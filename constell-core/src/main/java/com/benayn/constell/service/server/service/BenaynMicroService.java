@@ -1,16 +1,12 @@
 package com.benayn.constell.service.server.service;
 
 import com.benayn.constell.service.server.check.BenaynServiceRegister;
-import com.benayn.constell.service.server.repository.ExamplePageFeature;
-import com.benayn.constell.service.server.repository.bean.MybatisExamplePageFeature;
 import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 
 @ComponentScan(basePackages = {
     "com.benayn.constell.service.server.filter",
@@ -25,18 +21,12 @@ import org.springframework.context.annotation.Configuration;
     "com.benayn.constell.service.server.annotation.processor",
     "com.benayn.constell.services" })
 @Slf4j
-//@Configuration
 @EnableBenaynService
 public class BenaynMicroService {
 
     public BenaynMicroService() {
 
     }
-
-//    @Bean("extest")
-//    public ExamplePageFeature examplePageFeature() {
-//        return new MybatisExamplePageFeature();
-//    }
 
     public ApplicationContext start(Class<?> primarySource, String[] args) {
 
