@@ -1,0 +1,21 @@
+spring:
+  profiles:
+    active: @profileActive@
+
+server:
+  port: 8011
+
+logging:
+  level:
+    ROOT: INFO
+    org.springframework.web: ERROR
+    com.benayn.constell: INFO
+    com.benayn.constell.services.capricorn.mapper: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36}:%line - %msg%n"
+  file: /Users/paulo/Documents/opt/logs/constell.log
+
+mybatis:
+  type-aliases-package: com.benayn.constell.services.capricorn.mapper
+  mapper-locations: classpath:mybatis/mapper/*.xml

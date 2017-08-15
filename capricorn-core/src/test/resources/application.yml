@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/constell
+    username: postgres
+    password: benaynconstell
+    driverClassName: org.postgresql.Driver
+
+
+mybatis:
+  type-aliases-package: com.benayn.constell.services.capricorn.mapper
+  mapper-locations: classpath:mybatis/mapper/*.xml
