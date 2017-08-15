@@ -3,8 +3,8 @@ spring:
   datasource:
     platform: postgres
     url: jdbc:postgresql://localhost:5432/constell
-    username: foo
-    password: bar
+    username: postgres
+    password: benaynconstell
     driverClassName: org.postgresql.Driver
 
 
