@@ -1,6 +1,5 @@
 package com.benayn.constell.services.capricorn;
 
-import com.benayn.constell.service.server.repository.ExamplePageFeature;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.service.BenaynMicroService;
 import com.benayn.constell.services.capricorn.domain.User;
@@ -35,8 +34,6 @@ public class CapricornApplication {
         Page<User> page = ur.selectPageBy(ex, 1, 1);
         log.info(page.getResource().size() + " " + page.toString());
 
-        ExamplePageFeature extest = (ExamplePageFeature) ctx.getBean("extest");
-        log.info(extest.toString());
 
     }
 

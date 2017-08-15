@@ -25,6 +25,7 @@
         <constel.version>1.0</constel.version>
         <capricorn.version>1.0</capricorn.version>
         <guava.version>22.0</guava.version>
+        <swagger.version>2.7.0</swagger.version>
     </properties>
 
     <dependencyManagement>
