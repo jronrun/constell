@@ -1,11 +1,11 @@
 package com.benayn.constell.services.capricorn.service.bean;
 
+import com.benayn.constell.service.enums.Gender;
 import com.benayn.constell.services.capricorn.domain.User;
 import com.benayn.constell.services.capricorn.domain.UserExample;
 import com.benayn.constell.services.capricorn.enums.UserStatus;
 import com.benayn.constell.services.capricorn.repository.UserRepository;
 import com.benayn.constell.services.capricorn.service.UserService;
-import com.benayn.constell.service.enums.Gender;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,14 +24,14 @@ public class UserServiceBean implements UserService {
     }
 
     @Override
-    public User create(String email, String password, String name, Gender gender) {
+    public User create(String email, String password, String name) {
         User user = new User();
         Date now = new Date();
 
         user.setEmail(email);
         user.setPasswd(password);
         user.setName(name);
-        user.setGender(gender.getValue());
+        user.setGender(Gender.UNKNOWN.getValue());
         user.setStatus(UserStatus.USING.getValue());
         user.setCreateTime(now);
         user.setLastModifyTime(now);
