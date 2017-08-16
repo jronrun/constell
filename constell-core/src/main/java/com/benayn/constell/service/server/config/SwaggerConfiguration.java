@@ -26,6 +26,7 @@ public class SwaggerConfiguration implements ApplicationContextAware {
     @Bean
     public Docket capricornApi() {
         Docket docket = new Docket(SWAGGER_2)
+            .groupName("constellation")
             .select()
             .apis(withClassAnnotation(RestController.class))
             .paths(any())
