@@ -1,4 +1,4 @@
-package com.benayn.constell.services.capricorn.validator;
+package com.benayn.constell.services.capricorn.settings.validator;
 
 import com.benayn.constell.services.capricorn.request.RegisterRequest;
 import com.benayn.constell.services.capricorn.service.UserService;

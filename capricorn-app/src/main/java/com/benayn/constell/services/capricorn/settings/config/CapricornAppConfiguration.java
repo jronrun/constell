@@ -1,6 +1,6 @@
-package com.benayn.constell.services.capricorn.config;
+package com.benayn.constell.services.capricorn.settings.config;
 
-import static com.benayn.constell.services.capricorn.constant.CapricornConstant.SERVICE_NAME;
+import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.SERVICE_NAME;
 
 import com.benayn.constell.service.server.annotation.EnableBenaynSwagger;
 import com.benayn.constell.service.server.service.BenaynServiceInfo;

@@ -1,4 +1,4 @@
-package com.benayn.constell.services.capricorn.validator;
+package com.benayn.constell.services.capricorn.settings.validator;
 
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.ElementType.PARAMETER;

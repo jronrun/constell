@@ -1,6 +1,6 @@
 package com.benayn.constell.services.capricorn.controller;
 
-import static com.benayn.constell.services.capricorn.constant.CapricornConstant.BASE_PATH_V1;
+import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.BASE_PATH_V1;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
