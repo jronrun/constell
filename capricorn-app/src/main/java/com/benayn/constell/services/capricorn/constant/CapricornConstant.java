@@ -1,4 +1,4 @@
-package com.benayn.constell.services.constant;
+package com.benayn.constell.services.capricorn.constant;
 
 public class CapricornConstant {
 
