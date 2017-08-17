@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@MapperScan("com.benayn.constell.services.capricorn.mapper")
+@MapperScan("com.benayn.constell.services.capricorn.repository.mapper")
 public class MybatisConfiguration {
 
     @Bean

@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.benayn.constell.services.capricorn.mapper.UserMapper">
-  <resultMap id="BaseResultMap" type="com.benayn.constell.services.capricorn.domain.User">
+<mapper namespace="com.benayn.constell.services.capricorn.repository.mapper.AccountMapper">
+  <resultMap id="BaseResultMap" type="com.benayn.constell.services.capricorn.repository.domain.Account">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="email" jdbcType="VARCHAR" property="email" />
-    <result column="passwd" jdbcType="VARCHAR" property="passwd" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="gender" jdbcType="SMALLINT" property="gender" />
     <result column="status" jdbcType="SMALLINT" property="status" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="last_modify_time" jdbcType="TIMESTAMP" property="lastModifyTime" />
+    <result column="enabled" jdbcType="BIT" property="enabled" />
+    <result column="credentials_expired" jdbcType="BIT" property="credentialsExpired" />
+    <result column="expired" jdbcType="BIT" property="expired" />
+    <result column="locked" jdbcType="BIT" property="locked" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -70,15 +74,16 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, email, passwd, gender, status, create_time, last_modify_time
+    id, username, email, password, gender, status, create_time, last_modify_time, enabled, 
+    credentials_expired, expired, locked
   </sql>
-  <select id="selectByExample" parameterType="com.benayn.constell.services.capricorn.domain.UserExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.benayn.constell.services.capricorn.repository.domain.AccountExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from public.t_user
+    from public.t_account
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -89,38 +94,40 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from public.t_user
+    from public.t_account
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from public.t_user
+    delete from public.t_account
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.benayn.constell.services.capricorn.domain.UserExample">
-    delete from public.t_user
+  <delete id="deleteByExample" parameterType="com.benayn.constell.services.capricorn.repository.domain.AccountExample">
+    delete from public.t_account
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.benayn.constell.services.capricorn.domain.User" useGeneratedKeys="true">
-    insert into public.t_user (name, email, passwd, 
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.benayn.constell.services.capricorn.repository.domain.Account" useGeneratedKeys="true">
+    insert into public.t_account (username, email, password, 
       gender, status, create_time, 
-      last_modify_time)
-    values (#{name,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{passwd,jdbcType=VARCHAR}, 
+      last_modify_time, enabled, credentials_expired, 
+      expired, locked)
+    values (#{username,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
       #{gender,jdbcType=SMALLINT}, #{status,jdbcType=SMALLINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{lastModifyTime,jdbcType=TIMESTAMP})
+      #{lastModifyTime,jdbcType=TIMESTAMP}, #{enabled,jdbcType=BIT}, #{credentialsExpired,jdbcType=BIT}, 
+      #{expired,jdbcType=BIT}, #{locked,jdbcType=BIT})
   </insert>
-  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.benayn.constell.services.capricorn.domain.User" useGeneratedKeys="true">
-    insert into public.t_user
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.benayn.constell.services.capricorn.repository.domain.Account" useGeneratedKeys="true">
+    insert into public.t_account
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="name != null">
-        name,
+      <if test="username != null">
+        username,
       </if>
       <if test="email != null">
         email,
       </if>
-      <if test="passwd != null">
-        passwd,
+      <if test="password != null">
+        password,
       </if>
       <if test="gender != null">
         gender,
@@ -134,16 +141,20 @@
       <if test="lastModifyTime != null">
         last_modify_time,
       </if>
+      enabled,
+      credentials_expired,
+      expired,
+      locked,
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="name != null">
-        #{name,jdbcType=VARCHAR},
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
       </if>
       <if test="email != null">
         #{email,jdbcType=VARCHAR},
       </if>
-      <if test="passwd != null">
-        #{passwd,jdbcType=VARCHAR},
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
       </if>
       <if test="gender != null">
         #{gender,jdbcType=SMALLINT},
@@ -157,28 +168,32 @@
       <if test="lastModifyTime != null">
         #{lastModifyTime,jdbcType=TIMESTAMP},
       </if>
+      #{enabled,jdbcType=BIT},
+      #{credentialsExpired,jdbcType=BIT},
+      #{expired,jdbcType=BIT},
+      #{locked,jdbcType=BIT},
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.benayn.constell.services.capricorn.domain.UserExample" resultType="java.lang.Long">
-    select count(*) from public.t_user
+  <select id="countByExample" parameterType="com.benayn.constell.services.capricorn.repository.domain.AccountExample" resultType="java.lang.Long">
+    select count(*) from public.t_account
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update public.t_user
+    update public.t_account
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.name != null">
-        name = #{record.name,jdbcType=VARCHAR},
+      <if test="record.username != null">
+        username = #{record.username,jdbcType=VARCHAR},
       </if>
       <if test="record.email != null">
         email = #{record.email,jdbcType=VARCHAR},
       </if>
-      <if test="record.passwd != null">
-        passwd = #{record.passwd,jdbcType=VARCHAR},
+      <if test="record.password != null">
+        password = #{record.password,jdbcType=VARCHAR},
       </if>
       <if test="record.gender != null">
         gender = #{record.gender,jdbcType=SMALLINT},
@@ -192,36 +207,52 @@
       <if test="record.lastModifyTime != null">
         last_modify_time = #{record.lastModifyTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.enabled != null">
+        enabled = #{record.enabled,jdbcType=BIT},
+      </if>
+      <if test="record.credentialsExpired != null">
+        credentials_expired = #{record.credentialsExpired,jdbcType=BIT},
+      </if>
+      <if test="record.expired != null">
+        expired = #{record.expired,jdbcType=BIT},
+      </if>
+      <if test="record.locked != null">
+        locked = #{record.locked,jdbcType=BIT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update public.t_user
+    update public.t_account
     set id = #{record.id,jdbcType=BIGINT},
-      name = #{record.name,jdbcType=VARCHAR},
+      username = #{record.username,jdbcType=VARCHAR},
       email = #{record.email,jdbcType=VARCHAR},
-      passwd = #{record.passwd,jdbcType=VARCHAR},
+      password = #{record.password,jdbcType=VARCHAR},
       gender = #{record.gender,jdbcType=SMALLINT},
       status = #{record.status,jdbcType=SMALLINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      last_modify_time = #{record.lastModifyTime,jdbcType=TIMESTAMP}
+      last_modify_time = #{record.lastModifyTime,jdbcType=TIMESTAMP},
+      enabled = #{record.enabled,jdbcType=BIT},
+      credentials_expired = #{record.credentialsExpired,jdbcType=BIT},
+      expired = #{record.expired,jdbcType=BIT},
+      locked = #{record.locked,jdbcType=BIT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.benayn.constell.services.capricorn.domain.User">
-    update public.t_user
+  <update id="updateByPrimaryKeySelective" parameterType="com.benayn.constell.services.capricorn.repository.domain.Account">
+    update public.t_account
     <set>
-      <if test="name != null">
-        name = #{name,jdbcType=VARCHAR},
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
       </if>
       <if test="email != null">
         email = #{email,jdbcType=VARCHAR},
       </if>
-      <if test="passwd != null">
-        passwd = #{passwd,jdbcType=VARCHAR},
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
       </if>
       <if test="gender != null">
         gender = #{gender,jdbcType=SMALLINT},
@@ -235,18 +266,34 @@
       <if test="lastModifyTime != null">
         last_modify_time = #{lastModifyTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="enabled != null">
+        enabled = #{enabled,jdbcType=BIT},
+      </if>
+      <if test="credentialsExpired != null">
+        credentials_expired = #{credentialsExpired,jdbcType=BIT},
+      </if>
+      <if test="expired != null">
+        expired = #{expired,jdbcType=BIT},
+      </if>
+      <if test="locked != null">
+        locked = #{locked,jdbcType=BIT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.benayn.constell.services.capricorn.domain.User">
-    update public.t_user
-    set name = #{name,jdbcType=VARCHAR},
+  <update id="updateByPrimaryKey" parameterType="com.benayn.constell.services.capricorn.repository.domain.Account">
+    update public.t_account
+    set username = #{username,jdbcType=VARCHAR},
       email = #{email,jdbcType=VARCHAR},
-      passwd = #{passwd,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
       gender = #{gender,jdbcType=SMALLINT},
       status = #{status,jdbcType=SMALLINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
-      last_modify_time = #{lastModifyTime,jdbcType=TIMESTAMP}
+      last_modify_time = #{lastModifyTime,jdbcType=TIMESTAMP},
+      enabled = #{enabled,jdbcType=BIT},
+      credentials_expired = #{credentialsExpired,jdbcType=BIT},
+      expired = #{expired,jdbcType=BIT},
+      locked = #{locked,jdbcType=BIT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

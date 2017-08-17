@@ -12,9 +12,9 @@ import javax.validation.Payload;
 
 @Target({ PARAMETER, METHOD })
 @Retention(RUNTIME)
-@Constraint(validatedBy = { UniqueUserValidator.class })
+@Constraint(validatedBy = { UniqueAccountValidator.class })
 @Documented
-public @interface UniqueUser {
+public @interface UniqueAccount {
 
     String message() default "E-mail is already exists";
 

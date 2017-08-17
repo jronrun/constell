@@ -2,9 +2,9 @@ package com.benayn.constell.services.capricorn;
 
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.service.BenaynMicroService;
-import com.benayn.constell.services.capricorn.domain.User;
-import com.benayn.constell.services.capricorn.domain.UserExample;
-import com.benayn.constell.services.capricorn.repository.UserRepository;
+import com.benayn.constell.services.capricorn.repository.domain.Account;
+import com.benayn.constell.services.capricorn.repository.domain.AccountExample;
+import com.benayn.constell.services.capricorn.repository.AccountRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -25,14 +25,14 @@ public class CapricornApplication {
         log.info(" ----- info ----");
         log.warn(" ----- warn ----");
         log.error(" ----- error ----");
-        UserRepository ur = ctx.getBean(UserRepository.class);
+        AccountRepository ur = ctx.getBean(AccountRepository.class);
 
-        log.info(ur.selectById(1l).toString());
-
-        UserExample ex = new UserExample();
+        AccountExample ex = new AccountExample();
         ex.setOrderByClause("gender");
-        Page<User> page = ur.selectPageBy(ex, 1, 1);
+        Page<Account> page = ur.selectPageBy(ex, 1, 1);
         log.info(page.getResource().size() + " " + page.toString());
+
+        log.info(ur.selectById(page.getResource().get(0).getId()).toString());
 
 
     }

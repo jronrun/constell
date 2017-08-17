@@ -7,16 +7,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public enum UserStatus {
+public enum AccountStatus {
     USING((short) 1),
-    LOCKED((short) 8),
     DELETED((short) 9)
     ;
 
     @Getter
     private final short value;
 
-    public static UserStatus get(int val) {
-        return find(UserStatus.class, x -> x.value == val);
+    public static AccountStatus get(int val) {
+        return find(AccountStatus.class, x -> x.value == val);
     }
 }
