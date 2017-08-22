@@ -45,7 +45,7 @@ public class ConstellationUserDetailsService implements UserDetailsService {
 //            grantedAuthorities.add(new SimpleGrantedAuthority(role.getCode()));
 //        }
 
-        return new User(account.getUsername(),
+        return new User(account.getEmail(),
             account.getPassword(), account.isEnabled(),
             !account.isExpired(), !account.isCredentialsExpired(),
             !account.isLocked(), grantedAuthorities);
