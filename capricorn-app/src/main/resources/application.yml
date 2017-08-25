@@ -8,7 +8,7 @@ server:
 logging:
   level:
     ROOT: INFO
-    org.springframework.web: ERROR
+    org.springframework: INFO
     com.benayn.constell: INFO
     com.benayn.constell.services.capricorn.mapper: DEBUG
   pattern:
@@ -19,3 +19,12 @@ logging:
 mybatis:
   type-aliases-package: com.benayn.constell.services.capricorn.mapper
   mapper-locations: classpath:mybatis/mapper/*.xml
+
+# OAuth2 resources are protected by a filter chain with order security.oauth2.resource.filter-order
+# and the default is after the filter protecting the actuator endpoints by default
+# http://docs.spring.io/spring-boot/docs/2.0.0.M3/reference/htmlsingle/#boot-features-security-oauth2-resource-server
+security:
+  sessions: never
+  oauth2:
+    resource:
+      filter-order: 3
