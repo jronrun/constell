@@ -13,8 +13,8 @@ public class RegisterRequest {
 
     @NotNull
     @Size(min = 2, max = 255, message = "have to be grater than 2 characters")
-    @ApiModelProperty(value = "Username", required = true)
-    private String name;
+    @ApiModelProperty(value = "Nickname", required = true)
+    private String nickname;
     @NotNull
     @Pattern(regexp = ".+@.+\\.[a-z]+", message = "may not be valid")
     @ApiModelProperty(value = "E-mail", required = true)
