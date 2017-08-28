@@ -8,6 +8,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import com.benayn.constell.services.capricorn.repository.domain.Account;
 import com.benayn.constell.services.capricorn.request.RegisterRequest;
 import com.benayn.constell.services.capricorn.service.AccountService;
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,14 @@ public class AuthenticationController {
     @Autowired
     private AccountService userService;
 
+    @RolesAllowed("ROLE_USER")
     @RequestMapping(value="/get", method= GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Account> sampleGet22(){
         return new ResponseEntity<>(userService.findByEmail("test@test.com"), HttpStatus.CREATED);
     }
 
     @RequestMapping(value="", method= GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RolesAllowed("ROLE_TEST")
     public ResponseEntity<Account> sampleGet(){
         return new ResponseEntity<>(userService.findByEmail("test@test.com"), HttpStatus.CREATED);
     }
