@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -18,6 +19,20 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 @Configuration
 @EnableWebSecurity
+/*
+@Secured({"ROLE_XXX"})
+@EnableGlobalMethodSecurity(securedEnabled = true)
+
+@RolesAllowed({"ROLE_XXX"})
+@PermitAll
+@DenyAll
+@EnableGlobalMethodSecurity(jsr250Enabled = true)
+
+@PreAuthorize("hasRole(‘ROLE_XXX‘)")
+@PostAuthorize("hasRole(‘ROLE_XXX‘)")
+@EnableGlobalMethodSecurity(prePostEnabled = true)
+*/
+@EnableGlobalMethodSecurity(jsr250Enabled = true)
 @Slf4j
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
