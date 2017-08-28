@@ -8,6 +8,7 @@ import com.benayn.constell.services.capricorn.service.AccountService;
 import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -44,6 +45,7 @@ public class ConstellationUserDetailsService implements UserDetailsService {
 //        for (Role role : account.getRoles()) {
 //            grantedAuthorities.add(new SimpleGrantedAuthority(role.getCode()));
 //        }
+        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
         return new User(account.getEmail(),
             account.getPassword(), account.isEnabled(),

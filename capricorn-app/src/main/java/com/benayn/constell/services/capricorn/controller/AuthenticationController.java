@@ -2,6 +2,7 @@ package com.benayn.constell.services.capricorn.controller;
 
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.BASE_PATH_V1;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import com.benayn.constell.services.capricorn.repository.domain.Account;
@@ -23,6 +24,16 @@ public class AuthenticationController {
 
     @Autowired
     private AccountService userService;
+
+    @RequestMapping(value="/get", method= GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Account> sampleGet22(){
+        return new ResponseEntity<>(userService.findByEmail("test@test.com"), HttpStatus.CREATED);
+    }
+
+    @RequestMapping(value="", method= GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Account> sampleGet(){
+        return new ResponseEntity<>(userService.findByEmail("test@test.com"), HttpStatus.CREATED);
+    }
 
     @RequestMapping(value="/register", method= POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Account> register(@Valid @RequestBody RegisterRequest request){

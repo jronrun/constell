@@ -17,3 +17,49 @@ server:
       path: /dev2
     - ip: 127.0.0.3
       path: /dev3
+
+
+config:
+  oauth2:
+    # openssl genrsa -out jwt.pem 2048
+    # openssl rsa -in jwt.pem
+    privateKey: |
+      -----BEGIN RSA PRIVATE KEY-----
+      MIIEowIBAAKCAQEAp9H7NuHHO2MPFodKbEJHJiPelwoqV3n9kRiJvhCcFPdfR0+w
+      Ge0SBxMhG3mN0B1xMtifj+FtP5nRxzkWbi6IPRT52HEoGtzn7zDTMmJBhPIcEwbW
+      ZYFIPlJhhQ7xkr+OWqU1RdgljjtkcZEW/5z8n5r7c/XNcOL/ePaBbI4VSQlSP1oe
+      +sSAOZEOpLjrxHXRd3vK+hNG3gXqGHB8n1zewztLFnFRAypoxO4l8cbnu/KKWSp/
+      CREA2C/1DJ4kBSZcUbwx6sPgP3TP/02AauT7DyrhDrvMreh6Be7A2wOeRtnmOWeN
+      vaOhaIBQFLqb3vI01t1mvxjSHBxmgMc3lfLq/QIDAQABAoIBABmIXhM8iKZlbN89
+      mDoeX1rTLEOInWaPvd98f0B2oHikJk/gNOfM5OhEpc3bUZMvV5Cn2qb2YjvB+GO6
+      MMp0s++vKFAg7zwfDf6bTBanUlaay2CtsqLg54/r0sB+xIxSLqNl7VQCDby1FpQc
+      wgYD6X+TAdzjse0R7FKIFqrgdyaUUE8YXlnXmh99a+23G8un0AUR1LBZMZhieSH6
+      tBt+JyaKLbKhbkvnKqa3mVXwo6egJDYkWBbeVo4+R832Q49BhtPOviB+Z1J2wWCu
+      T2XYS20xbCACPbUH2RJ76pQQU8O9XMYrxcpDauHsaa7IVCfdm2nsDoc0mkf7znhU
+      hmVUqIECgYEA2xgv/OhdM4N4M8Z+fEJ8Oy33AFVC302QWa8dLpDpAn64tGrrt9Qt
+      /+3Iz5502bq7marOmAUcnqGpgCywoRBfGsylVBdZI4TooM6iIttEjYhsQkG65TJj
+      Ek+1ASsKazl57wRDR1ai8Y1WJF6/M8RXaY2M55OEhct67mrl/7H/990CgYEAxBa9
+      v/BPHX5emglcQurQVifJTBb9zGYRpsm2Jjr3JKBJsBe18fugC1ZHgjB0i8BdvQrg
+      HrKoh8kUR/AtjlEM1OH3AZWUSID7xQPZjUKcd41zE/E4hbudsMXWAH1/+BOIkceg
+      SJwD3ehG2/YDjAsNUhbgstifK+ym86cygrw0HaECgYAlrttSHIUrPwmFnjZTGPxV
+      EWrSW9fMoIKbaksSn0n0a+dI4Lr6OzxOMI/BZfejG0L5Ay/VZcuuXQ/SQ919VluF
+      OH2XIQzr1whL4D5y0FPSJAy6uKN0mF4B4EO5l7WLC6+1NH593qDX+v898i3gsXx3
+      YylBC1ZXzM+wAiLc/7iO4QKBgBnvWBF22z/vYtvEuSswm3WJtZoWwGK0bUk+DJVp
+      3x49BQIBYNMskLJvKu4RMpj5TGygb5wfzSKIeeI55gyYs7XEXUMcYYxlYudf5vpE
+      ASXe04WjtfIaKnUi9XcDIlXRX5LIcG6qE+jZu+WD2FxBafWdiQKenA7XMg2v44Jf
+      GhWBAoGBAI0Vn+ToWzGJ7cxXInzmy0bj/ZLO4QWMw6L3OIktHZauizS6pDaYwlPa
+      jOBpWbWmKZCs9gXOuUHFyacUVyg9nhPnyt0yd8wUGQ3R6IAbPLsCz86kGY+JILDf
+      ZsgNm3LUjLTNMJGmYrweSN8C2aP1M8McizZcXZpADoTAzVb1oqdx
+      -----END RSA PRIVATE KEY-----
+
+    # openssl rsa -in jwt.pem -pubout
+    publicKey: |
+      -----BEGIN PUBLIC KEY-----
+      MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAp9H7NuHHO2MPFodKbEJH
+      JiPelwoqV3n9kRiJvhCcFPdfR0+wGe0SBxMhG3mN0B1xMtifj+FtP5nRxzkWbi6I
+      PRT52HEoGtzn7zDTMmJBhPIcEwbWZYFIPlJhhQ7xkr+OWqU1RdgljjtkcZEW/5z8
+      n5r7c/XNcOL/ePaBbI4VSQlSP1oe+sSAOZEOpLjrxHXRd3vK+hNG3gXqGHB8n1ze
+      wztLFnFRAypoxO4l8cbnu/KKWSp/CREA2C/1DJ4kBSZcUbwx6sPgP3TP/02AauT7
+      DyrhDrvMreh6Be7A2wOeRtnmOWeNvaOhaIBQFLqb3vI01t1mvxjSHBxmgMc3lfLq
+      /QIDAQAB
+      -----END PUBLIC KEY-----

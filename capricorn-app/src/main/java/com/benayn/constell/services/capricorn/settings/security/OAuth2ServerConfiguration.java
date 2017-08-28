@@ -18,14 +18,11 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 @Configuration
 public class OAuth2ServerConfiguration {
 
-    private static final String RESOURCE_ID = "restservice";
+    private static final String RESOURCE_ID = "constellation-capricorn-api";
 
     @Configuration
     @EnableResourceServer
     protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
-
-        @Autowired
-        private JwtAccessTokenConverter jwtAccessTokenConverter;
 
         @Autowired
         private TokenStore tokenStore;
@@ -43,10 +40,13 @@ public class OAuth2ServerConfiguration {
             // @formatter:off
             http
                 .csrf().disable()
+                .formLogin()
+                .and()
+                .httpBasic().disable()
+                .anonymous().disable()
                 .authorizeRequests()
-                .antMatchers("/api/**").authenticated();
-
-
+                .antMatchers("/api/**").authenticated()
+                ;
 
             // @formatter:on
         }
@@ -88,12 +88,15 @@ public class OAuth2ServerConfiguration {
             // @formatter:off
             clients
                 .inMemory()
-                .withClient("clientapp")
-                .authorizedGrantTypes("password","refresh_token")
+
+                .withClient("constellation-capricorn")
+                .secret("9ddf1f40ddea06837257a7e2653a69d0")
                 .authorities("USER")
+                .authorizedGrantTypes("client_credentials", "password", "authorization_code", "refresh_token")
                 .scopes("read", "write")
                 .resourceIds(RESOURCE_ID)
-                .secret("123456");
+                ;
+
             // @formatter:on
         }
 
