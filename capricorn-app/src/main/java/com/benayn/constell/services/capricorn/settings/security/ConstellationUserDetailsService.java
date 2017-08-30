@@ -1,11 +1,10 @@
 package com.benayn.constell.services.capricorn.settings.security;
 
 
-import static com.google.common.collect.Lists.newArrayList;
-
-import com.benayn.constell.services.capricorn.repository.domain.Account;
+import com.benayn.constell.services.capricorn.repository.model.AccountDetails;
 import com.benayn.constell.services.capricorn.service.AccountService;
 import java.util.Collection;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,22 +29,22 @@ public class ConstellationUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-        Account account = userService.findByEmail(username);
+        AccountDetails account = userService.getAccountDetails(username);
 
         if (account == null) {
             throw new UsernameNotFoundException("User " + username + " not found.");
         }
 
-//        if (account.getRoles() == null || account.getRoles().isEmpty()) {
-//            throw new UsernameNotFoundException("User not authorized.");
-//        }
+        if (account.getRoles() == null || account.getRoles().isEmpty()) {
+            throw new UsernameNotFoundException("User not authorized.");
+        }
 
-        Collection<GrantedAuthority> grantedAuthorities = newArrayList();
-//        for (Role role : account.getRoles()) {
-//            grantedAuthorities.add(new SimpleGrantedAuthority(role.getCode()));
-//        }
-        grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        //Wraps a role to SimpleGrantedAuthority objects
+        Collection<GrantedAuthority> grantedAuthorities = account.getRoles()
+            .stream()
+            .map(role -> new SimpleGrantedAuthority(role.getCode()))
+            .collect(Collectors.toList())
+            ;
 
         return new User(account.getEmail(),
             account.getPassword(), account.isEnabled(),

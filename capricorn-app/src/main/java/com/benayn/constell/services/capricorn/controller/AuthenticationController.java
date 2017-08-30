@@ -31,20 +31,20 @@ public class AuthenticationController {
     @RolesAllowed("ROLE_USER")
     @RequestMapping(value="/get", method= GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Account> sampleGet22(){
-        return new ResponseEntity<>(userService.findByEmail("test@test.com"), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.getAccountDetails("test@test.com"), HttpStatus.CREATED);
     }
 
     @RequestMapping(value="", method= GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @RolesAllowed("ROLE_TEST")
     public ResponseEntity<Account> sampleGet(){
-        return new ResponseEntity<>(userService.findByEmail("test@test.com"), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.getAccountDetails("test@test.com"), HttpStatus.CREATED);
     }
 
     @RequestMapping(value="/get1", method= GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @PreAuthorize(USER_RETRIEVE_PERMISSION)
     public ResponseEntity<Account> sampleGet1(String email){
 
-        return new ResponseEntity<>(userService.findByEmail("test@test.com"), HttpStatus.CREATED);
+        return new ResponseEntity<>(userService.getAccountDetails("test@test.com"), HttpStatus.CREATED);
     }
 
     @RequestMapping(value="/register", method= POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)

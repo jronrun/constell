@@ -124,6 +124,16 @@ public abstract class GenericRepository<T, E, M> implements Repository<T, E> {
     }
 
     /**
+     * Returns domain Mapper instance with given Mapper type
+     * @param mapperType
+     * @param <Mapper>
+     * @return
+     */
+    protected <Mapper> Mapper getMapper(Class<Mapper> mapperType) {
+        return getSqlSession().getMapper(mapperType);
+    }
+
+    /**
      * Returns SqlSession
      * @return
      */
@@ -154,6 +164,6 @@ public abstract class GenericRepository<T, E, M> implements Repository<T, E> {
      */
     private final String namespace = mapperType.getName() ;
 
-    private final List<T> EMPTY_ITEMS = Lists.newArrayList();
+    protected final List<T> EMPTY_ITEMS = Lists.newArrayList();
 
 }
