@@ -8,7 +8,7 @@ import com.benayn.constell.services.capricorn.repository.AccountRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class AccountRepositoryBean extends GenericRepository<Account, AccountExample, AccountMapper> implements
-    AccountRepository {
+public class AccountRepositoryBean
+    extends GenericRepository<Account, AccountExample, AccountMapper> implements AccountRepository {
 
 }
