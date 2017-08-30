@@ -1,5 +1,6 @@
 package com.benayn.constell.services.capricorn.controller;
 
+import static com.benayn.constell.services.capricorn.settings.constant.Authorities.USER_RETRIEVE_PERMISSION;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.BASE_PATH_V1;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -40,8 +41,9 @@ public class AuthenticationController {
     }
 
     @RequestMapping(value="/get1", method= GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasPermission(#email, 'read')")
+    @PreAuthorize(USER_RETRIEVE_PERMISSION)
     public ResponseEntity<Account> sampleGet1(String email){
+
         return new ResponseEntity<>(userService.findByEmail("test@test.com"), HttpStatus.CREATED);
     }
 

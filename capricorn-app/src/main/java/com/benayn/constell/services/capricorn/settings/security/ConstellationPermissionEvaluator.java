@@ -10,7 +10,7 @@ public class ConstellationPermissionEvaluator implements PermissionEvaluator {
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
-        System.out.println(authentication);
+        System.out.println(authentication.getAuthorities());
         System.out.println(targetDomainObject);
         System.out.println(permission);
         return false;
