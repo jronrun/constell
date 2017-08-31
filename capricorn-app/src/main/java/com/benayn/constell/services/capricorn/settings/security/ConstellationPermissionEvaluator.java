@@ -13,7 +13,7 @@ public class ConstellationPermissionEvaluator implements PermissionEvaluator {
         System.out.println(authentication.getAuthorities());
         System.out.println(targetDomainObject);
         System.out.println(permission);
-        return false;
+        return true;
     }
 
     @Override

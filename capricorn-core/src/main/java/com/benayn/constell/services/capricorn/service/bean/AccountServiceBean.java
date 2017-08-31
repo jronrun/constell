@@ -12,6 +12,7 @@ import com.benayn.constell.services.capricorn.service.AccountService;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,6 +24,7 @@ public class AccountServiceBean implements AccountService {
     private RoleRepository roleRepository;
 
     @Override
+    @Cacheable(value = "accounts", sync = true)
     public AccountDetails getAccountDetails(String email) {
         AccountExample example = new AccountExample();
         example.createCriteria().andEmailEqualTo(email);

@@ -1,6 +1,7 @@
 package com.benayn.constell.services.capricorn.settings.security;
 
 
+import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.repository.model.AccountDetails;
 import com.benayn.constell.services.capricorn.service.AccountService;
 import java.util.Collection;
