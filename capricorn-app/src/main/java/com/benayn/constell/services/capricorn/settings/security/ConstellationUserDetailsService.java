@@ -1,7 +1,6 @@
 package com.benayn.constell.services.capricorn.settings.security;
 
 
-import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.repository.model.AccountDetails;
 import com.benayn.constell.services.capricorn.service.AccountService;
 import java.util.Collection;
@@ -40,10 +39,9 @@ public class ConstellationUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User not authorized.");
         }
 
-        //Wraps a role to SimpleGrantedAuthority objects
         Collection<GrantedAuthority> grantedAuthorities = account.getRoles()
             .stream()
-            .map(role -> new SimpleGrantedAuthority(role.getCode()))
+            .map(authority -> new SimpleGrantedAuthority(authority.getCode()))
             .collect(Collectors.toList())
             ;
 

@@ -13,12 +13,14 @@ import com.benayn.constell.services.capricorn.repository.mapper.AccountRoleMappe
 import com.benayn.constell.services.capricorn.repository.mapper.RoleMapper;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class RoleRepositoryBean extends GenericRepository<Role, RoleExample, RoleMapper> implements RoleRepository {
 
     @Override
+    @Cacheable(value = "roles", sync = true)
     public List<Role> getByAccountId(Long accountId) {
         AccountRoleMapper accountRoleMapper = getMapper(AccountRoleMapper.class);
 

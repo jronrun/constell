@@ -3,12 +3,12 @@ package com.benayn.constell.services.capricorn.service.bean;
 import com.benayn.constell.service.enums.Gender;
 import com.benayn.constell.services.capricorn.enums.AccountStatus;
 import com.benayn.constell.services.capricorn.repository.AccountRepository;
-import com.benayn.constell.services.capricorn.repository.RoleRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Account;
 import com.benayn.constell.services.capricorn.repository.domain.AccountExample;
 import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.repository.model.AccountDetails;
 import com.benayn.constell.services.capricorn.service.AccountService;
+import com.benayn.constell.services.capricorn.service.AuthorityService;
 import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class AccountServiceBean implements AccountService {
     @Autowired
     private AccountRepository userRepository;
     @Autowired
-    private RoleRepository roleRepository;
+    private AuthorityService authorityService;
 
     @Override
     @Cacheable(value = "accounts", sync = true)
@@ -34,7 +34,7 @@ public class AccountServiceBean implements AccountService {
             return null;
         }
 
-        List<Role> roles = roleRepository.getByAccountId(account.getId());
+        List<Role> roles = authorityService.getRolesByAccountId(account.getId());
         return new AccountDetails(account, roles);
     }
 
