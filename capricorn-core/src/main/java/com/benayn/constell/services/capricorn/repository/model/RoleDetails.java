@@ -2,11 +2,14 @@ package com.benayn.constell.services.capricorn.repository.model;
 
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
 import com.benayn.constell.services.capricorn.repository.domain.Role;
+import com.google.common.collect.Lists;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
 public class RoleDetails extends Role {
+
+    public static RoleDetails EMPTY = new RoleDetails(new Role(), Lists.newArrayList());
 
     public RoleDetails(Role role, List<Permission> permissions) {
         setId(role.getId());

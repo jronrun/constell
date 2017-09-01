@@ -48,7 +48,7 @@ public class AuthorityServiceBean implements AuthorityService {
             ? roleRepository.getByCode((String) param)
             : roleRepository.selectById((Long) param);;
         if (null == role) {
-            return null;
+            return RoleDetails.EMPTY;
         }
 
         List<Permission> permissions = permissionRepository.getByRoleId(role.getId());
