@@ -26,7 +26,8 @@ public class CacheConfiguration {
     protected enum Caches {
 
         ACCOUNT("accounts", 300, 50),
-        ROLE("roles", 300, 100)
+        ROLE("roles", 300, 100),
+        PERMISSION("permissions", 300, 100)
         ;
 
         private final String name;

@@ -8,4 +8,6 @@ import java.util.List;
 public interface RoleRepository extends Repository<Role, RoleExample> {
 
     List<Role> getByAccountId(Long accountId);
+
+    Role getByCode(String code);
 }
