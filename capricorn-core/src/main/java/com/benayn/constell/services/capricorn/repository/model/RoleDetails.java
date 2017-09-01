@@ -9,7 +9,7 @@ import lombok.Setter;
 
 public class RoleDetails extends Role {
 
-    public static RoleDetails EMPTY = new RoleDetails(new Role(), Lists.newArrayList());
+    public static final RoleDetails EMPTY = new RoleDetails(new Role(), Lists.newArrayList());
 
     public RoleDetails(Role role, List<Permission> permissions) {
         setId(role.getId());
