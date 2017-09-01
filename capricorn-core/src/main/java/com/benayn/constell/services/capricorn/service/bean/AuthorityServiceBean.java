@@ -21,12 +21,11 @@ public class AuthorityServiceBean implements AuthorityService {
 
     @Override
     public boolean authenticate(String permission, List<String> authorities) {
-        List<RoleDetails> roles = authorities.stream()
+        return authorities.stream()
             .map(this::getRoleDetailsByCode)
-            .collect(Collectors.toList());
-            ;
-
-        return roles.stream().anyMatch(role -> role.has(permission));
+            .collect(Collectors.toList())
+            .stream()
+            .anyMatch(role -> role.has(permission));
     }
 
     @Override
