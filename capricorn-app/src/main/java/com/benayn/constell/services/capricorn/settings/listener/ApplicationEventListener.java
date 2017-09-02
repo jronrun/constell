@@ -1,0 +1,116 @@
+package com.benayn.constell.services.capricorn.settings.listener;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
+
+import com.benayn.constell.services.capricorn.settings.constant.Authorities;
+import com.benayn.constell.services.capricorn.settings.menu.AuthorityMenuitem;
+import com.benayn.constell.services.capricorn.settings.menu.MenuCapability;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
+import com.google.common.primitives.Ints;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.annotation.Nullable;
+import javax.annotation.security.RolesAllowed;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+
+@Component
+@Slf4j
+public class ApplicationEventListener {
+
+    @Autowired
+    private RequestMappingHandlerMapping handlerMapping;
+    private static final List<String> authories;
+
+    @EventListener
+    public void onApplicationReadyEvent(ApplicationReadyEvent event) {
+        List<AuthorityMenuitem> menus = Lists.newArrayList();
+        handlerMapping.getHandlerMethods().forEach((key, value) -> {
+            MenuCapability menu = value.getMethodAnnotation(MenuCapability.class);
+            if (null == menu) {
+                return;
+            }
+
+            String action;
+            List<String> patterns = Lists.newArrayList(key.getPatternsCondition().getPatterns());
+            if (patterns.isEmpty() || (action = patterns.get(0)).contains("{")) {
+                log.warn("unsupported menu capability {} : {}", menu.value(), key);
+                return;
+            }
+
+            menus.add(new AuthorityMenuitem(menu.value(), action,
+                getMenuRole(value), getMenuAuthority(value), menu.parent(), menu.order()));
+        });
+
+        List<AuthorityMenuitem> finalMenus = authorityOrdering.sortedCopy(packageMenu(menus));
+
+        System.out.println(finalMenus);
+    }
+
+    private String getMenuRole(HandlerMethod value) {
+        RolesAllowed rolesAllowed = value.getMethodAnnotation(RolesAllowed.class);
+        return null != rolesAllowed ? rolesAllowed.value()[0] : null;
+    }
+
+    private String getMenuAuthority(HandlerMethod value) {
+        PreAuthorize preAuthorize = value.getMethodAnnotation(PreAuthorize.class);
+        if (null == preAuthorize) {
+            return null;
+        }
+
+        return authories.stream()
+            .filter(auth -> preAuthorize.value().contains(String.format(authorityFormat, auth)))
+            .findFirst()
+            .orElse(null)
+            ;
+    }
+
+    private List<AuthorityMenuitem> packageMenu(List<AuthorityMenuitem> menus) {
+        List<AuthorityMenuitem> packagedMenus = menus.stream()
+            .filter(m -> isNullOrEmpty(m.getParent()))
+            .collect(Collectors.toList())
+            ;
+
+        packagedMenus.forEach(menu -> packagingTo(menu, menus));
+        return packagedMenus;
+    }
+
+    private void packagingTo(AuthorityMenuitem menu, List<AuthorityMenuitem> menus) {
+        List<AuthorityMenuitem> child = Lists.newArrayList();
+        menus.forEach(m -> {
+            if (m.getParent().equals(menu.getTitle())) {
+                packagingTo(m, menus);
+                child.add(m);
+            }
+        });
+
+        if (child.size() > 0) {
+            menu.setChild(authorityOrdering.sortedCopy(child));
+        }
+    }
+
+    private static final String authorityFormat = "'%s'";
+    private static final Ordering<AuthorityMenuitem> authorityOrdering = new Ordering<AuthorityMenuitem>() {
+        @Override
+        public int compare(@Nullable AuthorityMenuitem left, @Nullable AuthorityMenuitem right) {
+            return Ints.compare(checkNotNull(left).getOrder(), checkNotNull(right).getOrder());
+        }
+    };
+
+    static {
+        authories = Lists.newArrayList();
+
+        Arrays
+            .stream(Authorities.class.getDeclaredFields())
+            .forEach(field -> authories.add(field.getName().toLowerCase()));
+    }
+}
