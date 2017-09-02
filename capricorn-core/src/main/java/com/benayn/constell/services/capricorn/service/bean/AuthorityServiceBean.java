@@ -50,6 +50,19 @@ public class AuthorityServiceBean implements AuthorityService {
     }
 
     @Override
+    public List<Permission> getPermissionByAccountId(Long accountId) {
+        List<Role> roles = getRolesByAccountId(accountId);
+        List<Permission> permissions = Lists.newArrayList();
+
+        roles.forEach(role -> {
+            RoleDetails roleDetails = getRoleDetailsById(role.getId());
+            permissions.addAll(roleDetails.getPermissions());
+        });
+
+        return permissions;
+    }
+
+    @Override
     public RoleDetails getRoleDetailsByCode(String roleCode) {
         return getRoleDetailsBy(roleCode, true);
     }

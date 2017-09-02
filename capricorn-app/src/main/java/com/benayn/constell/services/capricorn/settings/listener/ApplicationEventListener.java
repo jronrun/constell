@@ -18,8 +18,8 @@ import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.cache.annotation.CachePut;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
@@ -36,7 +36,7 @@ public class ApplicationEventListener {
     private RequestMappingHandlerMapping handlerMapping;
 
     @EventListener
-    public void onApplicationReadyEvent(ApplicationReadyEvent event) {
+    public void onApplicationReadyEvent(ContextRefreshedEvent event) {
         List<AuthorityMenuitem> menus = Lists.newArrayList();
         handlerMapping.getHandlerMethods().forEach((key, value) -> {
             MenuCapability menu = value.getMethodAnnotation(MenuCapability.class);
@@ -47,7 +47,7 @@ public class ApplicationEventListener {
             String action;
             List<String> patterns = Lists.newArrayList(key.getPatternsCondition().getPatterns());
             if (patterns.isEmpty() || (action = patterns.get(0)).contains("{")) {
-                log.warn("unsupported menu capability {} : {}", menu.value(), key);
+                log.warn("Unsupported menu capability {} : {}", menu.value(), key);
                 return;
             }
 
@@ -57,7 +57,7 @@ public class ApplicationEventListener {
 
         authorityService.initializeAuthorityMenus(
             ImmutableList.copyOf(authorityOrdering.sortedCopy(packageMenu(menus))));
-        log.info("initialized authority menus successful");
+        log.info("Initialized authority menus successful");
     }
 
     @CachePut(value = "_menus", key = "'_menus'")

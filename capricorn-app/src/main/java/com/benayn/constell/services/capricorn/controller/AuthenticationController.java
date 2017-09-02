@@ -1,6 +1,7 @@
 package com.benayn.constell.services.capricorn.controller;
 
 import static com.benayn.constell.services.capricorn.settings.constant.Authorities.USER_CREATE_PERMISSION;
+import static com.benayn.constell.services.capricorn.settings.constant.Authorities.USER_DELETE_PERMISSION;
 import static com.benayn.constell.services.capricorn.settings.constant.Authorities.USER_RETRIEVE_PERMISSION;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.BASE_PATH_V1;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -9,6 +10,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import com.benayn.constell.service.server.menu.AuthorityMenuitem;
 import com.benayn.constell.service.server.menu.MenuCapability;
+import com.benayn.constell.service.server.menu.Menuitem;
 import com.benayn.constell.services.capricorn.repository.domain.Account;
 import com.benayn.constell.services.capricorn.request.RegisterRequest;
 import com.benayn.constell.services.capricorn.service.AccountService;
@@ -55,6 +57,7 @@ public class AuthenticationController {
     @MenuCapability(value = "角色管理", parent = "系统菜单", order = 10)
     @RequestMapping(value="/get1", method= GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     @PreAuthorize(USER_RETRIEVE_PERMISSION)
+//    @PreAuthorize(USER_DELETE_PERMISSION)
     public ResponseEntity<Account> sampleGet1(String email){
 
         return new ResponseEntity<>(userService.getAccountDetails("test@test.com"), HttpStatus.CREATED);
@@ -68,6 +71,7 @@ public class AuthenticationController {
     }
 
     @MenuCapability(value = "角色添加", parent = "角色管理")
+    @PreAuthorize(USER_RETRIEVE_PERMISSION)
     @RequestMapping(value="/register", method= POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Account> register(@Valid @RequestBody RegisterRequest request){
         log.info("signup " + request.toString());
@@ -95,6 +99,16 @@ public class AuthenticationController {
     @RequestMapping(value="/menus", method= GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<AuthorityMenuitem>> menus(){
         return new ResponseEntity<>(authorityService.getAuthorityMenus(), HttpStatus.ACCEPTED);
+    }
+
+    @RequestMapping(value="/usermenu", method= GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Menuitem>> usermenu(){
+        return new ResponseEntity<>(userService.getUserMenus(24L, true), HttpStatus.ACCEPTED);
+    }
+
+    @RequestMapping(value="/usermenuless", method= GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Menuitem>> usermenuless(){
+        return new ResponseEntity<>(userService.getUserMenus(24L, false), HttpStatus.ACCEPTED);
     }
 
 }

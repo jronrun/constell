@@ -25,14 +25,25 @@ public class AuthorityMenuitem extends Menuitem {
         this.order = order;
     }
 
+    public Menuitem asMenu(boolean authorized) {
+        Menuitem menu = new Menuitem();
+        menu.setId(getId());
+        menu.setTitle(getTitle());
+        menu.setAction(getAction());
+        menu.setAuthorized(authorized);
+        return menu;
+    }
+
+    public boolean hasChild() {
+        return getChild().size() > 0;
+    }
+
     @Override
     public String toString() {
         return toStringHelper(this)
-            .add("id", getId())
-            .add("title", getTitle())
+            .addValue(super.toString())
             .add("parent", getParent())
             .add("order", getOrder())
-            .add("action", getAction())
             .add("role", getRole())
             .add("authority", getAuthority())
             .toString();

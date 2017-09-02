@@ -31,7 +31,8 @@ public class CacheConfiguration {
         ACCOUNT("accounts", 300, 50, SECONDS),
         ROLE("roles", 300, 100, SECONDS),
         PERMISSION("permissions", 300, 100, SECONDS),
-        MENU("_menus", Integer.MAX_VALUE, 2, DAYS)
+        USER_MENU("menus", 300, 50, SECONDS),
+        AUTHORITY_MENU("_menus", Integer.MAX_VALUE, 2, DAYS)
         ;
 
         private final String name;
