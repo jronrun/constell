@@ -1,5 +1,8 @@
 package com.benayn.constell.services.capricorn.config;
 
+import static java.util.concurrent.TimeUnit.DAYS;
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Ticker;
 import java.util.Arrays;
@@ -25,20 +28,23 @@ public class CacheConfiguration {
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     protected enum Caches {
 
-        ACCOUNT("accounts", 300, 50),
-        ROLE("roles", 300, 100),
-        PERMISSION("permissions", 300, 100)
+        ACCOUNT("accounts", 300, 50, SECONDS),
+        ROLE("roles", 300, 100, SECONDS),
+        PERMISSION("permissions", 300, 100, SECONDS),
+        MENU("_menus", Integer.MAX_VALUE, 2, DAYS)
         ;
 
         private final String name;
         private final int secondsToExpire;
         private final int maximumSize;
+        private final TimeUnit timeUnit;
     }
 
     @Bean
     public CacheManager cacheManager(Ticker ticker) {
         Collection<? extends Cache> caches = Arrays.stream(Caches.values())
-            .map(cache -> buildCache(cache.getName(), ticker, cache.getSecondsToExpire(), cache.getMaximumSize()))
+            .map(cache -> buildCache(cache.getName(), ticker,
+                cache.getSecondsToExpire(), cache.getMaximumSize(), cache.getTimeUnit()))
             .collect(Collectors.toList())
             ;
 
@@ -47,9 +53,9 @@ public class CacheConfiguration {
         return manager;
     }
 
-    private CaffeineCache buildCache(String name, Ticker ticker, int secondsToExpire, int maximumSize) {
+    private CaffeineCache buildCache(String name, Ticker ticker, int secondsToExpire, int maximumSize, TimeUnit timeUnit) {
         return new CaffeineCache(name, Caffeine.newBuilder()
-            .expireAfterWrite(secondsToExpire, TimeUnit.SECONDS)
+            .expireAfterWrite(secondsToExpire, timeUnit)
             .maximumSize(maximumSize)
             .ticker(ticker)
             .build()

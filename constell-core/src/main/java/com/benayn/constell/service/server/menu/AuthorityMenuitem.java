@@ -1,4 +1,4 @@
-package com.benayn.constell.services.capricorn.settings.menu;
+package com.benayn.constell.service.server.menu;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 
@@ -28,6 +28,7 @@ public class AuthorityMenuitem extends Menuitem {
     @Override
     public String toString() {
         return toStringHelper(this)
+            .add("id", getId())
             .add("title", getTitle())
             .add("parent", getParent())
             .add("order", getOrder())

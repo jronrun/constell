@@ -3,9 +3,11 @@ package com.benayn.constell.services.capricorn.settings.listener;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+import com.benayn.constell.service.server.menu.AuthorityMenuitem;
+import com.benayn.constell.service.server.menu.MenuCapability;
+import com.benayn.constell.services.capricorn.service.AuthorityService;
 import com.benayn.constell.services.capricorn.settings.constant.Authorities;
-import com.benayn.constell.services.capricorn.settings.menu.AuthorityMenuitem;
-import com.benayn.constell.services.capricorn.settings.menu.MenuCapability;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Ints;
@@ -17,6 +19,7 @@ import javax.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.context.event.EventListener;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
@@ -28,8 +31,9 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 public class ApplicationEventListener {
 
     @Autowired
+    private AuthorityService authorityService;
+    @Autowired
     private RequestMappingHandlerMapping handlerMapping;
-    private static final List<String> authories;
 
     @EventListener
     public void onApplicationReadyEvent(ApplicationReadyEvent event) {
@@ -51,9 +55,14 @@ public class ApplicationEventListener {
                 getMenuRole(value), getMenuAuthority(value), menu.parent(), menu.order()));
         });
 
-        List<AuthorityMenuitem> finalMenus = authorityOrdering.sortedCopy(packageMenu(menus));
+        authorityService.initializeAuthorityMenus(
+            ImmutableList.copyOf(authorityOrdering.sortedCopy(packageMenu(menus))));
+        log.info("initialized authority menus successful");
+    }
 
-        System.out.println(finalMenus);
+    @CachePut(value = "_menus", key = "'_menus'")
+    public List<AuthorityMenuitem> cachePut(List<AuthorityMenuitem> finalMenus) {
+        return finalMenus;
     }
 
     private String getMenuRole(HandlerMethod value) {
@@ -98,6 +107,7 @@ public class ApplicationEventListener {
         }
     }
 
+    private static final List<String> authories;
     private static final String authorityFormat = "'%s'";
     private static final Ordering<AuthorityMenuitem> authorityOrdering = new Ordering<AuthorityMenuitem>() {
         @Override

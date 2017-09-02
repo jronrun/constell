@@ -1,4 +1,4 @@
-package com.benayn.constell.services.capricorn.settings.menu;
+package com.benayn.constell.service.server.menu;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

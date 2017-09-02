@@ -1,14 +1,18 @@
 package com.benayn.constell.services.capricorn.service.bean;
 
+import com.benayn.constell.service.server.menu.AuthorityMenuitem;
 import com.benayn.constell.services.capricorn.repository.PermissionRepository;
 import com.benayn.constell.services.capricorn.repository.RoleRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
 import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.repository.model.RoleDetails;
 import com.benayn.constell.services.capricorn.service.AuthorityService;
+import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -26,6 +30,18 @@ public class AuthorityServiceBean implements AuthorityService {
             .collect(Collectors.toList())
             .stream()
             .anyMatch(role -> role.has(permission));
+    }
+
+    @Override
+    @Cacheable(value = "_menus", key = "'_menus'", sync = true)
+    public List<AuthorityMenuitem> getAuthorityMenus() {
+        return Lists.newArrayList();
+    }
+
+    @Override
+    @CachePut(value = "_menus", key = "'_menus'")
+    public List<AuthorityMenuitem> initializeAuthorityMenus(List<AuthorityMenuitem> authorityMenus) {
+        return authorityMenus;
     }
 
     @Override

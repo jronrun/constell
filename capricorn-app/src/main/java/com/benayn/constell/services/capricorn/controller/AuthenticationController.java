@@ -7,10 +7,13 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import com.benayn.constell.service.server.menu.AuthorityMenuitem;
+import com.benayn.constell.service.server.menu.MenuCapability;
 import com.benayn.constell.services.capricorn.repository.domain.Account;
 import com.benayn.constell.services.capricorn.request.RegisterRequest;
 import com.benayn.constell.services.capricorn.service.AccountService;
-import com.benayn.constell.services.capricorn.settings.menu.MenuCapability;
+import com.benayn.constell.services.capricorn.service.AuthorityService;
+import java.util.List;
 import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +33,8 @@ public class AuthenticationController {
 
     @Autowired
     private AccountService userService;
+    @Autowired
+    private AuthorityService authorityService;
 
     @MenuCapability("系统菜单")
     @RolesAllowed("ROLE_USER")
@@ -85,6 +90,11 @@ public class AuthenticationController {
     @RequestMapping(value="/gets/test2", method= GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public void test2(){
 
+    }
+
+    @RequestMapping(value="/menus", method= GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<AuthorityMenuitem>> menus(){
+        return new ResponseEntity<>(authorityService.getAuthorityMenus(), HttpStatus.ACCEPTED);
     }
 
 }
