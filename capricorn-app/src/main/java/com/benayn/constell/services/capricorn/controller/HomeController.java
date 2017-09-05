@@ -1,21 +1,16 @@
 package com.benayn.constell.services.capricorn.controller;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import java.time.LocalDateTime;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
+@Controller
 public class HomeController {
 
-    @RequestMapping(value = "/", method= GET)
-    public String home() {
-        return "Hello World";
-    }
-
-    @RequestMapping(value = "/test", method= GET)
-    public String test() {
-        return "test World";
+    @GetMapping(value = "/index")
+    public void index(Model model) {
+        model.addAttribute("now", LocalDateTime.now());
     }
 
 }

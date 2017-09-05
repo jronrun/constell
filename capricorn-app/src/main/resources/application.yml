@@ -1,6 +1,12 @@
 spring:
   profiles:
     active: @profileActive@
+  thymeleaf:
+    mode: HTML5
+    encoding: UTF-8
+    cache: true
+    servlet:
+      content-type: text/html
 
 server:
   port: 8011
