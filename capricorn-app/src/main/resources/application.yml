@@ -4,7 +4,8 @@ spring:
   thymeleaf:
     mode: HTML5
     encoding: UTF-8
-    cache: true
+    # cache: false, Enable thymeleaf reloadable when develop, (⌘+F9)
+    cache: false
     servlet:
       content-type: text/html
 
