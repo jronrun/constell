@@ -51,6 +51,16 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
         <dependency>
+            <groupId>nz.net.ultraq.thymeleaf</groupId>
+            <artifactId>thymeleaf-layout-dialect</artifactId>
+            <version>${thymeleaf-layout-dialect.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.mxab.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-data-attribute</artifactId>
+            <version>${thymeleaf-extras-data-attribute.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
@@ -61,7 +71,7 @@
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>${spring.boot.mybatis.starter}</version>
+            <version>${mybatis-spring-boot-starter.version}</version>
         </dependency>
 
         <dependency>
