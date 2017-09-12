@@ -49,3 +49,4 @@ target
 *.log
 *.iml
 *.idea
+capricorn-app/src/main/resources/static/components

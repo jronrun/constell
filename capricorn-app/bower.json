@@ -1,0 +1,15 @@
+{
+  "name": "capricorn-app-component",
+  "description": "Constellation Capricorn Component",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "jquery#3.2.1",
+    "semantic": "semantic-ui#^2.2.13"
+  }
+}
