@@ -2,7 +2,7 @@ spring:
   profiles:
     active: @profileActive@
   thymeleaf:
-    mode: HTML5
+    mode: HTML
     encoding: UTF-8
     # cache: false, Enable thymeleaf reloadable when develop, (⌘+F9)
     cache: false

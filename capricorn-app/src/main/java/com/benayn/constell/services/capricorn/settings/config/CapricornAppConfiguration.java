@@ -4,7 +4,6 @@ import static com.benayn.constell.services.capricorn.settings.constant.Capricorn
 
 import com.benayn.constell.service.server.annotation.EnableBenaynSwagger;
 import com.benayn.constell.service.server.service.BenaynServiceInfo;
-import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -16,11 +15,6 @@ public class CapricornAppConfiguration {
     @Bean
     public BenaynServiceInfo benaynServiceInfo() {
         return BenaynServiceInfo.of(new ApiInfoBuilder().title("Capricorn API Document").build(), SERVICE_NAME);
-    }
-
-    @Bean
-    public LayoutDialect layoutDialect() {
-        return new LayoutDialect();
     }
 
 }

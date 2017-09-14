@@ -1,13 +1,14 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
-    <head>
-        <title>Constellation Capricorn</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    </head>
-
-    <body>
-        <strong th:text="${#temporals.format(now, 'yyyy-MM-dd HH:mm:ss')}">2017-09-05 21:00:00</strong>
-    </body>
-
+<html layout:decorate="~{manage/layouts/layout}">
+<head>
+  <title>Content page</title>
+  <script src="content-script.js"></script>
+</head>
+<body>
+  <section layout:fragment="content">
+    <p>This is a paragraph from the content page</p>
+  </section>
+  <footer>
+    <p layout:fragment="custom-footer">This is some footer content from the content page</p>
+  </footer>
+</body>
 </html>

@@ -1,9 +1,8 @@
 package com.benayn.constell.services.capricorn.controller;
 
 import static com.benayn.constell.services.capricorn.settings.constant.Authorities.USER_CREATE_PERMISSION;
-import static com.benayn.constell.services.capricorn.settings.constant.Authorities.USER_DELETE_PERMISSION;
 import static com.benayn.constell.services.capricorn.settings.constant.Authorities.USER_RETRIEVE_PERMISSION;
-import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.BASE_PATH_V1;
+import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.BASE_API_V1;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
@@ -29,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = BASE_PATH_V1 + "/user")
+@RequestMapping(value = BASE_API_V1 + "/user")
 @Slf4j
 public class AuthenticationController {
 
