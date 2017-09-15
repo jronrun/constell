@@ -73,6 +73,29 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>${mybatis-spring-boot-starter.version}</version>
         </dependency>
+        <!--
+        wro4j in runtime
+        add follow configuration to application.yml
+        wro4j:
+          #cacheName: wro4j
+          manager-factory:
+            pre-processors: removeSourceMaps, cssUrlRewriting, cssImport, cssMinJawr, semicolonAppender, jsMin
+          filterUrl: /module
+          debug: true
+
+        <dependency>
+            <groupId>eu.michael-simons</groupId>
+            <artifactId>wro4j-spring-boot-starter</artifactId>
+            <version>${wro4j-spring-boot-starter.version}</version>
+        </dependency>
+        -->
+        <!--
+        <dependency>
+            <groupId>ro.isdc.wro4j</groupId>
+            <artifactId>wro4j-extensions</artifactId>
+            <version>${wro4j.version}</version>
+        </dependency>
+        -->
 
         <dependency>
             <groupId>org.springframework</groupId>
