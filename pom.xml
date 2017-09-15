@@ -76,6 +76,8 @@
             <id>dev</id>
             <properties>
                 <profileActive>dev</profileActive>
+                <!-- wro4j -->
+                <minimize>false</minimize>
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -85,12 +87,14 @@
             <id>test</id>
             <properties>
                 <profileActive>test</profileActive>
+                <minimize>true</minimize>
             </properties>
         </profile>
         <profile>
             <id>product</id>
             <properties>
                 <profileActive>product</profileActive>
+                <minimize>true</minimize>
             </properties>
         </profile>
     </profiles>
