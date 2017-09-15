@@ -60,11 +60,6 @@ public class ApplicationEventListener {
         log.info("Initialized authority menus successful");
     }
 
-    @CachePut(value = "_menus", key = "'_menus'")
-    public List<AuthorityMenuitem> cachePut(List<AuthorityMenuitem> finalMenus) {
-        return finalMenus;
-    }
-
     private String getMenuRole(HandlerMethod value) {
         RolesAllowed rolesAllowed = value.getMethodAnnotation(RolesAllowed.class);
         return null != rolesAllowed ? rolesAllowed.value()[0] : null;
