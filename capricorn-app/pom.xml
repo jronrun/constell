@@ -69,7 +69,8 @@
                 </executions>
                 <configuration>
                     <wroFile>${basedir}/src/main/resources/wro.xml</wroFile>
-                    <contextFolder>${project.build.outputDirectory}/static/</contextFolder>
+                    <!--<contextFolder>${project.build.outputDirectory}/static/</contextFolder>-->
+                    <contextFolder>${basedir}/src/main/resources/static/</contextFolder>
                     <destinationFolder>${project.build.outputDirectory}/static/module/</destinationFolder>
                     <cssDestinationFolder>${project.build.outputDirectory}/static/module/</cssDestinationFolder>
                     <jsDestinationFolder>${project.build.outputDirectory}/static/module/</jsDestinationFolder>

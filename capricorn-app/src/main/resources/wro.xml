@@ -1,10 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- http://wro4j.readthedocs.io/en/stable/WroFileFormat/ -->
 
 <groups xmlns="http://www.isdc.ro/wro">
-    <group name="demo">
-        <css>/style1.css</css>
-        <css>/style2.css</css>
-        <js>/test.js</js>
-        <js>/test2.js</js>
+
+    <!-- Capricorn Manage Start -->
+
+    <group name="manage">
+        <css>/components/semantic/dist/semantic.css</css>
+        <css>/manage/manage.css</css>
+        <js>/components/jquery/dist/jquery.js</js>
+        <js>/components/semantic/dist/semantic.js</js>
+        <js>/components/lodash/dist/lodash.js</js>
     </group>
+
+    <group name="index">
+        <js>/manage/index.js</js>
+    </group>
+
+    <!-- Capricorn Manage End -->
+
 </groups>

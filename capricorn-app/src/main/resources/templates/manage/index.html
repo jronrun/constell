@@ -1,17 +1,11 @@
 <html layout:decorate="~{manage/layout}">
-<head>
-  <title>Content page</title>
-  <script src="content-script.js"></script>
-  <link th:href="@{/module/demo.css}" rel="stylesheet" />
-  <script type="text/javascript" th:src="@{/module/demo.js}"></script>
-</head>
-<body>
-  <section layout:fragment="content">
-    <p>This is a paragraph from the content page</p>
-  </section>
+    <head>
+        <title>Home</title>
+        <script type="text/javascript" th:src="@{/module/index.js}"></script>
+    </head>
+    <body>
+        <section layout:fragment="content">
 
-  <footer>
-    <p layout:fragment="custom-footer">This is some footer content from the content page <strong th:text="${#temporals.format(now, 'yyyy-MM-dd HH:mm:ss')}">2017-09-05 21:00:00</strong></p>
-  </footer>
-</body>
+        </section>
+    </body>
 </html>
