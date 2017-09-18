@@ -11,6 +11,7 @@
         <js>/components/jquery/dist/jquery.js</js>
         <js>/components/semantic/dist/semantic.js</js>
         <js>/components/lodash/dist/lodash.js</js>
+        <js>/manage/manage.js</js>
     </group>
 
     <group name="index">
