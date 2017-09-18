@@ -107,6 +107,7 @@
                     <exclude>config/application-dev.yml</exclude>
                     <exclude>config/application-test.yml</exclude>
                     <exclude>config/application-product.yml</exclude>
+                    <exclude>**/assets/fonts/*</exclude>
                 </excludes>
                 <filtering>true</filtering>
             </resource>
@@ -115,6 +116,13 @@
                 <includes>
                     <include>config/application-${profileActive}.yml</include>
                 </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/assets/fonts/*</include>
+                </includes>
+                <filtering>false</filtering>
             </resource>
         </resources>
     </build>
