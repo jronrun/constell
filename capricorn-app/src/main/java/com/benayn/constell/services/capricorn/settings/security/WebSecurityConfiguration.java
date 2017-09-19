@@ -45,7 +45,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private ConstellationUserDetailsService userDetailsService;
 
     @Autowired
-    private AccountAuthenticatoinProvider accountAuthenticationProvider;
+    private AccountAuthenticationProvider accountAuthenticationProvider;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
