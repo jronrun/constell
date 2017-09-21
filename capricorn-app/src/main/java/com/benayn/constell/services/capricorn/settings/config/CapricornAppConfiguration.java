@@ -28,8 +28,12 @@ public class CapricornAppConfiguration {
     @Configuration
     public class CapricornWebMvcConfigurer implements WebMvcConfigurer {
 
+        private CapricornConfigurer capricornConfigurer;
+
         @Autowired
-        CapricornConfigurer capricornConfigurer;
+        public CapricornWebMvcConfigurer(CapricornConfigurer capricornConfigurer) {
+            this.capricornConfigurer = capricornConfigurer;
+        }
 
         @Override
         public void addResourceHandlers(ResourceHandlerRegistry registry) {
