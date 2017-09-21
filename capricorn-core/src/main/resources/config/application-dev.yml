@@ -18,6 +18,12 @@ server:
     - ip: 127.0.0.3
       path: /dev3
 
+capricorn:
+  configurer:
+    resources:
+    -
+     handler: /tmpl/**
+     location: classpath:/static/components/golgi/
 
 config:
   oauth2:
