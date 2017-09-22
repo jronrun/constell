@@ -157,6 +157,7 @@ public abstract class GenericRepository<T, E, M> implements Repository<T, E> {
     /**
      * Mapper Class Type
      */
+    @SuppressWarnings("unchecked")
     private final Class<M> mapperType = (Class<M>) mapperTypeToken.getRawType();
 
     /**
