@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-    <head>
-        <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-        <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">Capricorn Manage</title>
-        <link th:href="@{/module/manage.css}" rel="stylesheet" />
-        <script type="text/javascript" th:src="@{/module/manage.js}"></script>
-    </head>
-    <body>
-        <div layout:replace="~{manage/header}">
-            header
-        </div>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">Capricorn Manage</title>
+    <link th:href="@{/module/manage.css}" rel="stylesheet"/>
+    <script type="text/javascript" th:src="@{/module/manage.js}"></script>
+</head>
+<body class="admin">
+<div class="ui vertical push sidebar menu  thin" id="toc">Mobile Sidebar</div>
+<div class="mobilenavbar">Mobile Navigation</div>
 
-        <section layout:fragment="content" class="borderless">
-            content
-        </section>
+<div class="pusher">
+    <div class="full height">
+        <div class="toc">Sidebar</div>
 
-        <div layout:replace="~{manage/footer}">
-            footer
+        <div class="article">
+            <div class="navbarmenu">Navigation</div>
+            <div class="containerli" layout:fragment="content">Content</div>
+            <div class="footer">Footer</div>
         </div>
-    </body>
+    </div>
+</div>
+
+</body>
 </html>

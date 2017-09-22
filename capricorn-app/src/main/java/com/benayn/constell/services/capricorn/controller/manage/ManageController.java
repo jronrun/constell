@@ -17,4 +17,28 @@ public class ManageController {
         model.addAttribute("now", LocalDateTime.now());
     }
 
+    @GetMapping(value = "side-menu")
+    public void sideMenu(Model model) {
+    }
+
+    @GetMapping(value = "side-small-view")
+    public void sideSmallView(Model model) {
+    }
+
+    @GetMapping(value = "navigation")
+    public void navigation(Model model) {
+    }
+
+    @GetMapping(value = "navigation-small")
+    public void navigationSmall(Model model) {
+    }
+
+    @GetMapping(value = "thin-menu")
+    public void thinMenu(Model model) {
+    }
+
+    @GetMapping(value = "footer")
+    public void footer(Model model) {
+    }
+
 }

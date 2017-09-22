@@ -11,6 +11,8 @@
   "dependencies": {
     "jquery": "jquery#3.2.1",
     "semantic": "semantic-ui#^2.2.13",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "PACE": "pace#^1.0.2",
+    "jquery.nicescroll": "^3.7.6"
   }
 }

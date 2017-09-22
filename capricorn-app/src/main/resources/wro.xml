@@ -7,9 +7,14 @@
 
     <group name="manage">
         <css>/components/semantic/dist/semantic.css</css>
+        <css>/manage/golgi/css/main.css</css>
+        <css>/components/PACE/themes/blue/pace-theme-minimal.css</css>
         <css>/manage/manage.css</css>
+
         <js>/components/jquery/dist/jquery.js</js>
+        <js>/components/jquery.nicescroll/dist/jquery.nicescroll.js</js>
         <js>/components/semantic/dist/semantic.js</js>
+        <js>/components/PACE/pace.js</js>
         <js>/components/lodash/dist/lodash.js</js>
         <js>/manage/manage.js</js>
     </group>
