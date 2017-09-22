@@ -41,7 +41,7 @@ var mgr = {};
                 $toc.animate({
                     width: '80px'
                 }, 350);
-                $('.logo').animate({
+                $('#logo').animate({
                     width: '60px',
                     'margin-left': '0.6em'
                 }, 350);
@@ -60,7 +60,7 @@ var mgr = {};
                 $toc.animate({
                     width: '250px'
                 }, 350);
-                $('.logo').animate({
+                $('#logo').animate({
                     width: '195px',
                     'margin-left': '3.2em'
                 }, 350);
@@ -114,8 +114,26 @@ var mgr = {};
 
         foot: {
             init: function () {
+                var a, b;
                 $('.footer').load('/manage/footer', function () {
+                    if (!isMobile) {
+                        $(".colorlist li a").on("click", function (b) {
+                            var c = $(this).attr("data-addClass");
+                            b.preventDefault();
+                            $(".navmenu").removeClass(a).addClass(c);
+                            a = c;
+                        });
 
+                        $(".sidecolor li a").on("click", function (a) {
+                            var c = $(this).attr("data-addClass");
+                            a.preventDefault();
+                            $(".sidemenu").removeClass(b).addClass(c);
+                            $(".accordion").removeClass("inverted").addClass("inverted");
+                            b = c;
+                        });
+
+                        $(".colorize-logo").popup({on: "click"});
+                    }
                 });
             }
         },
