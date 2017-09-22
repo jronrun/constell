@@ -1,7 +1,6 @@
-<div class="ui fixed top  menu no-border no-radius borderless navmenu">
-    <a class="item active no-padding logo" style="width:250px;" href="dashboard.html">
-
-        <img class="ui image logoImg" src="golgi/img/logo.png" />
+<div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" class="ui fixed top  menu no-border no-radius borderless navmenu">
+    <a class="item no-padding logo" style="width:250px;margin-top:2em;">
+        <div layout:insert="~{logo}" class="ui image logoImg">logo</div>
     </a>
     <a class="item hamburger" data-name="show">
         <i class="align justify icon"></i>

@@ -39,12 +39,12 @@ var mgr = {};
             var $toc = $('.toc');
             if ('show' === $(this).data('name')) {
                 $toc.animate({
-                    width: '100px'
+                    width: '80px'
                 }, 350);
                 $('.logo').animate({
-                    width: '100px'
+                    width: '60px',
+                    'margin-left': '0.6em'
                 }, 350);
-                $('.logo img').transition('scale').attr('src', 'golgi/img/thumblogo.png');
 
                 $toc.load('/manage/thin-menu', function () {
                     $('.ui .dropdown').dropdown({
@@ -52,7 +52,7 @@ var mgr = {};
                         on: 'hover'
                     });
 
-                    $('.logoImg').transition('jiggle')
+                    $('.logoImg').transition('jiggle');
                 });
 
                 $(this).data('name', 'hide');
@@ -61,9 +61,9 @@ var mgr = {};
                     width: '250px'
                 }, 350);
                 $('.logo').animate({
-                    width: '250px'
+                    width: '195px',
+                    'margin-left': '3.2em'
                 }, 350);
-                $('.logo img').attr('src', 'golgi/img/logo.png');
 
                 $toc.load('/manage/side-menu', function () {
                     $('.ui.accordion').accordion();
