@@ -26,9 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class GenericRepository<T, E, M> implements Repository<T, E> {
 
-    @Autowired
-    private SqlSession sqlSession;
-
     /**
      * Mapper TypeToken
      */
@@ -117,7 +114,7 @@ public abstract class GenericRepository<T, E, M> implements Repository<T, E> {
 
     /**
      * Returns domain Mapper instance
-     * @return
+     * @return M
      */
     protected M getMapper() {
         return getSqlSession().getMapper(mapperType);
@@ -125,9 +122,9 @@ public abstract class GenericRepository<T, E, M> implements Repository<T, E> {
 
     /**
      * Returns domain Mapper instance with given Mapper type
-     * @param mapperType
-     * @param <Mapper>
-     * @return
+     * @param mapperType Mapper Type
+     * @param <Mapper> M
+     * @return M
      */
     protected <Mapper> Mapper getMapper(Class<Mapper> mapperType) {
         return getSqlSession().getMapper(mapperType);
@@ -135,9 +132,9 @@ public abstract class GenericRepository<T, E, M> implements Repository<T, E> {
 
     /**
      * Returns SqlSession
-     * @return
+     * @return SqlSession
      */
-    protected SqlSession getSqlSession() {
+    private SqlSession getSqlSession() {
         return sqlSession;
     }
 
@@ -154,6 +151,11 @@ public abstract class GenericRepository<T, E, M> implements Repository<T, E> {
         this.pageFeature = pageFeature;
     }
 
+    @Autowired
+    public void setSqlSession(SqlSession sqlSession) {
+        this.sqlSession = sqlSession;
+    }
+
     /**
      * Mapper Class Type
      */
@@ -165,6 +167,7 @@ public abstract class GenericRepository<T, E, M> implements Repository<T, E> {
      */
     private final String namespace = mapperType.getName() ;
 
+    private SqlSession sqlSession;
     protected final List<T> EMPTY_ITEMS = Lists.newArrayList();
 
 }
