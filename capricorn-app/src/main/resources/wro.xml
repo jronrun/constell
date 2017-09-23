@@ -11,11 +11,11 @@
         <css>/components/PACE/themes/blue/pace-theme-minimal.css</css>
         <css>/manage/manage.css</css>
 
-        <js>/components/jquery/dist/jquery.js</js>
-        <js>/components/jquery.nicescroll/dist/jquery.nicescroll.js</js>
-        <js>/components/semantic/dist/semantic.js</js>
-        <js>/components/PACE/pace.js</js>
-        <js>/components/lodash/dist/lodash.js</js>
+        <js minimize="false">/components/jquery/dist/jquery.min.js</js>
+        <js minimize="false">/components/jquery.nicescroll/dist/jquery.nicescroll.min.js</js>
+        <js minimize="false">/components/semantic/dist/semantic.min.js</js>
+        <js minimize="false">/components/PACE/pace.min.js</js>
+        <!--<js minimize="false">/components/lodash/dist/lodash.min.js</js>-->
         <js>/manage/manage.js</js>
     </group>
 
