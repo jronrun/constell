@@ -21,7 +21,7 @@ public class ManageController {
     public void sideMenu(Model model) {
     }
 
-    @GetMapping(value = "side-small-view")
+    @GetMapping(value = "side-menu-small")
     public void sideSmallView(Model model) {
     }
 

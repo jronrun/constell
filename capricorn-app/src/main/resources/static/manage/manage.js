@@ -80,7 +80,7 @@ var mgr = {};
             side: {
                 init: function () {
                     if (isMobile) {
-                        $('#toc').load('/manage/side-small-view', function () {
+                        $('#toc').load('/manage/side-menu-small', function () {
                             $('.ui.accordion').accordion();
                         });
                     } else {
