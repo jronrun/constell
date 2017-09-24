@@ -15,6 +15,7 @@
         <js minimize="false">/components/jquery.nicescroll/dist/jquery.nicescroll.min.js</js>
         <js minimize="false">/components/semantic/dist/semantic.min.js</js>
         <js minimize="false">/components/PACE/pace.min.js</js>
+        <js>/components/jquery-pjax/jquery.pjax.js</js>
         <!--<js minimize="false">/components/lodash/dist/lodash.min.js</js>-->
         <js>/manage/manage.js</js>
     </group>

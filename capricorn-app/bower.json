@@ -13,6 +13,8 @@
     "semantic": "semantic-ui#^2.2.13",
     "lodash": "^4.17.4",
     "PACE": "pace#^1.0.2",
-    "jquery.nicescroll": "^3.7.6"
+    "jquery.nicescroll": "^3.7.6",
+    "jquery-pjax": "^2.0.1",
+    "lz-string": "^1.4.4"
   }
 }

@@ -14,6 +14,36 @@ var mgr = {};
         Pace.restart();
     });
 
+    function getURI() {
+        return location.href.replace(location.origin, '');
+    }
+
+    var pageable = '.containerli.pageable', pjax = function (url, container) {
+        $.pjax({url: url, container: container || pageable});
+    };
+
+    pjax.reload = function (container) {
+        pjax(getURI(), container);
+    };
+
+    $(document).pjax('a[data-pjax]', pageable);
+
+    /**
+     * <a data-pjax data-query="{{selector}}" data-queries="{{encode json data}}" href="{{href}}"> {{text}} </a>
+     */
+    $(document).on('pjax:beforeSend', function(event, xhr, options) {
+        var target = event.relatedTarget, ds = target ? (target.dataset || {}) : {};
+
+        var origin = location.origin;
+        xhr.setRequestHeader('Referer-Source', location.href.replace(origin, ''));
+
+        return true;
+    });
+
+    $(document).on('pjax:end', function(event) {
+
+    });
+
     function scrollable(selector, options) {
         $(selector || 'body').niceScroll($.extend({
             cursorcolor: 'grey',
@@ -117,22 +147,22 @@ var mgr = {};
                 var a, b;
                 $('.footer').load('/manage/footer', function () {
                     if (!isMobile) {
-                        $(".colorlist li a").on("click", function (b) {
-                            var c = $(this).attr("data-addClass");
+                        $('.colorlist li a').on('click', function (b) {
+                            var c = $(this).attr('data-addClass');
                             b.preventDefault();
-                            $(".navmenu").removeClass(a).addClass(c);
+                            $('.navmenu').removeClass(a).addClass(c);
                             a = c;
                         });
 
-                        $(".sidecolor li a").on("click", function (a) {
-                            var c = $(this).attr("data-addClass");
+                        $('.sidecolor li a').on('click', function (a) {
+                            var c = $(this).attr('data-addClass');
                             a.preventDefault();
-                            $(".sidemenu").removeClass(b).addClass(c);
-                            $(".accordion").removeClass("inverted").addClass("inverted");
+                            $('.sidemenu').removeClass(b).addClass(c);
+                            $('.accordion').removeClass('inverted').addClass('inverted');
                             b = c;
                         });
 
-                        $(".colorize-logo").popup({on: "click"});
+                        $('.colorize-logo').popup({on: 'click'});
                     }
                 });
             }
@@ -146,8 +176,12 @@ var mgr = {};
         }
     };
 
-    register.isMobile = isMobile;
-    register.scrollable = scrollable;
+    $.extend(register, {
+        pjax: pjax,
+        getURI: getURI,
+        isMobile: isMobile,
+        scrollable: scrollable
+    });
 
     $(function () {
         core.initialize();
