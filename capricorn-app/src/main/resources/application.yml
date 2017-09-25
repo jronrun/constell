@@ -1,4 +1,6 @@
 spring:
+  messages:
+    basename: i18n/messages
   profiles:
     active: @profileActive@
   thymeleaf:

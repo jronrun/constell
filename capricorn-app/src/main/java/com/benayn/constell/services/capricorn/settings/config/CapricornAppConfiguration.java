@@ -12,8 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.LocaleResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver;
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import springfox.documentation.builders.ApiInfoBuilder;
 
 @Configuration
@@ -25,6 +29,16 @@ public class CapricornAppConfiguration {
         return BenaynServiceInfo.of(new ApiInfoBuilder().title("Capricorn API Document").build(), SERVICE_NAME);
     }
 
+    @Bean
+    public LocaleChangeInterceptor localeChangeInterceptor() {
+        return new LocaleChangeInterceptor();
+    }
+
+    @Bean(name="localeResolver")
+    public LocaleResolver localeResolverBean() {
+        return new CookieLocaleResolver();
+    }
+
     @Configuration
     public class CapricornWebMvcConfigurer implements WebMvcConfigurer {
 
@@ -33,6 +47,11 @@ public class CapricornAppConfiguration {
         @Autowired
         public CapricornWebMvcConfigurer(CapricornConfigurer capricornConfigurer) {
             this.capricornConfigurer = capricornConfigurer;
+        }
+
+        @Override
+        public void addInterceptors(InterceptorRegistry registry) {
+            registry.addInterceptor(localeChangeInterceptor());
         }
 
         @Override
