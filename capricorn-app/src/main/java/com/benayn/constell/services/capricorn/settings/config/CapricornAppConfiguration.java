@@ -18,6 +18,10 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 import springfox.documentation.builders.ApiInfoBuilder;
 
 @Configuration
@@ -92,6 +96,46 @@ public class CapricornAppConfiguration {
         static class StaticResourcesConfigurer {
             private String handler;
             private String location;
+        }
+    }
+
+    @Configuration
+    public static class ThymeleafFragmentConfig {
+
+        /*
+            @Autowired
+            private TemplateEngine textTemplateEngine;
+            ...
+
+            Context context = new Context();
+            context.setVariable("name", "test name");
+            context.setVariable("tags", "#spring #framework #java".split(" "));
+            String text = textTemplateEngine.process("test", context);
+            ...
+
+            test.txt
+            Name: [(${name})]
+            Tags:
+            [# th:each="tag : ${tags}" ]
+                <div id="[(${tag})]">[(${tag})]</div>
+            [/]
+         */
+        @Bean(name = "textTemplateEngine")
+        public TemplateEngine textTemplateEngine() {
+            TemplateEngine templateEngine = new TemplateEngine();
+            templateEngine.addTemplateResolver(textTemplateResolver());
+            return templateEngine;
+        }
+
+        private ITemplateResolver textTemplateResolver() {
+            ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+            templateResolver.setPrefix("/templates/manage/fragment/");
+            templateResolver.setSuffix(".txt");
+            templateResolver.setTemplateMode(TemplateMode.TEXT /* https://github.com/thymeleaf/thymeleaf/issues/395 */);
+            templateResolver.setCharacterEncoding("UTF8");
+            templateResolver.setCheckExistence(true);
+            templateResolver.setCacheable(false);
+            return templateResolver;
         }
     }
 
