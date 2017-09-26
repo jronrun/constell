@@ -1,14 +1,15 @@
 package com.benayn.constell.services.capricorn.controller.manage;
 
+import static com.benayn.constell.service.server.respond.Responds.success;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.MANAGE_BASE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.util.StringUtils.parseLocaleString;
 
+import com.benayn.constell.service.server.respond.Message;
 import java.time.LocalDateTime;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -53,12 +54,12 @@ public class ManageController {
     }
 
     @GetMapping(value = "language", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> getLanguage() {
-        return new ResponseEntity<>(LocaleContextHolder.getLocale().toString(), HttpStatus.OK);
+    public ResponseEntity<Message> getLanguage() {
+        return success(LocaleContextHolder.getLocale().toString());
     }
 
     @PostMapping(value = "language/{lang}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> setLanguage(@PathVariable("lang") String lang, HttpServletRequest request,
+    public ResponseEntity<Message> setLanguage(@PathVariable("lang") String lang, HttpServletRequest request,
         HttpServletResponse response) {
 
         LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
@@ -67,7 +68,7 @@ public class ManageController {
         }
 
         localeResolver.setLocale(request, response, parseLocaleString(lang));
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        return success(null);
     }
 
 }
