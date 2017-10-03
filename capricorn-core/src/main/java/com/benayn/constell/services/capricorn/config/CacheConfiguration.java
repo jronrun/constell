@@ -32,7 +32,8 @@ public class CacheConfiguration {
         ROLE("roles", 300, 100, SECONDS),
         PERMISSION("permissions", 300, 100, SECONDS),
         USER_MENU("menus", 300, 50, SECONDS),
-        AUTHORITY_MENU("_menus", Integer.MAX_VALUE, 2, DAYS)
+        AUTHORITY_MENU("_menus", Integer.MAX_VALUE, 2, DAYS),
+        VIEW_OBJECT("defined_pages", Integer.MAX_VALUE, 100, DAYS)
         ;
 
         private final String name;

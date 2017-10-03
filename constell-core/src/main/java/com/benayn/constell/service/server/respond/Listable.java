@@ -13,7 +13,13 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Listable {
 
-    String title() default "";
+    /**
+     * List Title, will use {@link DefineElement#value()} if not set
+     */
+    String value() default "";
 
+    /**
+     * Define By Fragment, if set then above set will be ignore
+     */
     String fragment() default "";
 }

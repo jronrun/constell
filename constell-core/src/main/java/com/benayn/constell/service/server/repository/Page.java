@@ -1,7 +1,9 @@
 package com.benayn.constell.service.server.repository;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -71,6 +73,38 @@ public final class Page<R> {
 
     @Setter
     private List<R> resource = Lists.newArrayList();
+    /**
+     * Column title
+     */
+    @Setter
+    private Map<String, String> titles;
+
+    public void addTitle(String columnName, String columnTitle) {
+        if (null == titles) {
+            titles = Maps.newHashMap();
+        }
+
+        titles.put(columnName, columnTitle);
+    }
+
+    public <T> Page<T> cloneButResource() {
+        Page<T> np = new Page<>();
+        np.index = index;
+        np.size = size;
+        np.rows = rows;
+        np.offset = offset;
+        np.pages = pages;
+        np.first = first;
+        np.last = last;
+        np.next = next;
+        np.prev = prev;
+        np.navStart = navStart;
+        np.navEnd = navEnd;
+        np.navCount = navCount;
+        np.navPages = navPages;
+
+        return np;
+    }
 
     public static <R> Page<R> of(int pageNo, int pageSize) {
         return of(pageNo, pageSize, 0);
@@ -79,6 +113,8 @@ public final class Page<R> {
     public static <R> Page<R> of(int pageNo, int pageSize, long totalSize) {
         return new Page<>(pageNo, pageSize, totalSize);
     }
+
+    private Page() { }
 
     private Page(int pageNo, int pageSize, long totalSize) {
         index = pageNo <= 0 ? 1 : pageNo;

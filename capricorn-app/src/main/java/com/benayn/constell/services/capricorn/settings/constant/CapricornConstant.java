@@ -8,4 +8,13 @@ public class CapricornConstant {
 
     public static final String MANAGE_BASE = "/manage/";
 
+
+    public static final String PAGE_INDEX = "item-index";
+    public static final String PAGE_LIST = "item-list";
+    public static final String PAGE_EDIT = "item-edit";
+
+    public static final String DEFINED_SEARCH_KEY = "searchEls";
+    public static final String DEFINED_LIST_KEY = "listEls";
+    public static final String DEFINED_EDIT_KEY = "editEls";
+
 }

@@ -3,6 +3,8 @@ package com.benayn.constell.services.capricorn.settings.config;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.SERVICE_NAME;
 
 import com.benayn.constell.service.server.annotation.EnableBenaynSwagger;
+import com.benayn.constell.service.server.component.ViewObjectResolver;
+import com.benayn.constell.service.server.component.ViewObjectResolverBean;
 import com.benayn.constell.service.server.service.BenaynServiceInfo;
 import com.google.common.collect.Lists;
 import java.util.List;
@@ -10,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
@@ -31,6 +34,11 @@ public class CapricornAppConfiguration {
     @Bean
     public BenaynServiceInfo benaynServiceInfo() {
         return BenaynServiceInfo.of(new ApiInfoBuilder().title("Capricorn API Document").build(), SERVICE_NAME);
+    }
+
+    @Bean
+    public ViewObjectResolver viewObjectResolver(MessageSource messageSource) {
+        return new ViewObjectResolverBean(messageSource, textTemplateEngine());
     }
 
     @Bean
@@ -99,44 +107,40 @@ public class CapricornAppConfiguration {
         }
     }
 
-    @Configuration
-    public static class ThymeleafFragmentConfig {
+    /*
+        @Autowired
+        private TemplateEngine textTemplateEngine;
+        ...
 
-        /*
-            @Autowired
-            private TemplateEngine textTemplateEngine;
-            ...
+        Context context = new Context();
+        context.setVariable("name", "test name");
+        context.setVariable("tags", "#spring #framework #java".split(" "));
+        String text = textTemplateEngine.process("test", context);
+        ...
 
-            Context context = new Context();
-            context.setVariable("name", "test name");
-            context.setVariable("tags", "#spring #framework #java".split(" "));
-            String text = textTemplateEngine.process("test", context);
-            ...
+        test.txt
+        Name: [(${name})]
+        Tags:
+        [# th:each="tag : ${tags}" ]
+            <div id="[(${tag})]">[(${tag})]</div>
+        [/]
+     */
+    @Bean(name = "textTemplateEngine")
+    public TemplateEngine textTemplateEngine() {
+        TemplateEngine templateEngine = new TemplateEngine();
+        templateEngine.addTemplateResolver(textTemplateResolver());
+        return templateEngine;
+    }
 
-            test.txt
-            Name: [(${name})]
-            Tags:
-            [# th:each="tag : ${tags}" ]
-                <div id="[(${tag})]">[(${tag})]</div>
-            [/]
-         */
-        @Bean(name = "textTemplateEngine")
-        public TemplateEngine textTemplateEngine() {
-            TemplateEngine templateEngine = new TemplateEngine();
-            templateEngine.addTemplateResolver(textTemplateResolver());
-            return templateEngine;
-        }
-
-        private ITemplateResolver textTemplateResolver() {
-            ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-            templateResolver.setPrefix("/templates/manage/fragment/");
-            templateResolver.setSuffix(".txt");
-            templateResolver.setTemplateMode(TemplateMode.TEXT /* https://github.com/thymeleaf/thymeleaf/issues/395 */);
-            templateResolver.setCharacterEncoding("UTF8");
-            templateResolver.setCheckExistence(true);
-            templateResolver.setCacheable(false);
-            return templateResolver;
-        }
+    private ITemplateResolver textTemplateResolver() {
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setPrefix("/templates/manage/fragment/");
+        templateResolver.setSuffix(".txt");
+        templateResolver.setTemplateMode(TemplateMode.TEXT /* https://github.com/thymeleaf/thymeleaf/issues/395 */);
+        templateResolver.setCharacterEncoding("UTF8");
+        templateResolver.setCheckExistence(true);
+        templateResolver.setCacheable(false);
+        return templateResolver;
     }
 
 }
