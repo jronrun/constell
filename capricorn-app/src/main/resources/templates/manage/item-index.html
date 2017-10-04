@@ -35,7 +35,16 @@
                                                    th:attr="data-attrs=${el.attributes}"
                                                    th:style="${el.style}" th:value="${el.value}"/>
                                         </div>
-                                        <div th:case="*">unsupported yet</div>
+                                        <div th:case="*">
+                                            <div class="ui icon input">
+                                                <input type="text" placeholder="Unsupported Yet...">
+                                            </div>
+                                        </div>
+                                        <div class="field" th:remove="all">
+                                            <div class="ui icon input">
+                                                <input type="text" placeholder="Search large...">
+                                            </div>
+                                        </div>
                                     </div>
                                     <!--/*/ </th:block> /*/-->
                                 <!--/*/ </th:block> /*/-->
