@@ -6,10 +6,14 @@ import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
 import java.util.Date;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
-@Data
-public class RoleVo implements Renderable {
+@Getter
+@Setter
+@ToString
+public class RoleVo extends Renderable {
 
     @DefineElement("render.common.id")
     @Listable

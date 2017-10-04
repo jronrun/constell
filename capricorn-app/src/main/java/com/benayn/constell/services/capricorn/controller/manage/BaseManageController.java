@@ -1,14 +1,18 @@
 package com.benayn.constell.services.capricorn.controller.manage;
 
+import static com.benayn.constell.service.util.LZString.encodes;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.DEFINED_EDIT_KEY;
-import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.DEFINED_LIST_KEY;
+import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.DEFINED_PAGE_KEY;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.DEFINED_SEARCH_KEY;
+import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.MANAGE_BASE;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.PAGE_EDIT;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.PAGE_INDEX;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.PAGE_LIST;
 
 import com.benayn.constell.service.server.component.ViewObjectResolver;
 import com.benayn.constell.service.server.repository.Page;
+import com.benayn.constell.service.server.respond.PageInfo;
+import com.benayn.constell.service.server.respond.QueryCondition;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.google.common.reflect.TypeToken;
 import java.util.Locale;
@@ -25,17 +29,20 @@ public abstract class BaseManageController<T extends Renderable> {
     private final Class<T> voClass = ((Class<T>) new TypeToken<T>(getClass()) {}.getRawType());
 
     String genericIndex(Model model) {
-        String moduleName = voClass.getSimpleName().toLowerCase();
-        moduleName = moduleName.substring(0, moduleName.length() - 2);
-        model.addAttribute("title", viewObjectResolver.getMessage(
-            String.format("render.%s.module.title", moduleName), null));
-
+        PageInfo pageInfo = viewObjectResolver.getPageInfo(voClass, MANAGE_BASE);
+        model.addAttribute("title", pageInfo.getTitle());
+        model.addAttribute("page", encodes(pageInfo));
+        model.addAttribute("pageId", pageInfo.getPageId());
         model.addAttribute(DEFINED_SEARCH_KEY, viewObjectResolver.getDefinedSearch(voClass, null));
         return PAGE_INDEX;
     }
 
+    <T extends QueryCondition> T genericLike(T condition) {
+        return viewObjectResolver.getQueryCondition(voClass, condition);
+    }
+
     String genericList(Model model, Page<?> page) {
-        model.addAttribute(DEFINED_LIST_KEY, viewObjectResolver.getDefinedPage(voClass, page));
+        model.addAttribute(DEFINED_PAGE_KEY, viewObjectResolver.getDefinedPage(voClass, page));
         return PAGE_LIST;
     }
 

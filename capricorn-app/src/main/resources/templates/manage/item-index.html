@@ -8,10 +8,7 @@
 <body>
 <div layout:fragment="content">
 
-
-
-    <div class="ui equal width left aligned padded grid stackable">
-
+    <div class="ui equal width left aligned padded grid stackable" th:attr="data-page-info=${page}" th:id="${pageId}">
         <div class="row">
             <div class="column">
                 <div class="ui segments">
@@ -61,6 +58,7 @@
             </div>
         </div>
 
+        <div class="row" id="item-list"></div>
 
 </div>
 </body>

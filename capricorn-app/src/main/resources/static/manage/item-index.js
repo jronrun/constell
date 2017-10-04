@@ -2,11 +2,15 @@
 
 var index = {};
 (function ($, root, register) {
-    var core = {
+    var pageInfo = null, core = {
         initialize: function () {
             $$('[data-attrs]').each(function (idx, item) {
-                var attrs = JSON.parse(LZString.decompressFromEncodedURIComponent($(item).data('attrs')));
-                $(item).attr(attrs);
+                $(item).attr(decodes($(item).data('attrs')));
+                pageInfo = decodes($$('[data-page-info]').data('pageInfo'));
+
+                $$('#item-list').load(pageInfo.list, function (data) {
+                    console.log(data);
+                });
             });
         }
     };

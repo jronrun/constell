@@ -2,6 +2,8 @@ package com.benayn.constell.service.server.component;
 
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.respond.DefinedElement;
+import com.benayn.constell.service.server.respond.PageInfo;
+import com.benayn.constell.service.server.respond.QueryCondition;
 import com.benayn.constell.service.server.respond.Renderable;
 import java.util.List;
 import java.util.Locale;
@@ -16,4 +18,8 @@ public interface ViewObjectResolver {
 
     String getMessage(String code, String defaultMessage, Object... args);
     String getMessage(String code, String defaultMessage, Locale locale, Object... args);
+
+    <T extends Renderable> PageInfo getPageInfo(Class<T> viewObjectType, String manageBaseUrl);
+
+    <T extends QueryCondition, R extends Renderable> T getQueryCondition(Class<R> viewObjectType, T condition);
 }

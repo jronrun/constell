@@ -14,7 +14,7 @@ public class CapricornConstant {
     public static final String PAGE_EDIT = "manage/item-edit";
 
     public static final String DEFINED_SEARCH_KEY = "searchEls";
-    public static final String DEFINED_LIST_KEY = "listEls";
+    public static final String DEFINED_PAGE_KEY = "pageEl";
     public static final String DEFINED_EDIT_KEY = "editEls";
 
 }

@@ -1,5 +1,14 @@
 package com.benayn.constell.service.server.respond;
 
-public interface Renderable {
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public abstract class Renderable {
+
+    private boolean fragmentValue;
 
 }

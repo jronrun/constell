@@ -1,5 +1,6 @@
 package com.benayn.constell.service.util;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -31,6 +32,10 @@ public class LZString {
         }
 
         return (char) map.get(character).intValue();
+    }
+
+    public static String encodes(Object object) {
+        return compressToEncodedURIComponent(JSON.toJSONString(object));
     }
 
     public static String compressToBase64(String input) {

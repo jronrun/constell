@@ -1,14 +1,14 @@
 package com.benayn.constell.service.server.component;
 
-import static com.alibaba.fastjson.JSON.toJSONString;
 import static com.benayn.constell.service.server.respond.DefineType.EDITABLE;
 import static com.benayn.constell.service.server.respond.DefineType.SEARCHABLE;
 import static com.benayn.constell.service.server.respond.TagName.INPUT;
 import static com.benayn.constell.service.server.respond.TagName.UNDEFINED;
-import static com.benayn.constell.service.util.LZString.compressToEncodedURIComponent;
+import static com.benayn.constell.service.util.LZString.encodes;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.lang.String.format;
 
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.respond.DefineElement;
@@ -17,6 +17,8 @@ import com.benayn.constell.service.server.respond.DefinedElement;
 import com.benayn.constell.service.server.respond.Editable;
 import com.benayn.constell.service.server.respond.InputType;
 import com.benayn.constell.service.server.respond.Listable;
+import com.benayn.constell.service.server.respond.PageInfo;
+import com.benayn.constell.service.server.respond.QueryCondition;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
 import com.benayn.constell.service.server.respond.TagName;
@@ -73,15 +75,33 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         List<Renderable> renders = Lists.newArrayList();
 
         List<Field> defineFields = getFields(viewObjectType);
+        Page<Renderable> newPage = page.cloneButResource();
+        defineFields.forEach(field -> {
+            DefineElement defineElement = field.getAnnotation(DefineElement.class);
+            boolean hasDefineElement = null != defineElement;
+
+            Listable listable = field.getAnnotation(Listable.class);
+            if (null != listable) {
+                String title = listable.value();
+                if (isNullOrEmpty(title) && hasDefineElement) {
+                    title = defineElement.value();
+                }
+
+                checkArgument(!isNullOrEmpty(title), "undefined listable column title %s.%s",
+                    viewObjectType.getSimpleName(), field.getName());
+                newPage.addColumn(field.getName());
+                newPage.addTitle(field.getName(), getMessage(title, title));
+            }
+        });
+
         List<Field> itemFields = null;
         if (items.size() > 0) {
             itemFields = getFields(items.get(0).getClass());
         }
 
-        Page<Renderable> newPage = page.cloneButResource();
         List<Field> finalItemFields = itemFields;
         items.forEach(item -> {
-            Renderable render = asRenderable(viewObjectType, defineFields, item, finalItemFields, newPage);
+            Renderable render = asRenderable(viewObjectType, defineFields, item, finalItemFields);
             if (null != render) {
                 renders.add(render);
             }
@@ -92,8 +112,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     }
 
     private Renderable asRenderable(Class<? extends Renderable> viewObjectType,
-        List<Field> defineFields, Object value, List<Field> valueFields,
-        Page<Renderable> newPage) {
+        List<Field> defineFields, Object value, List<Field> valueFields) {
         try {
             Renderable render = viewObjectType.newInstance();
             defineFields.forEach(field -> {
@@ -102,17 +121,6 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
                 Listable listable = field.getAnnotation(Listable.class);
                 if (null != listable) {
-
-                    String title = listable.value();
-                    if (isNullOrEmpty(title) && hasDefineElement) {
-                        title = defineElement.value();
-                    }
-
-                    checkArgument(!isNullOrEmpty(title), "undefined listable column title %s.%s",
-                        viewObjectType.getSimpleName(), field.getName());
-                    newPage.addColumn(field.getName());
-                    newPage.addTitle(field.getName(), getMessage(title, title));
-
                     Object aValue;
                     //value fragment
                     String fragment;
@@ -124,6 +132,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                     //value from fragment
                     if (!isNullOrEmpty(fragment)) {
                         aValue = getFragmentValue(value, fragment);
+                        render.setFragmentValue(true);
                     } else {
                         aValue = getFieldValueByName(value, valueFields, field.getName());
                     }
@@ -234,7 +243,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
             if (isNullOrEmpty(id)) {
                 //auto generator "el_{fieldName}"
-                id = String.format(ELEMENT_ID_FORMAT, fieldName);
+                id = format(ELEMENT_ID_FORMAT, fieldName);
             }
             element.setId(id);
 
@@ -379,7 +388,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 }
 
             }
-            element.setAttributes(compressToEncodedURIComponent(toJSONString(attrMap)));
+            element.setAttributes(encodes(attrMap));
 
             //editable hidden behave
             if (isEditable && editable.hidden()) {
@@ -443,6 +452,48 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         context.setVariable("item", value);
 
         return textTemplateEngine.process(fragment, context);
+    }
+
+    @Override
+    public <T extends QueryCondition, R extends Renderable> T getQueryCondition(Class<R> viewObjectType, T condition) {
+        List<Field> fields = getFields(viewObjectType);
+
+        fields.forEach(field -> {
+            Searchable searchable = field.getAnnotation(Searchable.class);
+            if (null != searchable && searchable.like()) {
+                condition.addLikeField(field.getName());
+            }
+        });
+
+        return condition;
+    }
+
+    private static final String TITLE_FORMAT = "render.%s.module.title";
+    private static final String INDEX_FORMAT = "%s%s/index";
+    private static final String LIST_FORMAT = "%s%ss";
+    private static final String RETRIEVE_FORMAT = "%s%s/{0}";
+    private static final String CREATE_FORMAT = "%s%s";
+    private static final String UPDATE_FORMAT = "%s%s";
+    private static final String DELETE_FORMAT = "%s%s/{0}";
+    private static final String PAGE_ID_FORMAT = "%s_%s";
+
+    @Override
+    public <T extends Renderable> PageInfo getPageInfo(Class<T> viewObjectType, String manageBaseUrl) {
+        PageInfo pageInfo = new PageInfo();
+        String moduleName = viewObjectType.getSimpleName().toLowerCase();
+        moduleName = moduleName.substring(0, moduleName.length() - 2);
+
+        pageInfo.setTitle(getMessage(format(TITLE_FORMAT, moduleName), null));
+        pageInfo.setPageId(format(PAGE_ID_FORMAT, moduleName, System.currentTimeMillis()));
+
+        pageInfo.setIndex(format(INDEX_FORMAT, manageBaseUrl, moduleName));
+        pageInfo.setList(format(LIST_FORMAT, manageBaseUrl, moduleName));
+        pageInfo.setRetrieve(format(RETRIEVE_FORMAT, manageBaseUrl, moduleName));
+        pageInfo.setCreate(format(CREATE_FORMAT, manageBaseUrl, moduleName));
+        pageInfo.setUpdate(format(UPDATE_FORMAT, manageBaseUrl, moduleName));
+        pageInfo.setDelete(format(DELETE_FORMAT, manageBaseUrl, moduleName));
+
+        return pageInfo;
     }
 
     @Override

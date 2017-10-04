@@ -31,7 +31,7 @@ var mgr = {};
     /**
      * <a data-pjax data-query="{{selector}}" data-queries="{{encode json data}}" href="{{href}}"> {{text}} </a>
      */
-    $(document).on('pjax:beforeSend', function(event, xhr, options) {
+    $(document).on('pjax:beforeSend', function (event, xhr, options) {
         var target = event.relatedTarget, ds = target ? (target.dataset || {}) : {};
 
         var origin = location.origin;
@@ -40,12 +40,30 @@ var mgr = {};
         return true;
     });
 
-    $(document).on('pjax:end', function(event) {
+    $(document).on('pjax:end', function (event) {
 
     });
 
-    root.$$ = function(selector) {
+    root.$$ = function (selector) {
         return $(pageable + ' ' + selector);
+    };
+
+    function decodes(target) {
+        return JSON.parse(LZString.decompressFromEncodedURIComponent(target));
+    }
+
+    root.decodes = function (target) {
+        return decodes(target);
+    };
+
+    root.fmt = function() {
+        var s = arguments[0];
+        for (var i = 0; i < arguments.length - 1; i++) {
+            var reg = new RegExp("\\{" + i + "\\}", "gm");
+            s = s.replace(reg, arguments[i + 1]);
+        }
+
+        return s;
     };
 
     function scrollable(selector, options) {
