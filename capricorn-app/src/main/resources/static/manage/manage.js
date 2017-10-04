@@ -44,6 +44,10 @@ var mgr = {};
 
     });
 
+    root.$$ = function(selector) {
+        return $(pageable + ' ' + selector);
+    };
+
     function scrollable(selector, options) {
         $(selector || 'body').niceScroll($.extend({
             cursorcolor: 'grey',
@@ -188,3 +192,25 @@ var mgr = {};
     });
 
 })(jQuery, window, mgr);
+
+/*
+'use strict';
+
+var index = {};
+(function ($, root, register) {
+
+    var core = {
+        initialize: function () {
+
+        }
+    };
+
+    $.extend(register, {
+    });
+
+    $(function () {
+        core.initialize();
+    });
+
+})(jQuery, window, index);
+ */

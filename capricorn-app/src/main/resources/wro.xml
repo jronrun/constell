@@ -25,6 +25,10 @@
         <js>/manage/index.js</js>
     </group>
 
+    <group name="item-index">
+        <js>/manage/item-index.js</js>
+    </group>
+
     <!-- Capricorn Manage End -->
 
 </groups>
