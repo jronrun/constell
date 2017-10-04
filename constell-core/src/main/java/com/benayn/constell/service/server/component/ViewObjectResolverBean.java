@@ -27,6 +27,10 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -137,7 +141,12 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                         aValue = getFieldValueByName(value, valueFields, field.getName());
                     }
 
-                    setFieldValue(field, render, aValue);
+                    String dateStyle = listable.dateStyle();
+                    if (isNullOrEmpty(dateStyle) && hasDefineElement) {
+                        dateStyle = defineElement.dateStyle();
+                    }
+
+                    setFieldValue(field, render, aValue, dateStyle);
                 }
 
             });
@@ -149,6 +158,21 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         }
 
         return null;
+    }
+
+    private Object convertDate(Field defineField, Object aValue, String dateStyle) {
+        if (isNullOrEmpty(dateStyle)) {
+            return aValue;
+        }
+
+        if (defineField.getType().isAssignableFrom(String.class)
+            && aValue instanceof Date) {
+            aValue = DateTimeFormatter
+                .ofPattern(dateStyle).format(LocalDateTime
+                    .ofInstant(((Date) aValue).toInstant(), ZoneId.systemDefault()));
+        }
+
+        return aValue;
     }
 
     private List<DefinedElement> getDefinedElements(DefineType defineType,
@@ -413,10 +437,10 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         return null;
     }
 
-    private void setFieldValue(Field field, Object valueObj, Object aValue) {
+    private void setFieldValue(Field field, Object valueObj, Object aValue, String dateStyle) {
         try {
             field.setAccessible(true);
-            field.set(valueObj, aValue);
+            field.set(valueObj, convertDate(field, aValue, dateStyle));
         } catch (IllegalAccessException e) {
             log.warn("set field value fail: {}.{} {}",
                 valueObj.getClass().getSimpleName(), field.getName(), e.getMessage());

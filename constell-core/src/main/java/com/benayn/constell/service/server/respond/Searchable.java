@@ -64,6 +64,11 @@ public @interface Searchable {
     String[] attributes() default {};
 
     /**
+     * Date style, will use {@link DefineElement#dateStyle()} if not set
+     */
+    String dateStyle() default "";
+
+    /**
      * Define By Fragment, if set then above set will be ignore
      */
     String fragment() default "";

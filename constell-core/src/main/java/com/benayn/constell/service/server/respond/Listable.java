@@ -19,6 +19,11 @@ public @interface Listable {
     String value() default "";
 
     /**
+     * Date style
+     */
+    String dateStyle() default "yyyy-MM-dd HH:mm:ss";
+
+    /**
      * Define By Fragment, if set then above set will be ignore
      */
     String fragment() default "";

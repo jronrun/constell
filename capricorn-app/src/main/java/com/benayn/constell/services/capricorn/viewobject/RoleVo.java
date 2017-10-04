@@ -33,6 +33,6 @@ public class RoleVo extends Renderable {
     private String label;
 
     @Listable("render.common.createTime")
-    private Date createTime;
+    private String createTime;
 
 }

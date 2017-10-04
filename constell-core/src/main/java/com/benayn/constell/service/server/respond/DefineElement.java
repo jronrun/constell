@@ -68,4 +68,9 @@ public @interface DefineElement {
      */
     String fragment() default "";
 
+    /**
+     * Element date style
+     */
+    String dateStyle() default "yyyy-MM-dd HH:mm:ss";
+
 }
