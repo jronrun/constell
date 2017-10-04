@@ -16,5 +16,6 @@ public class DefinedElement {
     private String placeholder;
     private String attributes;
     private Object value;
+    private boolean fragmentValue;
 
 }

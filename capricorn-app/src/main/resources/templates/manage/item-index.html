@@ -26,7 +26,8 @@
                                 <!--/*/ <th:block th:each="el: ${searchEls}"> /*/-->
                                     <!--/*/ <th:block th:if="${(elStat.count > ((groupElStat.count - 1) * groupnum))
                                      && (elStat.count <= (groupElStat.count * groupnum))}"> /*/-->
-                                    <div th:switch="${el.tag.toString()}" class="field">
+                                    <div th:if="${el.fragmentValue}" th:utext="${el.value}" class="field"></div>
+                                    <div th:if="${not el.fragmentValue}" th:switch="${el.tag.toString()}" class="field">
                                         <div th:case="'INPUT'" class="ui icon input">
                                             <input th:type="${el.type.toString().toLowerCase()}"
                                                    type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"

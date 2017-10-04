@@ -1,14 +1,15 @@
 package com.benayn.constell.service.server.component;
 
+import static com.alibaba.fastjson.JSON.toJSONString;
 import static com.benayn.constell.service.server.respond.DefineType.EDITABLE;
 import static com.benayn.constell.service.server.respond.DefineType.SEARCHABLE;
 import static com.benayn.constell.service.server.respond.TagName.INPUT;
 import static com.benayn.constell.service.server.respond.TagName.UNDEFINED;
+import static com.benayn.constell.service.util.LZString.compressToEncodedURIComponent;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-import com.alibaba.fastjson.JSON;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.respond.DefineElement;
 import com.benayn.constell.service.server.respond.DefineType;
@@ -19,14 +20,11 @@ import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
 import com.benayn.constell.service.server.respond.TagName;
-import com.benayn.constell.service.util.LZString;
-import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -198,6 +196,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             if (!isNullOrEmpty(fragment)) {
                 String fragmentValue = getFragmentValue(value, fragment);
                 element.setValue(fragmentValue);
+                element.setFragmentValue(true);
                 return element;
             }
 
@@ -380,7 +379,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 }
 
             }
-            element.setAttributes(LZString.compressToEncodedURIComponent(JSON.toJSONString(attrMap)));
+            element.setAttributes(compressToEncodedURIComponent(toJSONString(attrMap)));
 
             //editable hidden behave
             if (isEditable && editable.hidden()) {
