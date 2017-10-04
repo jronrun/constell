@@ -25,6 +25,11 @@ public abstract class BaseManageController<T extends Renderable> {
     private final Class<T> voClass = ((Class<T>) new TypeToken<T>(getClass()) {}.getRawType());
 
     String genericIndex(Model model) {
+        String moduleName = voClass.getSimpleName().toLowerCase();
+        moduleName = moduleName.substring(0, moduleName.length() - 2);
+        model.addAttribute("title", viewObjectResolver.getMessage(
+            String.format("render.%s.module.title", moduleName), null));
+
         model.addAttribute(DEFINED_SEARCH_KEY, viewObjectResolver.getDefinedSearch(voClass, null));
         return PAGE_INDEX;
     }

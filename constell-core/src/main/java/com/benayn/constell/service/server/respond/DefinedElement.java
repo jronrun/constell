@@ -1,6 +1,5 @@
 package com.benayn.constell.service.server.respond;
 
-import java.util.List;
 import lombok.Data;
 
 @Data
@@ -15,7 +14,7 @@ public class DefinedElement {
     private String style;
     private String label;
     private String placeholder;
-    private List<String> attributes;
+    private String attributes;
     private Object value;
 
 }

@@ -9,14 +9,14 @@ import java.util.Date;
 import lombok.Data;
 
 @Data
-public class RoleVo extends Renderable {
+public class RoleVo implements Renderable {
 
     @DefineElement("render.common.id")
     @Listable
     @Editable(hidden = true)
     private Long id;
 
-    @DefineElement("render.role.code")
+    @DefineElement(value = "render.role.code", attributes = {"src=test,abcd=abcd"})
     @Searchable(like = true)
     @Listable
     @Editable

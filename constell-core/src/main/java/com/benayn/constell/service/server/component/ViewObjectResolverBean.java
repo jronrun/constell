@@ -8,6 +8,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+import com.alibaba.fastjson.JSON;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.respond.DefineElement;
 import com.benayn.constell.service.server.respond.DefineType;
@@ -18,13 +19,20 @@ import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
 import com.benayn.constell.service.server.respond.TagName;
+import com.benayn.constell.service.util.LZString;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.thymeleaf.TemplateEngine;
@@ -44,7 +52,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     }
 
     @SuppressWarnings("WeakerAccess")
-    //@Cacheable(value = "defined_pages", sync = true, key = "#viewObjectType.simpleName")
+    @Cacheable(value = "defined_pages", sync = true, key = "#viewObjectType.simpleName")
     public List<Field> getFields(Class<?> viewObjectType) {
         return Lists.newArrayList(viewObjectType.getDeclaredFields());
     }
@@ -346,7 +354,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
             //auto generator if none, same as label
             if (isNullOrEmpty(placeholder)) {
-                placeholder = element.getLabel();
+                placeholder = element.getLabel() + " ..";
             }
             element.setPlaceholder(placeholder);
 
@@ -364,7 +372,15 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             if (attributes.length < 1 && hasDefineElement) {
                 attributes = defineElement.attributes();
             }
-            element.setAttributes(Lists.newArrayList(attributes));
+
+            Map<String, String> attrMap = Maps.newHashMap();
+            if (attributes.length > 0) {
+                for (String attribute : attributes) {
+                    attrMap.putAll(Splitter.on(",").withKeyValueSeparator("=").split(attribute));
+                }
+
+            }
+            element.setAttributes(LZString.compressToEncodedURIComponent(JSON.toJSONString(attrMap)));
 
             //editable hidden behave
             if (isEditable && editable.hidden()) {

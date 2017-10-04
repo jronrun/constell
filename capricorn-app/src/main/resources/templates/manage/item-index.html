@@ -1,1 +1,57 @@
-item index
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{manage/layout}">
+<head>
+    <title>Home</title>
+    <script type="text/javascript" th:src="@{/module/index.js}"></script>
+</head>
+<body>
+<div layout:fragment="content">
+
+
+
+    <div class="ui equal width left aligned padded grid stackable">
+
+        <div class="row">
+            <div class="column">
+                <div class="ui segments">
+                    <div class="ui segment">
+                        <h4 class="ui header" th:text="${title}">
+                            Module Title
+                        </h4>
+                    </div>
+                    <form class="ui form segment form8" th:with="groupnum=1">
+                        <!--/*/ <th:block th:each="groupEl: ${searchEls}"> /*/-->
+                            <div class="three fields">
+                                <!--/*/ <th:block th:each="el: ${searchEls}"> /*/-->
+                                    <!--/*/ <th:block th:if="${(elStat.count > ((groupElStat.count - 1) * groupnum))
+                                     && (elStat.count <= (groupElStat.count * groupnum))}"> /*/-->
+                                    <div th:switch="${el.tag.toString()}" class="field">
+                                        <div th:case="'INPUT'" class="ui icon input">
+                                            <input th:type="${el.type.toString().toLowerCase()}"
+                                                   type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
+                                                   th:placeholder="${el.placeholder}" th:class="${el.clazz}"
+                                                   th:attr="data-attrs=${el.attributes}"
+                                                   th:style="${el.style}" th:value="${el.value}"/>
+                                        </div>
+                                        <div th:case="*">unsupported yet</div>
+                                    </div>
+                                    <!--/*/ </th:block> /*/-->
+                                <!--/*/ </th:block> /*/-->
+                            </div>
+                        <!--/*/ </th:block> /*/-->
+                        <div class="ui submit green labeled icon button">
+                            <i class="search icon"></i>
+                            <div th:text="#{render.button.search}">Search</div>
+                        </div>
+                        <div class="ui error message"><ul class="list"><li>Please put the same value in both fields</li></ul></div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+</div>
+</body>
+</html>
