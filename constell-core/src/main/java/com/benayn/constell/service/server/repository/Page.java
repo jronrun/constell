@@ -73,11 +73,25 @@ public final class Page<R> {
 
     @Setter
     private List<R> resource = Lists.newArrayList();
+
     /**
-     * Column title
+     * Column name and title map
      */
     @Setter
     private Map<String, String> titles;
+    /**
+     * Column name
+     */
+    @Setter
+    private List<String> columns;
+
+    public void addColumn(String columnName) {
+        if (null == columns) {
+            columns = Lists.newArrayList();
+        }
+
+        columns.add(columnName);
+    }
 
     public void addTitle(String columnName, String columnTitle) {
         if (null == titles) {

@@ -104,6 +104,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
                     checkArgument(!isNullOrEmpty(title), "undefined listable column title %s.%s",
                         viewObjectType.getSimpleName(), field.getName());
+                    newPage.addColumn(field.getName());
                     newPage.addTitle(field.getName(), getMessage(title, title));
 
                     Object aValue;
