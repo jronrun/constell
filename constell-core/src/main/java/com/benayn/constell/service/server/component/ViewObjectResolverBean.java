@@ -342,6 +342,11 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             if (isNullOrEmpty(placeholder) && hasDefineElement) {
                 placeholder = defineElement.placeholder();
             }
+
+            //auto generator if none, same as label
+            if (isNullOrEmpty(placeholder)) {
+                placeholder = element.getLabel();
+            }
             element.setPlaceholder(placeholder);
 
             //attributes

@@ -54,7 +54,7 @@ public @interface DefineElement {
     String style() default "";
 
     /**
-     * Element Placeholder
+     * Element Placeholder, auto generator if none, same as label
      */
     String placeholder() default "";
 
