@@ -19,7 +19,7 @@ logging:
     ROOT: INFO
     org.springframework: INFO
     com.benayn.constell: INFO
-    com.benayn.constell.services.capricorn.mapper: DEBUG
+    com.benayn.constell.services.capricorn.repository.mapper: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36}:%line - %msg%n"

@@ -17,7 +17,7 @@
                             Module Title
                         </h4>
                     </div>
-                    <form class="ui form segment form8" th:with="groupnum=1">
+                    <form class="ui form segment form8" th:with="groupnum=1" id="form-search">
                         <!--/*/ <th:block th:each="groupEl: ${searchEls}"> /*/-->
                             <div class="three fields">
                                 <!--/*/ <th:block th:each="el: ${searchEls}"> /*/-->
@@ -47,7 +47,7 @@
                                 <!--/*/ </th:block> /*/-->
                             </div>
                         <!--/*/ </th:block> /*/-->
-                        <div class="ui submit green labeled icon button">
+                        <div class="ui submit green labeled icon button" data-page-no="0">
                             <i class="search icon"></i>
                             <div th:text="#{render.button.search}">Search</div>
                         </div>

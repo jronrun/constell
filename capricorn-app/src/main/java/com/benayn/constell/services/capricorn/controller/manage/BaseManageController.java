@@ -42,6 +42,7 @@ public abstract class BaseManageController<T extends Renderable> {
     }
 
     String genericList(Model model, Page<?> page) {
+        model.addAttribute("listInfo", encodes(page.cloneButResource()));
         model.addAttribute(DEFINED_PAGE_KEY, viewObjectResolver.getDefinedPage(voClass, page));
         return PAGE_LIST;
     }

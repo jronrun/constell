@@ -1,5 +1,6 @@
 package com.benayn.constell.service.server.repository;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.List;
@@ -65,7 +66,7 @@ public final class Page<R> {
     /**
      * Page Navigation, Show Page Count, Max is numCount+1
      */
-    private int navCount = 10;
+    private int navCount = 5;
     /**
      * Page Navigation, Show Page No
      */

@@ -25,17 +25,18 @@
                 <tfoot>
                 <tr>
                     <th colspan="3" th:colspan="${#lists.size(pageEl.columns)}">
-                        <div class="ui right floated pagination menu">
-                            <a class="icon item">
-                                <i class="left chevron icon"></i>
-                            </a>
-                            <a class="item">1</a>
-                            <a class="item">2</a>
-                            <a class="item">3</a>
-                            <a class="item">4</a>
-                            <a class="icon item">
-                                <i class="right chevron icon"></i>
-                            </a>
+                        <div class="ui right floated pagination menu" th:attr="data-list-info=${listInfo}">
+                            <a class="item" th:if="${pageEl.prev >= pageEl.first && pageEl.index != 1}" th:text="#{render.page.prev}" th:attr="data-page-no=${pageEl.prev}">Prev</a>
+                            <a class="item" th:if="${pageEl.navStart > 1}" th:text="${pageEl.first}" th:attr="data-page-no=${pageEl.first}">First</a>
+                            <a class="item" th:if="${pageEl.navStart > 1}">...</a>
+                            <a class="item" th:each="np: ${pageEl.navPages}" th:attr="data-page-no=${np}"
+                               th:class="${pageEl.index == np ? 'item active green' : 'item'}" th:text="${#messages.msg('render.page.number', np)}">1</a>
+                            <a class="item" th:remove="all">2</a>
+                            <a class="item" th:remove="all">3</a>
+                            <a class="item" th:remove="all">4</a>
+                            <a class="item" th:if="${pageEl.navEnd < (pageEl.last - 1)}">...</a>
+                            <a class="item" th:if="${pageEl.navEnd < (pageEl.last - 1)}" th:text="${pageEl.last}" th:attr="data-page-no=${pageEl.last}">Last</a>
+                            <a class="item" th:if="${pageEl.next <= pageEl.last && pageEl.index != pageEl.last}" th:text="#{render.page.next}" th:attr="data-page-no=${pageEl.next}">Next</a>
                         </div>
                     </th>
                 </tr>

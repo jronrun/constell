@@ -44,32 +44,50 @@ var mgr = {};
 
     });
 
-    root.$$ = function (selector) {
-        return $(pageable + ' ' + selector);
-    };
+    function getFormData(selector){
+        var indexed = {};
+        $.map($(selector).serializeArray(), function(n){
+            var val = n['value'];
+            if (val && val.length > 0) {
+                indexed[n['name']] = val;
+            }
+        });
+
+        return indexed;
+    }
+
+    $.extend(root, {
+        $$: function (selector) {
+            return $(pageable + ' ' + selector);
+        },
+
+        getFormData: function (selector) {
+            return getFormData(selector);
+        },
+
+        decodes: function (target) {
+            return decodes(target);
+        },
+
+        fmt: function() {
+            var s = arguments[0];
+            for (var i = 0; i < arguments.length - 1; i++) {
+                var reg = new RegExp("\\{" + i + "\\}", "gm");
+                s = s.replace(reg, arguments[i + 1]);
+            }
+
+            return s;
+        }
+    });
 
     function decodes(target) {
         return JSON.parse(LZString.decompressFromEncodedURIComponent(target));
     }
 
-    root.decodes = function (target) {
-        return decodes(target);
-    };
-
-    root.fmt = function() {
-        var s = arguments[0];
-        for (var i = 0; i < arguments.length - 1; i++) {
-            var reg = new RegExp("\\{" + i + "\\}", "gm");
-            s = s.replace(reg, arguments[i + 1]);
-        }
-
-        return s;
-    };
-
     function scrollable(selector, options) {
         $(selector || 'body').niceScroll($.extend({
             cursorcolor: 'grey',
-            cursorwidth: '10px',
+            cursorwidth: '8px',
             cursorborder: '0px solid #000',
             scrollspeed: 50,
             autohidemode: true,
@@ -78,7 +96,7 @@ var mgr = {};
             cursorminheight: 20,
             enablekeyboard: true,
             horizrailenabled: true,
-            bouncescroll: false,
+            bouncescroll: true,
             smoothscroll: true,
             iframeautoresize: true,
             touchbehavior: false,
