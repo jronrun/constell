@@ -1,6 +1,5 @@
 package com.benayn.constell.service.server.repository;
 
-import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.List;
@@ -85,6 +84,15 @@ public final class Page<R> {
      */
     @Setter
     private List<String> columns;
+    private Map<String, Object> extra;
+
+    public void addExtra(String key, Object value) {
+        if (null == extra) {
+            extra = Maps.newHashMap();
+        }
+
+        extra.put(key, value);
+    }
 
     public void addColumn(String columnName) {
         if (null == columns) {

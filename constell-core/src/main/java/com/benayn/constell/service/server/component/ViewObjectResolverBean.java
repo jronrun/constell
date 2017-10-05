@@ -11,8 +11,10 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.format;
 
 import com.benayn.constell.service.server.repository.Page;
+import com.benayn.constell.service.server.respond.Actionable;
 import com.benayn.constell.service.server.respond.DefineElement;
 import com.benayn.constell.service.server.respond.DefineType;
+import com.benayn.constell.service.server.respond.DefinedAction;
 import com.benayn.constell.service.server.respond.DefinedElement;
 import com.benayn.constell.service.server.respond.Editable;
 import com.benayn.constell.service.server.respond.InputType;
@@ -79,6 +81,9 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
         List<Field> defineFields = getFields(viewObjectType);
         Page<Renderable> newPage = page.cloneButResource();
+
+        DefinedAction definedAction = getDefinedAction(viewObjectType);
+        newPage.addExtra("definedAction", definedAction);
         defineFields.forEach(field -> {
             DefineElement defineElement = field.getAnnotation(DefineElement.class);
             boolean hasDefineElement = null != defineElement;
@@ -104,7 +109,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
         List<Field> finalItemFields = itemFields;
         items.forEach(item -> {
-            Renderable render = asRenderable(viewObjectType, defineFields, item, finalItemFields);
+            Renderable render = asRenderable(viewObjectType, defineFields, item, finalItemFields, definedAction);
             if (null != render) {
                 renders.add(render);
             }
@@ -114,8 +119,32 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         return newPage;
     }
 
+    private DefinedAction getDefinedAction(Class<? extends Renderable> viewObjectType) {
+        DefinedAction definedAction = new DefinedAction();
+        Actionable actionable = viewObjectType.getAnnotation(Actionable.class);
+        if (null != actionable) {
+            boolean hasEdit = actionable.edit();
+            boolean hasEditField = !isNullOrEmpty(actionable.editField());
+            String editField = actionable.editField();
+            boolean hasDelete = actionable.delete();
+            boolean hasActionFragment = !isNullOrEmpty(actionable.fragment());
+            boolean hasAction = hasEdit || hasDelete || hasActionFragment;
+
+            definedAction.setHasEdit(hasEdit);
+            definedAction.setHasEditField(hasEditField);
+            definedAction.setEditField(editField);
+            definedAction.setHasDelete(hasDelete);
+            definedAction.setHasActionFragment(hasActionFragment);
+            definedAction.setActionFragment(actionable.fragment());
+            definedAction.setHasAction(hasAction);
+        }
+
+        return definedAction;
+    }
+
     private Renderable asRenderable(Class<? extends Renderable> viewObjectType,
-        List<Field> defineFields, Object value, List<Field> valueFields) {
+        List<Field> defineFields, Object value, List<Field> valueFields,
+        DefinedAction definedAction) {
         try {
             Renderable render = viewObjectType.newInstance();
             defineFields.forEach(field -> {
@@ -124,6 +153,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
                 Listable listable = field.getAnnotation(Listable.class);
                 if (null != listable) {
+                    String fieldName = field.getName();
                     Object aValue;
                     //value fragment
                     String fragment;
@@ -137,7 +167,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                         aValue = getFragmentValue(value, fragment);
                         render.setFragmentValue(true);
                     } else {
-                        aValue = getFieldValueByName(value, valueFields, field.getName());
+                        aValue = getFieldValueByName(value, valueFields, fieldName);
                     }
 
                     String dateStyle = listable.dateStyle();
@@ -146,6 +176,15 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                     }
 
                     setFieldValue(field, render, aValue, dateStyle);
+
+                    //action fragment
+                    if (definedAction.isHasActionFragment()) {
+                        String actionFragment = definedAction.getActionFragment();
+                        if (!isNullOrEmpty(actionFragment)) {
+                            render.setFragmentAction(true);
+                            render.setAction(getFragmentValue(value, actionFragment));
+                        }
+                    }
                 }
 
             });

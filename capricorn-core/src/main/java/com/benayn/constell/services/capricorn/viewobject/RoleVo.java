@@ -1,5 +1,6 @@
 package com.benayn.constell.services.capricorn.viewobject;
 
+import com.benayn.constell.service.server.respond.Actionable;
 import com.benayn.constell.service.server.respond.DefineElement;
 import com.benayn.constell.service.server.respond.Editable;
 import com.benayn.constell.service.server.respond.Listable;
@@ -12,6 +13,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
+@Actionable
 public class RoleVo extends Renderable {
 
     @DefineElement("render.common.id")

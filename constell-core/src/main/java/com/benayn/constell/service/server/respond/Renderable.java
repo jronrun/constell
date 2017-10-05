@@ -15,7 +15,19 @@ import lombok.ToString;
 @ToString
 public abstract class Renderable {
 
+    /**
+     * True if list use field fragment
+     */
     private boolean fragmentValue;
+
+    /**
+     * List action fragment value
+     */
+    private String action;
+    /**
+     * True if list action use fragment
+     */
+    private boolean fragmentAction;
 
     private int pageNo;
     private int pageSize = DEFAULT_PAGE_SIZE;
