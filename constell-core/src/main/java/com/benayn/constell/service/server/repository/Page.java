@@ -84,13 +84,10 @@ public final class Page<R> {
      */
     @Setter
     private List<String> columns;
-    private Map<String, Object> extra;
+    @Setter
+    private Map<String, Object> extra = Maps.newHashMap();
 
     public void addExtra(String key, Object value) {
-        if (null == extra) {
-            extra = Maps.newHashMap();
-        }
-
         extra.put(key, value);
     }
 
