@@ -1,7 +1,6 @@
 package com.benayn.constell.services.capricorn.service.bean;
 
 import com.benayn.constell.service.server.repository.Page;
-import com.benayn.constell.service.util.Likes;
 import com.benayn.constell.services.capricorn.repository.RoleRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.repository.domain.RoleExample;
@@ -33,7 +32,7 @@ public class RoleServiceBean implements RoleService {
 
         if (null != condition.getCode()) {
             if (condition.isLike("code")) {
-                criteria.andCodeLike(Likes.get(condition.getCode()));
+                criteria.andCodeLike(condition.like(condition.getCode()));
             } else {
                 criteria.andCodeEqualTo(condition.getCode());
             }
@@ -41,7 +40,7 @@ public class RoleServiceBean implements RoleService {
 
         if (null != condition.getLabel()) {
             if (condition.isLike("label")) {
-                criteria.andLabelLike(Likes.get(condition.getLabel()));
+                criteria.andLabelLike(condition.like(condition.getLabel()));
             } else {
                 criteria.andLabelEqualTo(condition.getLabel());
             }
