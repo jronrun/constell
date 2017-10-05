@@ -19,8 +19,7 @@ public class RoleVo extends Renderable {
     @Editable(hidden = true)
     private Long id;
 
-    // attributes = {"src=test,abcd=abcd"}
-    @DefineElement(value = "render.role.code")
+    @DefineElement("render.role.code")
     @Searchable(like = true)
     @Listable
     @Editable
