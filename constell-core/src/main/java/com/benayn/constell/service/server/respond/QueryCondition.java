@@ -11,7 +11,7 @@ import lombok.ToString;
 @ToString
 public abstract class QueryCondition {
 
-    public static final int DEFAULT_PAGE_SIZE = 30;
+    public static final int DEFAULT_PAGE_SIZE = 20;
 
     private int pageNo;
     private int pageSize = DEFAULT_PAGE_SIZE;

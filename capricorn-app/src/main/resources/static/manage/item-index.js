@@ -17,10 +17,17 @@ var index = {};
         list: {
             init: function () {
                 $('body').on('click', '[data-page-no]', function (evt) {
-                    var el = evt.currentTarget, pn = parseInt($(el).data('pageNo'));
+                    var load = 'loading', el = evt.currentTarget, pn = parseInt($(el).data('pageNo'));
+                    if ($(el).hasClass(load)) {
+                        return;
+                    }
+
+                    $(el).addClass(load);
                     core.list.query($.extend({
                         pageNo: pn
-                    }, getFormData('#form-search')));
+                    }, getFormData('#form-search')), function () {
+                        $(el).removeClass(load);
+                    });
                 });
 
                 core.list.query();
