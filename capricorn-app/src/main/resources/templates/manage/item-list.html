@@ -30,15 +30,15 @@
                     <td th:if="${defact.hasAction && defact.hasActionFragment}" th:utext="${defact.actionFragment}">Action Fragment</td>
                     <td th:if="${defact.hasAction && !defact.hasActionFragment}">
 
-                        <div th:if="${defact.hasEdit}" class="mini ui brown basic animated fade button" tabindex="0">
-                            <div class="visible content" th:text="#{render.action.edit}" th:attr="data-edit-id=${item.id}">Edit</div>
+                        <div th:if="${defact.hasEdit}" th:attr="data-edit-id=${item.id}" class="mini ui brown basic animated fade button" tabindex="0">
+                            <div class="visible content" th:text="#{render.action.edit}">Edit</div>
                             <div class="hidden content">
                                 <i class="edit brown icon"></i>
                             </div>
                         </div>
 
-                        <div th:if="${defact.hasDelete}" class="mini ui red basic animated fade button" tabindex="0">
-                            <div class="visible content" th:text="#{render.action.delete}" th:attr="data-delete-id=${item.id}">Delete</div>
+                        <div th:if="${defact.hasDelete}" th:attr="data-delete-id=${item.id}" class="mini ui red basic animated fade button" tabindex="0">
+                            <div class="visible content" th:text="#{render.action.delete}">Delete</div>
                             <div class="hidden content">
                                 <i class="delete red icon"></i>
                             </div>
