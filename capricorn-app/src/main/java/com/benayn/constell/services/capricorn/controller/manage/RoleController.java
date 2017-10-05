@@ -4,7 +4,6 @@ import static com.benayn.constell.services.capricorn.settings.constant.Capricorn
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.benayn.constell.service.server.respond.Message;
-import com.benayn.constell.services.capricorn.condition.RoleCondition;
 import com.benayn.constell.services.capricorn.service.RoleService;
 import com.benayn.constell.services.capricorn.viewobject.RoleVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +34,7 @@ public class RoleController extends BaseManageController<RoleVo> {
     }
 
     @GetMapping("roles")
-    public String roles(Model model, RoleCondition condition) {
+    public String roles(Model model, RoleVo condition) {
         return genericList(model, roleService.selectPageBy(genericLike(condition)));
     }
 

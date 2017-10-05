@@ -12,7 +12,6 @@ import static com.benayn.constell.services.capricorn.settings.constant.Capricorn
 import com.benayn.constell.service.server.component.ViewObjectResolver;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.respond.PageInfo;
-import com.benayn.constell.service.server.respond.QueryCondition;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.google.common.reflect.TypeToken;
 import java.util.Locale;
@@ -37,8 +36,8 @@ public abstract class BaseManageController<T extends Renderable> {
         return PAGE_INDEX;
     }
 
-    <T extends QueryCondition> T genericLike(T condition) {
-        return viewObjectResolver.getQueryCondition(voClass, condition);
+    T genericLike(T condition) {
+        return viewObjectResolver.getQueryCondition(condition);
     }
 
     String genericList(Model model, Page<?> page) {

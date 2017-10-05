@@ -18,7 +18,6 @@ import com.benayn.constell.service.server.respond.Editable;
 import com.benayn.constell.service.server.respond.InputType;
 import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.PageInfo;
-import com.benayn.constell.service.server.respond.QueryCondition;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
 import com.benayn.constell.service.server.respond.TagName;
@@ -479,8 +478,8 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     }
 
     @Override
-    public <T extends QueryCondition, R extends Renderable> T getQueryCondition(Class<R> viewObjectType, T condition) {
-        List<Field> fields = getFields(viewObjectType);
+    public <T extends Renderable> T getQueryCondition(T condition) {
+        List<Field> fields = getFields(condition.getClass());
 
         fields.forEach(field -> {
             Searchable searchable = field.getAnnotation(Searchable.class);

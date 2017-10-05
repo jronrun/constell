@@ -2,12 +2,12 @@ package com.benayn.constell.services.capricorn.service.bean;
 
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.util.Likes;
-import com.benayn.constell.services.capricorn.condition.RoleCondition;
 import com.benayn.constell.services.capricorn.repository.RoleRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.repository.domain.RoleExample;
 import com.benayn.constell.services.capricorn.repository.domain.RoleExample.Criteria;
 import com.benayn.constell.services.capricorn.service.RoleService;
+import com.benayn.constell.services.capricorn.viewobject.RoleVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +27,7 @@ public class RoleServiceBean implements RoleService {
     }
 
     @Override
-    public Page<Role> selectPageBy(RoleCondition condition) {
+    public Page<Role> selectPageBy(RoleVo condition) {
         RoleExample example = new RoleExample();
         Criteria criteria = example.createCriteria();
 
