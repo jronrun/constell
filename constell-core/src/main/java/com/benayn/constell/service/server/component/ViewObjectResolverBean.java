@@ -477,20 +477,6 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         return textTemplateEngine.process(fragment, context);
     }
 
-    @Override
-    public <T extends Renderable> T getQueryCondition(T condition) {
-        List<Field> fields = getFields(condition.getClass());
-
-        fields.forEach(field -> {
-            Searchable searchable = field.getAnnotation(Searchable.class);
-            if (null != searchable && searchable.like()) {
-                condition.addLikeField(field.getName());
-            }
-        });
-
-        return condition;
-    }
-
     private static final String TITLE_FORMAT = "render.%s.module.title";
     private static final String INDEX_FORMAT = "%s%s/index";
     private static final String LIST_FORMAT = "%s%ss";

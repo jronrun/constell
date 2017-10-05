@@ -35,7 +35,7 @@ public class RoleController extends BaseManageController<RoleVo> {
 
     @GetMapping("roles")
     public String roles(Model model, RoleVo condition) {
-        return genericList(model, roleService.selectPageBy(genericLike(condition)));
+        return genericList(model, roleService.selectPageBy(condition));
     }
 
     @GetMapping(value = "role/{entityId}")

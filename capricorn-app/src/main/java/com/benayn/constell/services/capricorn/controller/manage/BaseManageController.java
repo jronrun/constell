@@ -36,10 +36,6 @@ public abstract class BaseManageController<T extends Renderable> {
         return PAGE_INDEX;
     }
 
-    T genericLike(T condition) {
-        return viewObjectResolver.getQueryCondition(condition);
-    }
-
     String genericList(Model model, Page<?> page) {
         model.addAttribute("listInfo", encodes(page.cloneButResource()));
         model.addAttribute(DEFINED_PAGE_KEY, viewObjectResolver.getDefinedPage(voClass, page));

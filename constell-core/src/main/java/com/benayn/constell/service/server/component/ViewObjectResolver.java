@@ -20,5 +20,4 @@ public interface ViewObjectResolver {
 
     <T extends Renderable> PageInfo getPageInfo(Class<T> viewObjectType, String manageBaseUrl);
 
-    <T extends Renderable> T getQueryCondition(T condition);
 }

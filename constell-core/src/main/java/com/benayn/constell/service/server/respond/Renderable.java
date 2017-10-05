@@ -29,20 +29,25 @@ public abstract class Renderable {
         return Likes.get(target, side);
     }
 
-    public void addLikeField(String fieldName) {
-        if (null == likeFields) {
-            likeFields = Lists.newArrayList();
-        }
-
-        likeFields.add(fieldName);
-    }
-
     public boolean isLike(String fieldName) {
-        if (null == likeFields) {
-            return false;
+        return checkFields().contains(fieldName);
+    }
+
+    private List<String> checkFields() {
+        if (null != likeFields) {
+            return likeFields;
         }
 
-        return likeFields.contains(fieldName);
+        likeFields = Lists.newArrayList();
+        Lists.newArrayList(getClass().getDeclaredFields()).forEach(field -> {
+            Searchable searchable = field.getAnnotation(Searchable.class);
+            if (null != searchable && searchable.like()) {
+                likeFields.add(field.getName());
+            }
+        });
+
+        return likeFields;
     }
+
 
 }
