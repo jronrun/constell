@@ -79,6 +79,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
         List<Renderable> renders = Lists.newArrayList();
 
+        final boolean[] isDefinedUniqueField = {false};
         List<Field> defineFields = getFields(viewObjectType);
         Page<Renderable> newPage = page.cloneButResource();
 
@@ -95,12 +96,21 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                     title = defineElement.value();
                 }
 
+                if (!isNullOrEmpty(definedAction.getUniqueField())
+                    && field.getName().equals(definedAction.getUniqueField())) {
+                    isDefinedUniqueField[0] = true;
+                }
+
                 checkArgument(!isNullOrEmpty(title), "undefined listable column title %s.%s",
                     viewObjectType.getSimpleName(), field.getName());
                 newPage.addColumn(field.getName());
                 newPage.addTitle(field.getName(), getMessage(title, title));
             }
         });
+
+        checkArgument(isDefinedUniqueField[0],
+            "undefined actionable unique field on type %s, unique field: %s",
+            viewObjectType.getSimpleName(), definedAction.getUniqueField());
 
         List<Field> itemFields = null;
         if (items.size() > 0) {
@@ -129,6 +139,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             boolean hasDelete = actionable.delete();
             boolean hasActionFragment = !isNullOrEmpty(actionable.fragment());
             boolean hasAction = hasEdit || hasDelete || hasActionFragment;
+            String uniqueField = actionable.uniqueField();
 
             definedAction.setHasEdit(hasEdit);
             definedAction.setHasEditField(hasEditField);
@@ -137,6 +148,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             definedAction.setHasActionFragment(hasActionFragment);
             definedAction.setActionFragment(actionable.fragment());
             definedAction.setHasAction(hasAction);
+            definedAction.setUniqueField(uniqueField);
         }
 
         return definedAction;

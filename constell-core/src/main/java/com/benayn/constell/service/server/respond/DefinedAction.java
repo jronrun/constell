@@ -12,5 +12,6 @@ public class DefinedAction {
     private boolean hasActionFragment;
     private String actionFragment;
     private boolean hasAction;
+    private String uniqueField;
 
 }

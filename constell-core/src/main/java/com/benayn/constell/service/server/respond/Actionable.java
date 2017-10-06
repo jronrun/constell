@@ -30,6 +30,11 @@ public @interface Actionable {
     boolean delete() default true;
 
     /**
+     * Unique field value in the list
+     */
+    String uniqueField() default "id";
+
+    /**
      * Define Action By Fragment,
      * if set then above set {@link Actionable#edit()} and {@link Actionable#delete()} will be ignore
      */

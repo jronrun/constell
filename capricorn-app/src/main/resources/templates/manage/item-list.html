@@ -18,7 +18,7 @@
                     <td th:if="${not item.fragmentValue}" th:each="column: ${pageEl.columns}">
                         <th:block th:if="${defact.hasEditField}">
                             <th:block th:if="${#strings.equals(column, defact.editField)}">
-                                <a class="ui blue basic" style="cursor: pointer;" th:text="${item[column]}" th:attr="data-edit-id=${item.id}">Edit</a>
+                                <a class="ui blue basic" style="cursor: pointer;" th:text="${item[column]}" th:attr="data-edit-id=${item[defact.uniqueField]}">Edit</a>
                             </th:block>
                             <th:block th:if="${not #strings.equals(column, defact.editField)}" th:text="${item[column]}">TD Content A</th:block>
                         </th:block>
@@ -30,14 +30,14 @@
                     <td th:if="${defact.hasAction && defact.hasActionFragment}" th:utext="${defact.actionFragment}">Action Fragment</td>
                     <td th:if="${defact.hasAction && !defact.hasActionFragment}">
 
-                        <div th:if="${defact.hasEdit}" th:attr="data-edit-id=${item.id}" class="mini ui brown basic animated fade button" tabindex="0">
+                        <div th:if="${defact.hasEdit}" th:attr="data-edit-id=${item[defact.uniqueField]}" class="mini ui brown basic animated fade button" tabindex="0">
                             <div class="visible content" th:text="#{render.action.edit}">Edit</div>
                             <div class="hidden content">
                                 <i class="edit brown icon"></i>
                             </div>
                         </div>
 
-                        <div th:if="${defact.hasDelete}" th:attr="data-delete-id=${item.id}" class="mini ui red basic animated fade button" tabindex="0">
+                        <div th:if="${defact.hasDelete}" th:attr="data-delete-id=${item[defact.uniqueField]}" class="mini ui red basic animated fade button" tabindex="0">
                             <div class="visible content" th:text="#{render.action.delete}">Delete</div>
                             <div class="hidden content">
                                 <i class="delete red icon"></i>
