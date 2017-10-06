@@ -19,47 +19,49 @@
                     </div>
                     <form class="ui form segment form8" th:with="groupnum=3" id="form-search">
                         <!--/*/ <th:block th:each="groupEl: ${searchEls}"> /*/-->
-                            <div class="three fields">
-                                <!--/*/ <th:block th:each="el: ${searchEls}"> /*/-->
-                                    <!--/*/ <th:block th:if="${(elStat.count > ((groupElStat.count - 1) * groupnum))
-                                     && (elStat.count <= (groupElStat.count * groupnum))}"> /*/-->
-                                    <div th:if="${el.fragmentValue}" th:utext="${el.value}" class="field"></div>
-                                    <div th:if="${not el.fragmentValue}" th:switch="${el.tag.toString()}" class="field">
-                                        <div th:case="'INPUT'" class="ui icon input">
-                                            <input th:type="${el.type.toString().toLowerCase()}"
-                                                   type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
-                                                   th:placeholder="${el.placeholder}" th:class="${el.clazz}"
-                                                   th:attr="data-attrs=${el.attributes}"
-                                                   th:style="${el.style}" th:value="${el.value}"/>
-                                        </div>
-                                        <div th:case="*">
-                                            <div class="ui icon input">
-                                                <input type="text" placeholder="Unsupported Yet...">
-                                            </div>
-                                        </div>
-                                        <div class="field" th:remove="all">
-                                            <div class="ui icon input">
-                                                <input type="text" placeholder="Search large...">
-                                            </div>
-                                        </div>
+                        <div class="three fields">
+                            <!--/*/ <th:block th:each="el: ${searchEls}"> /*/-->
+                            <!--/*/ <th:block th:if="${(elStat.count > ((groupElStat.count - 1) * groupnum))
+                             && (elStat.count <= (groupElStat.count * groupnum))}"> /*/-->
+                            <div th:if="${el.fragmentValue}" th:utext="${el.value}" class="field"></div>
+                            <div th:if="${not el.fragmentValue}" th:switch="${el.tag.toString()}" class="field">
+                                <div th:case="'INPUT'" class="ui icon input">
+                                    <input th:type="${el.type.toString().toLowerCase()}"
+                                           type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
+                                           th:placeholder="${el.placeholder}" th:class="${el.clazz}"
+                                           th:attr="data-attrs=${el.attributes}"
+                                           th:style="${el.style}" th:value="${el.value}"/>
+                                </div>
+                                <div th:case="*">
+                                    <div class="ui icon input">
+                                        <input type="text" placeholder="Unsupported Yet...">
                                     </div>
-                                    <!--/*/ </th:block> /*/-->
-                                <!--/*/ </th:block> /*/-->
+                                </div>
+                                <div class="field" th:remove="all">
+                                    <div class="ui icon input">
+                                        <input type="text" placeholder="Search large...">
+                                    </div>
+                                </div>
                             </div>
+                            <!--/*/ </th:block> /*/-->
+                            <!--/*/ </th:block> /*/-->
+                        </div>
                         <!--/*/ </th:block> /*/-->
                         <div class="ui submit green labeled icon button" data-page-no="0">
                             <i class="search icon"></i>
                             <div th:text="#{render.button.search}">Search</div>
                         </div>
-                        <div class="ui error message"><ul class="list"><li>Please put the same value in both fields</li></ul></div>
+                        <div class="ui error message">
+                            <ul class="list">
+                                <li>Please put the same value in both fields</li>
+                            </ul>
+                        </div>
 
                     </form>
                 </div>
             </div>
         </div>
 
-        <div class="row" id="item-list"></div>
-
-</div>
+    </div>
 </body>
 </html>

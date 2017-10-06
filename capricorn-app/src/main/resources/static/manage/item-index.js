@@ -49,7 +49,8 @@ var index = {};
                 }
 
                 $.get(pageInfo.list, param, function (data) {
-                    $$('#item-list').empty().html(data);
+                    $$('[data-replaceable=1]').remove();
+                    $$('#form-search').append(data);
                     callback && callback();
                 });
             }

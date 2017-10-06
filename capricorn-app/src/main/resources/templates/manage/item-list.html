@@ -1,69 +1,84 @@
-<div xmlns:th="http://www.thymeleaf.org" class="sixteen wide column">
-    <div class="ui segments" th:with="defact=${pageEl.extra.get('definedAction')}">
-        <div class="ui segment">
-            <h5 class="ui header"></h5>
-        </div>
-        <div class="ui segment">
-            <table class="ui celled table">
-                <thead>
-                <tr>
-                    <th th:each="column: ${pageEl.columns}" th:text="${pageEl.titles.get(column)}">Header</th>
-                    <th th:if="${defact.hasAction}" th:text="#{render.action.title}">Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="item: ${pageEl.resource}">
-                    <td th:if="${not item.fragmentValue}" th:each="column: ${pageEl.columns}">
-                        <th:block th:if="${defact.hasEditField}">
-                            <th:block th:if="${#strings.equals(column, defact.editField)}">
-                                <a class="ui blue basic" style="cursor: pointer;" th:text="${item[column]}" th:attr="data-edit-id=${item[defact.uniqueField]}">Edit</a>
-                            </th:block>
-                            <th:block th:if="${not #strings.equals(column, defact.editField)}" th:text="${item[column]}">TD Content A</th:block>
-                        </th:block>
-                        <th:block th:if="${!defact.hasEditField}" th:text="${item[column]}">TD Content 1</th:block>
-                    </td>
-                    <td th:if="${item.fragmentValue}" th:utext="${item[column]}">
-                        TD Content 2
-                    </td>
-                    <td th:if="${defact.hasAction && defact.hasActionFragment}" th:utext="${defact.actionFragment}">Action Fragment</td>
-                    <td th:if="${defact.hasAction && !defact.hasActionFragment}">
-
-                        <div th:if="${defact.hasEdit}" th:attr="data-edit-id=${item[defact.uniqueField]}" class="mini ui brown basic animated fade button" tabindex="0">
-                            <div class="visible content" th:text="#{render.action.edit}">Edit</div>
-                            <div class="hidden content">
-                                <i class="edit brown icon"></i>
-                            </div>
-                        </div>
-
-                        <div th:if="${defact.hasDelete}" th:attr="data-delete-id=${item[defact.uniqueField]}" class="mini ui red basic animated fade button" tabindex="0">
-                            <div class="visible content" th:text="#{render.action.delete}">Delete</div>
-                            <div class="hidden content">
-                                <i class="delete red icon"></i>
-                            </div>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-                <tfoot>
-                <tr>
-                    <th colspan="3" th:colspan="${#lists.size(pageEl.columns) + (defact.hasAction?1:0)}">
-                        <div class="ui right floated pagination menu" th:attr="data-list-info=${listInfo}">
-                            <a class="item" th:if="${pageEl.prev >= pageEl.first && pageEl.index != 1}" th:text="#{render.page.prev}" th:attr="data-page-no=${pageEl.prev}">Prev</a>
-                            <a class="item" th:if="${pageEl.navStart > 1}" th:text="${pageEl.first}" th:attr="data-page-no=${pageEl.first}">First</a>
-                            <a class="item" th:if="${pageEl.navStart > 1}">...</a>
-                            <a class="item" th:each="np: ${pageEl.navPages}" th:attr="data-page-no=${np}"
-                               th:class="${pageEl.index == np ? 'item active green' : 'item'}" th:text="${#messages.msg('render.page.number', np)}">1</a>
-                            <a class="item" th:remove="all">2</a>
-                            <a class="item" th:remove="all">3</a>
-                            <a class="item" th:remove="all">4</a>
-                            <a class="item" th:if="${pageEl.navEnd < (pageEl.last - 1)}">...</a>
-                            <a class="item" th:if="${pageEl.navEnd < (pageEl.last - 1)}" th:text="${pageEl.last}" th:attr="data-page-no=${pageEl.last}">Last</a>
-                            <a class="item" th:if="${pageEl.next <= pageEl.last && pageEl.index != pageEl.last}" th:text="#{render.page.next}" th:attr="data-page-no=${pageEl.next}">Next</a>
-                        </div>
-                    </th>
-                </tr>
-                </tfoot>
-            </table>
-        </div>
-    </div>
+<div xmlns:th="http://www.thymeleaf.org"
+     th:if="${pageEl.extra.get('definedAction').hasCreate && !pageEl.extra.get('definedAction').hasCreateFragment}"
+     class="ui submit green labeled icon button" data-replaceable="1" data-new-item="1">
+    <i class="plus icon"></i>
+    <div th:text="#{render.action.create}">Create</div>
 </div>
+<th:block xmlns:th="http://www.thymeleaf.org"
+          th:if="${pageEl.extra.get('definedAction').hasCreate && pageEl.extra.get('definedAction').hasCreateFragment}"
+          th:attr="data-replaceable=1" th:utext="${defact.createFragmentValue}">
+</th:block>
+
+<table xmlns:th="http://www.thymeleaf.org" class="ui celled table"
+       th:with="defact=${pageEl.extra.get('definedAction')}" data-replaceable="1">
+    <thead>
+    <tr>
+        <th th:each="column: ${pageEl.columns}" th:text="${pageEl.titles.get(column)}">Header</th>
+        <th th:if="${defact.hasAction}" th:text="#{render.action.title}">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item: ${pageEl.resource}">
+        <td th:if="${not item.fragmentValue}" th:each="column: ${pageEl.columns}">
+            <th:block th:if="${defact.hasEditField}">
+                <th:block th:if="${#strings.equals(column, defact.editField)}">
+                    <a class="ui blue basic" style="cursor: pointer;" th:text="${item[column]}"
+                       th:attr="data-edit-id=${item[defact.uniqueField]}">Edit</a>
+                </th:block>
+                <th:block th:if="${not #strings.equals(column, defact.editField)}" th:text="${item[column]}">TD Content
+                    A
+                </th:block>
+            </th:block>
+            <th:block th:if="${!defact.hasEditField}" th:text="${item[column]}">TD Content 1</th:block>
+        </td>
+        <td th:if="${item.fragmentValue}" th:utext="${item[column]}">
+            TD Content 2
+        </td>
+        <td th:if="${defact.hasAction && defact.hasActionFragment}" th:utext="${defact.actionFragment}">Action
+            Fragment
+        </td>
+        <td th:if="${defact.hasAction && !defact.hasActionFragment}">
+
+            <div th:if="${defact.hasEdit}" th:attr="data-edit-id=${item[defact.uniqueField]}"
+                 class="mini ui green basic animated fade button" tabindex="0">
+                <div class="visible content" th:text="#{render.action.edit}">Edit</div>
+                <div class="hidden content">
+                    <i class="edit green icon"></i>
+                </div>
+            </div>
+
+            <div th:if="${defact.hasDelete}" th:attr="data-delete-id=${item[defact.uniqueField]}"
+                 class="mini ui red basic animated fade button" tabindex="0">
+                <div class="visible content" th:text="#{render.action.delete}">Delete</div>
+                <div class="hidden content">
+                    <i class="delete red icon"></i>
+                </div>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+    <tfoot>
+    <tr>
+        <th colspan="3" th:colspan="${#lists.size(pageEl.columns) + (defact.hasAction?1:0)}">
+            <div class="ui right floated pagination menu" th:attr="data-list-info=${listInfo}">
+                <a class="item" th:if="${pageEl.prev >= pageEl.first && pageEl.index != 1}"
+                   th:text="#{render.page.prev}" th:attr="data-page-no=${pageEl.prev}">Prev</a>
+                <a class="item" th:if="${pageEl.navStart > 1}" th:text="${pageEl.first}"
+                   th:attr="data-page-no=${pageEl.first}">First</a>
+                <a class="item" th:if="${pageEl.navStart > 1}">...</a>
+                <a class="item" th:each="np: ${pageEl.navPages}" th:attr="data-page-no=${np}"
+                   th:class="${pageEl.index == np ? 'item active green' : 'item'}"
+                   th:text="${#messages.msg('render.page.number', np)}">1</a>
+                <a class="item" th:remove="all">2</a>
+                <a class="item" th:remove="all">3</a>
+                <a class="item" th:remove="all">4</a>
+                <a class="item" th:if="${pageEl.navEnd < (pageEl.last - 1)}">...</a>
+                <a class="item" th:if="${pageEl.navEnd < (pageEl.last - 1)}" th:text="${pageEl.last}"
+                   th:attr="data-page-no=${pageEl.last}">Last</a>
+                <a class="item" th:if="${pageEl.next <= pageEl.last && pageEl.index != pageEl.last}"
+                   th:text="#{render.page.next}" th:attr="data-page-no=${pageEl.next}">Next</a>
+            </div>
+        </th>
+    </tr>
+    </tfoot>
+</table>
