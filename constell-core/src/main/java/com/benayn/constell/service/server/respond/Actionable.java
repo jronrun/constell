@@ -40,4 +40,15 @@ public @interface Actionable {
      */
     String fragment() default "";
 
+    /**
+     * Define create action, default behave if true
+     */
+    boolean create() default true;
+
+    /**
+     * Define Create Action By Fragment,
+     * if set then above set {@link Actionable#create()} will be ignore
+     */
+    String createFragment() default "";
+
 }

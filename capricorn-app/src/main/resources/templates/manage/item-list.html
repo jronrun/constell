@@ -1,12 +1,10 @@
 <div xmlns:th="http://www.thymeleaf.org" class="sixteen wide column">
-    <div class="ui segments">
+    <div class="ui segments" th:with="defact=${pageEl.extra.get('definedAction')}">
         <div class="ui segment">
-            <h5 class="ui header">
-
-            </h5>
+            <h5 class="ui header"></h5>
         </div>
         <div class="ui segment">
-            <table class="ui celled table" th:with="defact=${pageEl.extra.get('definedAction')}">
+            <table class="ui celled table">
                 <thead>
                 <tr>
                     <th th:each="column: ${pageEl.columns}" th:text="${pageEl.titles.get(column)}">Header</th>

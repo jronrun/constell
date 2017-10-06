@@ -140,6 +140,8 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             boolean hasActionFragment = !isNullOrEmpty(actionable.fragment());
             boolean hasAction = hasEdit || hasDelete || hasActionFragment;
             String uniqueField = actionable.uniqueField();
+            boolean hasCreate = actionable.create();
+            boolean hasCreateFragment = !isNullOrEmpty(actionable.createFragment());
 
             definedAction.setHasEdit(hasEdit);
             definedAction.setHasEditField(hasEditField);
@@ -149,6 +151,12 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             definedAction.setActionFragment(actionable.fragment());
             definedAction.setHasAction(hasAction);
             definedAction.setUniqueField(uniqueField);
+            definedAction.setHasCreate(hasCreate);
+            definedAction.setHasCreateFragment(hasCreateFragment);
+            if (hasCreateFragment) {
+                String createFragmentValue = getFragmentValue(viewObjectType, actionable.createFragment());
+                definedAction.setCreateFragmentValue(createFragmentValue);
+            }
         }
 
         return definedAction;
