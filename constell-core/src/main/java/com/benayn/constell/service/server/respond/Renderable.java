@@ -5,7 +5,9 @@ import static com.benayn.constell.service.common.BaseConstants.DEFAULT_PAGE_SIZE
 import com.benayn.constell.service.util.Likes;
 import com.benayn.constell.service.util.Likes.Side;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,9 +18,9 @@ import lombok.ToString;
 public abstract class Renderable {
 
     /**
-     * True if list use field fragment
+     * Field fragment value map
      */
-    private boolean fragmentValue;
+    private Map<String, String> fieldFragmentValue = Maps.newHashMap();
 
     /**
      * List action fragment value
@@ -43,6 +45,10 @@ public abstract class Renderable {
 
     public boolean isLike(String fieldName) {
         return checkFields().contains(fieldName);
+    }
+
+    public void addFieldFragmentValue(String fieldName, String fragmentValue) {
+        fieldFragmentValue.put(fieldName, fragmentValue);
     }
 
     private List<String> checkFields() {

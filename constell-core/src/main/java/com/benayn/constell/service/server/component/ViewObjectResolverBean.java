@@ -47,13 +47,13 @@ import org.thymeleaf.context.Context;
 public class ViewObjectResolverBean implements ViewObjectResolver {
 
     private MessageSource messageSource;
-    private TemplateEngine textTemplateEngine;
+    private TemplateEngine fragmentTemplateEngine;
     private static final String ELEMENT_ID_FORMAT = "el_%s";
     private static final String HIDDEN_STYLE = "display:none;";
 
-    public ViewObjectResolverBean(MessageSource messageSource, TemplateEngine textTemplateEngine) {
+    public ViewObjectResolverBean(MessageSource messageSource, TemplateEngine fragmentTemplateEngine) {
         this.messageSource = messageSource;
-        this.textTemplateEngine = textTemplateEngine;
+        this.fragmentTemplateEngine = fragmentTemplateEngine;
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -175,6 +175,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 if (null != listable) {
                     String fieldName = field.getName();
                     Object aValue;
+
                     //value fragment
                     String fragment;
                     fragment = listable.fragment();
@@ -185,17 +186,17 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                     //value from fragment
                     if (!isNullOrEmpty(fragment)) {
                         aValue = getFragmentValue(value, fragment);
-                        render.setFragmentValue(true);
+                        render.addFieldFragmentValue(fieldName, (String) aValue);
                     } else {
                         aValue = getFieldValueByName(value, valueFields, fieldName);
-                    }
 
-                    String dateStyle = listable.dateStyle();
-                    if (isNullOrEmpty(dateStyle) && hasDefineElement) {
-                        dateStyle = defineElement.dateStyle();
-                    }
+                        String dateStyle = listable.dateStyle();
+                        if (isNullOrEmpty(dateStyle) && hasDefineElement) {
+                            dateStyle = defineElement.dateStyle();
+                        }
 
-                    setFieldValue(field, render, aValue, dateStyle);
+                        setFieldValue(field, render, aValue, dateStyle);
+                    }
 
                     //action fragment
                     if (definedAction.isHasActionFragment()) {
@@ -533,7 +534,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         Context context = new Context();
         context.setVariable("item", value);
 
-        return textTemplateEngine.process(fragment, context);
+        return fragmentTemplateEngine.process(fragment, context);
     }
 
     private static final String TITLE_FORMAT = "render.%s.module.title";

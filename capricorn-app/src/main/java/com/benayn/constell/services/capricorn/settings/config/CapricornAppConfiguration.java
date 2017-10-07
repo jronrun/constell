@@ -38,7 +38,7 @@ public class CapricornAppConfiguration {
 
     @Bean
     public ViewObjectResolver viewObjectResolver(MessageSource messageSource) {
-        return new ViewObjectResolverBean(messageSource, textTemplateEngine());
+        return new ViewObjectResolverBean(messageSource, fragmentTemplateEngine());
     }
 
     @Bean
@@ -124,19 +124,38 @@ public class CapricornAppConfiguration {
         [# th:each="tag : ${tags}" ]
             <div id="[(${tag})]">[(${tag})]</div>
         [/]
+
+        @Bean(name = "textTemplateEngine")
+        public TemplateEngine textTemplateEngine() {
+            TemplateEngine templateEngine = new TemplateEngine();
+            templateEngine.addTemplateResolver(textTemplateResolver());
+            return templateEngine;
+        }
+
+        private ITemplateResolver textTemplateResolver() {
+            ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+            templateResolver.setPrefix("/templates/manage/fragment/");
+            templateResolver.setSuffix(".txt");
+            //https://github.com/thymeleaf/thymeleaf/issues/395
+            templateResolver.setTemplateMode(TemplateMode.TEXT);
+            templateResolver.setCharacterEncoding("UTF8");
+            templateResolver.setCheckExistence(true);
+            templateResolver.setCacheable(false);
+            return templateResolver;
+        }
      */
-    @Bean(name = "textTemplateEngine")
-    public TemplateEngine textTemplateEngine() {
+    @Bean(name = "fragmentTemplateEngine")
+    public TemplateEngine fragmentTemplateEngine() {
         TemplateEngine templateEngine = new TemplateEngine();
-        templateEngine.addTemplateResolver(textTemplateResolver());
+        templateEngine.addTemplateResolver(fragmentTemplateResolver());
         return templateEngine;
     }
 
-    private ITemplateResolver textTemplateResolver() {
+    private ITemplateResolver fragmentTemplateResolver() {
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("/templates/manage/fragment/");
-        templateResolver.setSuffix(".txt");
-        templateResolver.setTemplateMode(TemplateMode.TEXT /* https://github.com/thymeleaf/thymeleaf/issues/395 */);
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode(TemplateMode.HTML);
         templateResolver.setCharacterEncoding("UTF8");
         templateResolver.setCheckExistence(true);
         templateResolver.setCacheable(false);

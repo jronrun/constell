@@ -19,21 +19,29 @@
     </thead>
     <tbody>
     <tr th:each="item: ${pageEl.resource}">
-        <td th:if="${not item.fragmentValue}" th:each="column: ${pageEl.columns}">
-            <th:block th:if="${defact.hasEditField}">
+        <td th:each="column: ${pageEl.columns}">
+
+            <th:block th:if="${!#maps.containsKey(item.fieldFragmentValue, column) && defact.hasEditField}">
                 <th:block th:if="${#strings.equals(column, defact.editField)}">
                     <a class="ui blue basic" style="cursor: pointer;" th:text="${item[column]}"
                        th:attr="data-edit-id=${item[defact.uniqueField]}">Edit</a>
                 </th:block>
-                <th:block th:if="${not #strings.equals(column, defact.editField)}" th:text="${item[column]}">TD Content
-                    A
+                <th:block th:if="${not #strings.equals(column, defact.editField)}" th:text="${item[column]}">
+                    TD Content A
                 </th:block>
             </th:block>
-            <th:block th:if="${!defact.hasEditField}" th:text="${item[column]}">TD Content 1</th:block>
+
+            <th:block th:if="${!#maps.containsKey(item.fieldFragmentValue, column) && !defact.hasEditField}"
+                      th:text="${item[column]}">
+                TD Content B
+            </th:block>
+
+            <th:block th:if="${#maps.containsKey(item.fieldFragmentValue, column)}"
+                      th:utext="${item.fieldFragmentValue.get(column)}">
+                TD Content C
+            </th:block>
         </td>
-        <td th:if="${item.fragmentValue}" th:utext="${item[column]}">
-            TD Content 2
-        </td>
+
         <td th:if="${defact.hasAction && defact.hasActionFragment}" th:utext="${defact.actionFragment}">Action
             Fragment
         </td>
