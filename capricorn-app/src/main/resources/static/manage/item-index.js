@@ -92,7 +92,7 @@ var index = {};
                         }
                     }).then(function (resp) {
                         swal(getMessage('render.alert.delete.title'), getMessage('render.alert.delete.text'), 'success');
-                        core.list.query();
+                        core.list.query({pageNo: 0});
                     }, function (dismiss) {
                         // dismiss can be 'cancel', 'overlay', 'close', and 'timer'
                         if (dismiss === 'cancel') {}
