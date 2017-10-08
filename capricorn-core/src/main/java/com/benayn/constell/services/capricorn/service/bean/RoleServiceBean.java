@@ -48,4 +48,9 @@ public class RoleServiceBean implements RoleService {
 
         return roleRepository.selectPageBy(example, condition.getPageNo(), condition.getPageSize());
     }
+
+    @Override
+    public int deleteById(Long entityId) {
+        return roleRepository.deleteById(entityId);
+    }
 }

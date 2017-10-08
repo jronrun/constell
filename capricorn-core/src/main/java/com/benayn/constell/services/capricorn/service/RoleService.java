@@ -9,4 +9,6 @@ public interface RoleService {
     Role selectById(long entityId);
 
     Page<Role> selectPageBy(RoleVo condition);
+
+    int deleteById(Long entityId);
 }

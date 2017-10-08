@@ -47,6 +47,10 @@ public abstract class BaseManageController<T extends Renderable> {
         return PAGE_EDIT;
     }
 
+    String getMessage(String code) {
+        return getMessage(code, null);
+    }
+
     String getMessage(String code, String defaultMessage, Object... args) {
         return viewObjectResolver.getMessage(code, defaultMessage, args);
     }

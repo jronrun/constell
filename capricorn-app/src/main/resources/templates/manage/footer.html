@@ -202,5 +202,27 @@
         </div>
     </div>
 
+    <script type="text/html" id="err_tmpl">
+        <div class="ui segment" style="border: none;">
+            <div class="ui special centered cards">
+                <div class="card" style="box-shadow:none; width:100%;">
+                    <div class="content">
+                        <div class="description" style="margin-bottom: 0.2em;"><%= item.error %></div>
+                        <div class="meta">
+                            <span class="date"><%= new Date(item.timestamp).fmt() %></span>
+                        </div>
+                        <div class="description"><%= item.exception %></div>
+                        <div class="description"><%= item.message %></div>
+                    </div>
+                    <div class="extra content">
+                        <a>
+                            <i class="warning red icon"></i>
+                            Http Status <%= item.status %>&nbsp;&nbsp;<%= item.path %>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </script>
 
 </div>

@@ -4,9 +4,11 @@ import static com.benayn.constell.services.capricorn.settings.constant.Capricorn
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.benayn.constell.service.server.respond.Message;
+import com.benayn.constell.service.server.respond.Responds;
 import com.benayn.constell.services.capricorn.service.RoleService;
 import com.benayn.constell.services.capricorn.viewobject.RoleVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,7 +57,11 @@ public class RoleController extends BaseManageController<RoleVo> {
 
     @DeleteMapping(value = "role/{entityId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> delete(@PathVariable("entityId") Long entityId) {
-        return null;
+        if (roleService.deleteById(entityId) > 0) {
+            return Responds.success(entityId);
+        }
+
+        return Responds.of(getMessage("render.record.none.exist"), HttpStatus.NO_CONTENT);
     }
 
 
