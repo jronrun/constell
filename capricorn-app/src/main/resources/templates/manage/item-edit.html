@@ -1,56 +1,57 @@
-<form xmlns:th="http://www.thymeleaf.org" class="ui form segment" style="border: none;">
-    <div class="two fields">
-        <div class="field">
-            <label>Name</label>
-            <input placeholder="First Name" name="name" type="text">
+<form xmlns:th="http://www.thymeleaf.org" th:with="groupNum=2" class="ui form segment" style="border: none;">
+
+    <!--/*/ <th:block th:each="el: ${editEl.hiddenGroup}"> /*/-->
+        <th:block th:switch="${el.tag.toString()}">
+            <th:block th:case="'INPUT'">
+                <input th:type="${el.type.toString().toLowerCase()}"
+                       type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
+                       th:placeholder="${el.placeholder}" th:class="${el.clazz}"
+                       th:attr="data-attrs=${el.attributes}"
+                       th:style="${el.style}" th:value="${el.value}"/>
+            </th:block>
+            <th:block th:case="*">
+                <input type="text" placeholder="Unsupported Hidden Tag Yet...">
+            </th:block>
+        </th:block>
+    <!--/*/ </th:block> /*/-->
+
+    <!--/*/ <th:block th:each="groupEl: ${editEl.wellGroup}"> /*/-->
+        <div class="two fields">
+            <!--/*/ <th:block th:each="el: ${editEl.wellGroup}"> /*/-->
+                <!--/*/ <th:block th:if="${(elStat.count > ((groupElStat.count - 1) * groupNum))
+                 && (elStat.count <= (groupElStat.count * groupNum))}"> /*/-->
+                    <div class="field" th:switch="${el.tag.toString()}">
+                        <th:block th:case="'INPUT'">
+                            <label th:if="${not el.hidden}" th:text="${el.label}" th:for="${el.id}">Name</label>
+                            <input th:type="${el.type.toString().toLowerCase()}"
+                                   type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
+                                   th:placeholder="${el.placeholder}" th:class="${el.clazz}"
+                                   th:attr="data-attrs=${el.attributes}"
+                                   th:style="${el.style}" th:value="${el.value}"/>
+                        </th:block>
+                        <th:block th:case="*">
+                            <input type="text" placeholder="Unsupported Well Element Yet...">
+                        </th:block>
+                    </div>
+                <!--/*/ </th:block> /*/-->
+            <!--/*/ </th:block> /*/-->
         </div>
-        <div class="field">
-            <label>Gender</label>
-            <div class="ui selection dropdown" tabindex="0">
-                <input name="gender" type="hidden" value="male">
-                <div class="text">Male</div>
-                <i class="dropdown icon"></i>
-                <div class="menu" tabindex="-1">
-                    <div class="item active selected" data-value="male">Male</div>
-                    <div class="item" data-value="female">Female</div>
-                </div>
-            </div>
+    <!--/*/ </th:block> /*/-->
+
+    <!--/*/ <th:block th:each="el: ${editEl.rowGroup}"> /*/-->
+        <div class="field" th:switch="${el.tag.toString()}">
+            <label th:if="${not el.hidden}" th:text="${el.label}" th:for="${el.id}">Name</label>
+            <th:block th:case="'TEXTAREA'">
+                <textarea th:type="${el.type.toString().toLowerCase()}"
+                       type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
+                       th:placeholder="${el.placeholder}" th:class="${el.clazz}"
+                       th:attr="data-attrs=${el.attributes}"
+                       th:style="${el.style}" th:value="${el.value}"></textarea>
+            </th:block>
+            <th:block th:case="*">
+                <input type="text" placeholder="Unsupported Row Element Yet...">
+            </th:block>
         </div>
-    </div>
-    <div class="field">
-        <label>Username</label>
-        <input placeholder="Username" name="username" type="text">
-    </div>
-    <div class="field">
-        <label>Password</label>
-        <input name="password" type="password">
-    </div>
-    <div class="inline fields">
-        <label for="colors">Favorite Colors</label>
-        <div class="field">
-            <div class="ui checkbox checked">
-                <input type="checkbox" name="colors[]" value="red" tabindex="0" class="hidden">
-                <label>Red</label>
-            </div>
-        </div>
-        <div class="field">
-            <div class="ui checkbox">
-                <input type="checkbox" name="colors[]" value="blue" tabindex="0" class="hidden">
-                <label>Blue</label>
-            </div>
-        </div>
-        <div class="field">
-            <div class="ui checkbox">
-                <input type="checkbox" name="colors[]" value="green" tabindex="0" class="hidden">
-                <label>Green</label>
-            </div>
-        </div>
-        <div class="field">
-            <div class="ui checkbox checked">
-                <input type="checkbox" name="colors[]" value="grey" tabindex="0" class="hidden">
-                <label>Grey</label>
-            </div>
-        </div>
-    </div>
+    <!--/*/ </th:block> /*/-->
 
 </form>

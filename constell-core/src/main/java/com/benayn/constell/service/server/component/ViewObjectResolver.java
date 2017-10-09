@@ -1,6 +1,7 @@
 package com.benayn.constell.service.server.component;
 
 import com.benayn.constell.service.server.repository.Page;
+import com.benayn.constell.service.server.respond.DefinedEditElement;
 import com.benayn.constell.service.server.respond.DefinedElement;
 import com.benayn.constell.service.server.respond.PageInfo;
 import com.benayn.constell.service.server.respond.Renderable;
@@ -11,7 +12,7 @@ public interface ViewObjectResolver {
 
     List<DefinedElement> getDefinedSearch(Class<? extends Renderable> viewObjectType, Object value);
 
-    List<DefinedElement> getDefinedEdit(Class<? extends Renderable> viewObjectType, Object value);
+    DefinedEditElement getDefinedEdit(Class<? extends Renderable> viewObjectType, Object value);
 
     Page<Renderable> getDefinedPage(Class<? extends Renderable> viewObjectType, Page<?> page);
 

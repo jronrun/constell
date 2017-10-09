@@ -3,6 +3,7 @@ package com.benayn.constell.service.server.component;
 import static com.benayn.constell.service.server.respond.DefineType.EDITABLE;
 import static com.benayn.constell.service.server.respond.DefineType.SEARCHABLE;
 import static com.benayn.constell.service.server.respond.TagName.INPUT;
+import static com.benayn.constell.service.server.respond.TagName.TEXTAREA;
 import static com.benayn.constell.service.server.respond.TagName.UNDEFINED;
 import static com.benayn.constell.service.util.LZString.encodes;
 import static com.google.common.base.Preconditions.checkArgument;
@@ -15,6 +16,7 @@ import com.benayn.constell.service.server.respond.Actionable;
 import com.benayn.constell.service.server.respond.DefineElement;
 import com.benayn.constell.service.server.respond.DefineType;
 import com.benayn.constell.service.server.respond.DefinedAction;
+import com.benayn.constell.service.server.respond.DefinedEditElement;
 import com.benayn.constell.service.server.respond.DefinedElement;
 import com.benayn.constell.service.server.respond.Editable;
 import com.benayn.constell.service.server.respond.InputType;
@@ -68,8 +70,26 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     }
 
     @Override
-    public List<DefinedElement> getDefinedEdit(Class<? extends Renderable> viewObjectType, Object value) {
-        return getDefinedElements(EDITABLE, viewObjectType, value);
+    public DefinedEditElement getDefinedEdit(Class<? extends Renderable> viewObjectType, Object value) {
+        DefinedEditElement defined = new DefinedEditElement();
+        List<DefinedElement> elements = getDefinedElements(EDITABLE, viewObjectType, value);
+
+        elements.forEach(element -> {
+            // hidden element
+            if (element.isHidden()) {
+                defined.addHiddenElement(element);
+            }
+            // row element
+            else if (TEXTAREA == element.getTag()) {
+                defined.addRowElement(element);
+            }
+            // well element
+            else {
+                defined.addWellElement(element);
+            }
+        });
+
+        return defined;
     }
 
     @Override
@@ -483,6 +503,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                         ? HIDDEN_STYLE : (element.getStyle() + HIDDEN_STYLE);
                     element.setStyle(aStyle);
                 }
+                element.setHidden(true);
             }
 
             //value

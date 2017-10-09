@@ -104,10 +104,11 @@ var index = {};
                     $.get(fmt(pageInfo.retrieve, itemId), function (data) {
                         $$('#edit-content').empty().html(data);
                         $(".ui.modal").modal({
+                            observeChanges: true,
                             closable: false,
                             transition: 'fade'
                             // blurring: true
-                        }).modal( "show");
+                        }).modal('refresh').modal( "show");
                     });
                 });
             }

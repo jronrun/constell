@@ -17,5 +17,6 @@ public class DefinedElement {
     private String attributes;
     private Object value;
     private boolean fragmentValue;
+    private boolean hidden;
 
 }
