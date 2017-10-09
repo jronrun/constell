@@ -48,7 +48,7 @@ public @interface Actionable {
     /**
      * Define Create Action By Fragment,
      * if set then above set {@link Actionable#create()} will be ignore.
-     * trigger create form just add data-new-item="1" to the element, eg: <a data-new-item="1">test</a>
+     * trigger create form just add data-edit-id="0" to the element, eg: <a data-edit-id="0">test</a>
      */
     String createFragment() default "";
 

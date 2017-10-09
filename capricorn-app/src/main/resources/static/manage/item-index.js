@@ -101,7 +101,14 @@ var index = {};
 
                 liveClk('[data-edit-id]', function (el) {
                     var itemId = parseInt($(el).data('editId'));
-                    alert(itemId);
+                    $.get(fmt(pageInfo.retrieve, itemId), function (data) {
+                        $$('#edit-content').empty().html(data);
+                        $(".ui.modal").modal({
+                            closable: false,
+                            transition: 'fade'
+                            // blurring: true
+                        }).modal( "show");
+                    });
                 });
             }
         },

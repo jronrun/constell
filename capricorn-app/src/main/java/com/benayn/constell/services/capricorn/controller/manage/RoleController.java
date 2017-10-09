@@ -5,6 +5,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.benayn.constell.service.server.respond.Message;
 import com.benayn.constell.service.server.respond.Responds;
+import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.service.RoleService;
 import com.benayn.constell.services.capricorn.viewobject.RoleVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,12 @@ public class RoleController extends BaseManageController<RoleVo> {
 
     @GetMapping(value = "role/{entityId}")
     public String retrieve(Model model, @PathVariable("entityId") Long entityId) {
-        return genericEdit(model, roleService.selectById(entityId));
+        Role item = null;
+        if (entityId > 0) {
+            item = roleService.selectById(entityId);
+        }
+
+        return genericEdit(model, item);
     }
 
     @PostMapping(value = "role", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
