@@ -100,15 +100,21 @@ var index = {};
                 });
 
                 liveClk('[data-edit-id]', function (el) {
-                    var itemId = parseInt($(el).data('editId'));
+                    var itemId = parseInt($(el).data('editId')), editId = '#edit-content';
                     $.get(fmt(pageInfo.retrieve, itemId), function (data) {
-                        $$('#edit-content').empty().html(data);
-                        $(".ui.modal").modal({
+                        var modalId = editId + ' .ui.modal';
+                        $(modalId).remove();
+                        $$(editId).html(data);
+
+                        $(modalId).modal({
                             observeChanges: true,
                             closable: false,
-                            transition: 'fade'
+                            transition: 'fade',
+                            onHidden: function () {
+                                $('.ui.modal').remove();
+                            }
                             // blurring: true
-                        }).modal('refresh').modal( "show");
+                        }).modal('show');
                     });
                 });
             }
