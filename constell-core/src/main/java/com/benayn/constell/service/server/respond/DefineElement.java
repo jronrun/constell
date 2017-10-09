@@ -59,7 +59,7 @@ public @interface DefineElement {
     String placeholder() default "";
 
     /**
-     * Element Attributes, eg: attributes = {"src=test,custom=custom"})
+     * Element Attributes, eg: attributes = {"src=test", "custom=custom"})
      */
     String[] attributes() default {};
 

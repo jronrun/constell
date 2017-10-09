@@ -384,8 +384,10 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 inputType = defineElement.type();
             }
 
-            checkArgument(tag == INPUT && InputType.UNDEFINED != inputType,
-                "undefined field input type %s.%s", voName, fieldName);
+            if (tag == INPUT) {
+                checkArgument(InputType.UNDEFINED != inputType,
+                    "undefined field input type %s.%s", voName, fieldName);
+            }
             element.setType(inputType);
 
 
