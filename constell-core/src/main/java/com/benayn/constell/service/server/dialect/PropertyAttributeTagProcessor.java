@@ -48,10 +48,15 @@ public class PropertyAttributeTagProcessor extends AbstractAttributeTagProcessor
         final IStandardExpression expression =
             parser.parseExpression(context, attributeValue);
 
-        //noinspection unchecked
-        List<Pair<String, String>> attributes = (List<Pair<String, String>>) expression.execute(context);
+        Object result = expression.execute(context);
+        if (null == result) {
+            return;
+        }
 
-        if (null == attributes || attributes.size() < 1) {
+        //noinspection unchecked
+        List<Pair<String, String>> attributes = (List<Pair<String, String>>) result;
+
+        if (attributes.size() < 1) {
             return;
         }
 
