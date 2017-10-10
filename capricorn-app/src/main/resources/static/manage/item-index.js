@@ -14,10 +14,7 @@ var index = {};
 
         index: {
             init: function () {
-                $$('[data-attrs]').each(function (idx, item) {
-                    $(item).attr(decodes($(item).data('attrs')));
-                    pageInfo = decodes($$('[data-page-info]').data('pageInfo'));
-                });
+                pageInfo = decodes($$('[data-page-info]').data('pageInfo'));
             }
         },
 

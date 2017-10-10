@@ -5,6 +5,7 @@ import static com.benayn.constell.services.capricorn.settings.constant.Capricorn
 import com.benayn.constell.service.server.annotation.EnableBenaynSwagger;
 import com.benayn.constell.service.server.component.ViewObjectResolver;
 import com.benayn.constell.service.server.component.ViewObjectResolverBean;
+import com.benayn.constell.service.server.dialect.StarsDialect;
 import com.benayn.constell.service.server.service.BenaynServiceInfo;
 import com.google.common.collect.Lists;
 import java.util.List;
@@ -49,6 +50,11 @@ public class CapricornAppConfiguration {
     @Bean(name="localeResolver")
     public LocaleResolver localeResolverBean() {
         return new CookieLocaleResolver();
+    }
+
+    @Bean
+    public StarsDialect starsDialect() {
+        return new StarsDialect();
     }
 
     @Configuration

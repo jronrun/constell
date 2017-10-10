@@ -1,5 +1,7 @@
 package com.benayn.constell.service.server.respond;
 
+import com.benayn.constell.service.common.Pair;
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -14,7 +16,7 @@ public class DefinedElement {
     private String style;
     private String label;
     private String placeholder;
-    private String attributes;
+    private List<Pair<String, String>> attributes;
     private Object value;
     private boolean fragmentValue;
     private boolean hidden;

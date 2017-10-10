@@ -1,4 +1,4 @@
-<div xmlns:th="http://www.thymeleaf.org" class="ui standard modal">
+<div xmlns:th="http://www.thymeleaf.org" xmlns:stars="http://www.benayn.org" class="ui standard modal">
     <!--<i class="close icon"></i>-->
     <div class="header" th:text="#{render.modal.edit.title}">Edit</div>
     <div class="content">
@@ -10,7 +10,7 @@
                         <input th:type="${el.type.toString().toLowerCase()}"
                                type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
                                th:placeholder="${el.placeholder}" th:class="${el.clazz}"
-                               th:attr="data-attrs=${el.attributes}"
+                               stars:attributes="${el.attributes}"
                                th:style="${el.style}" th:value="${el.value}"/>
                     </th:block>
                     <th:block th:case="*">
@@ -30,7 +30,7 @@
                                     <input th:type="${el.type.toString().toLowerCase()}"
                                            type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
                                            th:placeholder="${el.placeholder}" th:class="${el.clazz}"
-                                           th:attr="data-attrs=${el.attributes}"
+                                           stars:attributes="${el.attributes}"
                                            th:style="${el.style}" th:value="${el.value}"/>
                                 </th:block>
                                 <th:block th:case="*">
@@ -49,7 +49,7 @@
                         <textarea th:type="${el.type.toString().toLowerCase()}"
                                type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
                                th:placeholder="${el.placeholder}" th:class="${el.clazz}"
-                               th:attr="data-attrs=${el.attributes}"
+                               stars:attributes="${el.attributes}"
                                th:style="${el.style}" th:value="${el.value}"></textarea>
                     </th:block>
                     <th:block th:case="*">

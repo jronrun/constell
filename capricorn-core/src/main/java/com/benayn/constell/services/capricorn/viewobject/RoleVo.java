@@ -6,6 +6,7 @@ import com.benayn.constell.service.server.respond.Editable;
 import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
+import com.benayn.constell.service.server.respond.TagName;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -30,7 +31,7 @@ public class RoleVo extends Renderable {
     @DefineElement("render.role.label")
     @Searchable(like = true)
     @Listable
-    @Editable
+    @Editable(tag = TagName.TEXTAREA, attributes = {"rows=3"})
     private String label;
 
     @Listable("render.common.createTime")

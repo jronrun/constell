@@ -1,4 +1,5 @@
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:stars="http://www.benayn.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{manage/layout}">
 <head>
@@ -29,7 +30,7 @@
                                     <input th:type="${el.type.toString().toLowerCase()}"
                                            type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
                                            th:placeholder="${el.placeholder}" th:class="${el.clazz}"
-                                           th:attr="data-attrs=${el.attributes}"
+                                           stars:attributes="${el.attributes}"
                                            th:style="${el.style}" th:value="${el.value}"/>
                                 </div>
                                 <div th:case="*">

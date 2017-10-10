@@ -5,12 +5,12 @@ import static com.benayn.constell.service.server.respond.DefineType.SEARCHABLE;
 import static com.benayn.constell.service.server.respond.TagName.INPUT;
 import static com.benayn.constell.service.server.respond.TagName.TEXTAREA;
 import static com.benayn.constell.service.server.respond.TagName.UNDEFINED;
-import static com.benayn.constell.service.util.LZString.encodes;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.format;
 
+import com.benayn.constell.service.common.Pair;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.respond.Actionable;
 import com.benayn.constell.service.server.respond.DefineElement;
@@ -28,7 +28,6 @@ import com.benayn.constell.service.server.respond.TagName;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -36,7 +35,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -486,14 +484,17 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 attributes = defineElement.attributes();
             }
 
-            Map<String, String> attrMap = Maps.newHashMap();
+            List<Pair<String, String>> elementAttributes = Lists.newArrayList();
             if (attributes.length > 0) {
                 for (String attribute : attributes) {
-                    attrMap.putAll(Splitter.on(",").withKeyValueSeparator("=").split(attribute));
+                    List<String> attr = Splitter.on("=").splitToList(attribute);
+                    String attrName = attr.get(0);
+                    String attrValue = attr.size() > 1 ? attr.get(1) : null;
+                    elementAttributes.add(Pair.of(attrName, attrValue));
                 }
 
             }
-            element.setAttributes(encodes(attrMap));
+            element.setAttributes(elementAttributes);
 
             //editable hidden behave
             if (isEditable && editable.hidden()) {
