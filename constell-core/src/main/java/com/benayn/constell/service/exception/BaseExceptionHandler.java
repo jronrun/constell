@@ -39,8 +39,6 @@ public abstract class BaseExceptionHandler {
         ApiError responseBody = exceptionAttributes.getExceptionAttributes(
             ex, request, HttpStatus.CONFLICT, null);
 
-        log.info("- {}", responseBody);
-
         String message = responseBody.getMessage();
         if (!isNullOrEmpty(message) && message.startsWith("{") && message.endsWith("}")) {
             String code = CharMatcher.inRange('{', '}').trimFrom(message);
@@ -48,6 +46,9 @@ public abstract class BaseExceptionHandler {
 
             message = messageSource.getMessage(code, ex.getArgs(), locale);
         }
+
+        responseBody.setMessage(message);
+        log.info("- {}", responseBody);
 
         return Responds.failure(message);
     }
