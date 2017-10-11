@@ -32,25 +32,6 @@
     };
 })();
 
-$(function () {
-    $.ajaxSetup({
-        error: function (xhr, status, error) {
-            switch (xhr.status) {
-                case 400:
-                case 500:
-                    swal(
-                        'Oops... <i style="font-size:15px">Something went wrong!</i>',
-                        tmpl($('#err_tmpl').html(), {
-                            item: xhr.responseJSON
-                        }),
-                        'error'
-                    );
-                    break;
-            }
-        }
-    });
-});
-
 Date.prototype.fmt = function (fmt) {
     fmt = fmt || 'yyyy-MM-dd HH:mm:ss';
     var o = {
@@ -86,7 +67,7 @@ var mgr = {};
     function request(action, data, options) {
         options = options || {};
         return $.ajax($.extend({
-            type: options.type || 'GET',
+            type: 'GET',
             async: true,
             url: action,
             data: data || {},
@@ -96,17 +77,13 @@ var mgr = {};
         }, options));
     }
 
-    function put(action, data, options) {
-        return request(action, data, $.extend(options || {}, {
-            type: 'PUT'
-        }));
-    }
-
-    function del(action, data, options) {
-        return request(action, data, $.extend(options || {}, {
-            type: 'DELETE'
-        }));
-    }
+    $.each(['post', 'put', 'delete', 'get'], function (i, method) {
+        register[method] = function (action, data, options) {
+            return request(action, data, $.extend(options || {}, {
+                type: method
+            }));
+        }
+    });
 
     function jsonp(action, data, options) {
         return request(action, data, $.extend(options || {}, {
@@ -180,6 +157,13 @@ var mgr = {};
     $.extend(root, {
         $$: function (selector) {
             return $(pageable + ' ' + selector);
+        },
+
+        delay: function (func, wait) {
+            var args = Array.prototype.slice.call(arguments, 2);
+            return setTimeout((function() {
+                return func.apply(null, args);
+            }), wait);
         },
 
         getFormData: function (selector) {
@@ -353,14 +337,11 @@ var mgr = {};
         getURI: getURI,
         isMobile: isMobile,
         scrollable: scrollable,
+        failMsg: function (xhr, defaultMessage) {
+            return (xhr.responseJSON || {}).result || xhr.responseText || (defaultMessage || 'request fail');
+        },
         request: function (action, data, options) {
             return request(action, data, options);
-        },
-        put: function (action, data, options) {
-            return put(action, data, options);
-        },
-        del: function (action, data, options) {
-            return del(action, data, options);
         },
         jsonp: function (action, data, options) {
             return jsonp(action, data, options);
@@ -375,6 +356,35 @@ var mgr = {};
     });
 
 })(jQuery, window, mgr);
+
+$(function () {
+
+    function getTitleKey(code) {
+        return fmt('render.code.{0}.title', code);
+    }
+
+    function getTextKey(code) {
+        return fmt('render.code.{0}.text', code);
+    }
+
+    $(document).ajaxError(function( event, xhr, settings, thrownError ) {
+        switch (xhr.status) {
+            case 403:
+                swal(getMessage(getTitleKey(403)), getMessage(getTextKey(403)), 'warning');
+                break;
+            case 500:
+                swal(
+                    'Oops... <i style="font-size:15px">Something went wrong!</i>',
+                    tmpl($('#err_tmpl').html(), {
+                        item: xhr.responseJSON
+                    }),
+                    'error'
+                );
+                break;
+        }
+    });
+
+});
 
 /*
 'use strict';

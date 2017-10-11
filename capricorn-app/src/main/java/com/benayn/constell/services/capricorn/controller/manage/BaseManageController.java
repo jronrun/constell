@@ -43,6 +43,8 @@ public abstract class BaseManageController<T extends Renderable> {
     }
 
     String genericEdit(Model model, Object value) {
+        // 1 create, 2 edit
+        model.addAttribute("actionType", null == value ? 1 : 2);
         model.addAttribute(DEFINED_EDIT_KEY, viewObjectResolver.getDefinedEdit(voClass, value));
         return PAGE_EDIT;
     }

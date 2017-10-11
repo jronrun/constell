@@ -10,7 +10,7 @@ var index = {};
         });
     }
 
-    var pageInfo = null, core = {
+    var pageInfo = null, load = 'loading', formId = '#edit-form', editId = '#edit-content', core = {
 
         index: {
             init: function () {
@@ -21,7 +21,7 @@ var index = {};
         list: {
             init: function () {
                 liveClk('[data-page-no]', function (el) {
-                    var load = 'loading', pn = parseInt($(el).data('pageNo'));
+                    var pn = parseInt($(el).data('pageNo'));
                     if ($(el).hasClass(load)) {
                         return;
                     }
@@ -63,56 +63,108 @@ var index = {};
         edit: {
             init: function () {
                 liveClk('[data-delete-id]', function (el) {
-                    var itemId = parseInt($(el).data('deleteId'));
-                    swal({
-                        title: getMessage('render.confirm.title'),
-                        text: getMessage('render.confirm.delete.text'),
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#DD6B55",
-                        confirmButtonText: getMessage('render.confirm.delete.yes'),
-                        cancelButtonText: getMessage('render.confirm.cancel'),
-                        showLoaderOnConfirm: true,
-                        allowOutsideClick: false,
-                        preConfirm: function () {
-                            return new Promise(function (resolve, reject) {
-                                mgr.del(fmt(pageInfo.delete, itemId))
-                                .fail(function (xhr) {
-                                    var msg = (xhr.responseJSON || {}).result || xhr.responseText || 'request fail';
-                                    swal('Oops...', msg, 'warning');
-                                    reject();
-                                })
-                                .done(function (resp) {
-                                    resolve(resp);
-                                });
-                            })
-                        }
-                    }).then(function (resp) {
-                        swal(getMessage('render.alert.delete.title'), getMessage('render.alert.delete.text'), 'success');
-                        core.list.query({pageNo: 0});
-                    }, function (dismiss) {
-                        // dismiss can be 'cancel', 'overlay', 'close', and 'timer'
-                        if (dismiss === 'cancel') {}
-                    });
+                    core.edit.delete(el);
                 });
 
                 liveClk('[data-edit-id]', function (el) {
-                    var itemId = parseInt($(el).data('editId')), editId = '#edit-content';
-                    $.get(fmt(pageInfo.retrieve, itemId), function (data) {
-                        var modalId = editId + ' .ui.modal';
-                        $(modalId).remove();
-                        $$(editId).html(data);
+                    core.edit.retrieve(el);
+                });
 
-                        $(modalId).modal({
-                            observeChanges: true,
-                            closable: false,
-                            transition: 'fade',
-                            onHidden: function () {
-                                $('.ui.modal').remove();
-                            }
-                            // blurring: true
-                        }).modal('show');
+                liveClk('div[data-action-type]', function (el) {
+                    core.edit.save(el);
+                });
+            },
+
+            save: function (el) {
+                var actionType = parseInt($(el).data('actionType')),
+                    msgKey = 1 === actionType ? 'create' : 'update',
+                    action = 1 === actionType ? pageInfo.create : pageInfo.update,
+                    method = 1 === actionType ? 'post' : 'put';
+                if ($(el).hasClass(load)) {
+                    return;
+                }
+
+                $(el).addClass(load);
+                var data = getFormData(formId);
+
+                mgr[method](action, JSON.stringify(data))
+                    .fail(function (xhr) {
+                        $(el).removeClass(load);
+                        if (400 === xhr.status) {
+                            $.each(xhr.responseJSON.messages, function (k, v) {
+                                $('#field_' + k)
+                                    .addClass('error')
+                                    .append('<div class="ui basic red pointing prompt label transition visible">' + v + '</div>')
+                                    ;
+                            });
+                            //$(formId).form('clear')
+                        } else {
+                            swal('Oops...', mgr.failMsg(xhr), 'warning');
+                        }
+                    })
+                    .done(function (resp) {
+                        $(el).removeClass(load);
+                        swal(getMessage(fmt('render.alert.{0}.title', msgKey)),
+                            getMessage(fmt('render.alert.{0}.text', msgKey)), 'success');
+
+                        delay(function () {
+                            $('.ui.modal').modal('hide');
+                        }, 1100);
+                        core.list.query({pageNo: 0});
                     });
+            },
+
+            retrieve: function (el) {
+                var itemId = parseInt($(el).data('editId'));
+                $.get(fmt(pageInfo.retrieve, itemId), function (data) {
+                    var modalId = editId + ' .ui.modal';
+                    $(modalId).remove();
+                    $$(editId).html(data);
+
+                    $(modalId).modal({
+                        autofocus: false,
+                        observeChanges: true,
+                        closable: false,
+                        transition: 'fade',
+                        onHidden: function () {
+                            $('.ui.modal').remove();
+                        }
+                        // blurring: true
+                    }).modal('show');
+                });
+            },
+
+            delete: function (el) {
+                var itemId = parseInt($(el).data('deleteId'));
+                swal({
+                    title: getMessage('render.confirm.title'),
+                    text: getMessage('render.confirm.delete.text'),
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: getMessage('render.confirm.delete.yes'),
+                    cancelButtonText: getMessage('render.confirm.cancel'),
+                    showLoaderOnConfirm: true,
+                    allowOutsideClick: false,
+                    preConfirm: function () {
+                        return new Promise(function (resolve, reject) {
+                            mgr.delete(fmt(pageInfo.delete, itemId))
+                            .fail(function (xhr) {
+                                var msg = mgr.failMsg(xhr);
+                                swal('Oops...', msg, 'warning');
+                                reject();
+                            })
+                            .done(function (resp) {
+                                resolve(resp);
+                            });
+                        })
+                    }
+                }).then(function (resp) {
+                    swal(getMessage('render.alert.delete.title'), getMessage('render.alert.delete.text'), 'success');
+                    core.list.query({pageNo: 0});
+                }, function (dismiss) {
+                    // dismiss can be 'cancel', 'overlay', 'close', and 'timer'
+                    if (dismiss === 'cancel') {}
                 });
             }
         },

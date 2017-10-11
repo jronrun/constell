@@ -7,6 +7,7 @@ import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
 import com.benayn.constell.service.server.respond.TagName;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -22,12 +23,14 @@ public class RoleVo extends Renderable {
     @Editable(hidden = true)
     private Long id;
 
+    @NotNull
     @DefineElement("render.role.code")
     @Searchable(like = true)
     @Listable
     @Editable
     private String code;
 
+    @NotNull
     @DefineElement("render.role.label")
     @Searchable(like = true)
     @Listable

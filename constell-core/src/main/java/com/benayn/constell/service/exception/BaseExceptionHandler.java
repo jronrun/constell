@@ -1,6 +1,7 @@
 package com.benayn.constell.service.exception;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 import com.benayn.constell.service.exception.provider.ConstraintViolationProvider;
@@ -45,7 +46,7 @@ public abstract class BaseExceptionHandler {
     @ExceptionHandler({ AccessDeniedException.class })
     public ResponseEntity<ApiError> handleAccessDeniedException(
         AccessDeniedException ex, HttpServletRequest request) {
-        return doHandle(ex, request, BAD_REQUEST, null);
+        return doHandle(ex, request, FORBIDDEN, null);
     }
 
     /**

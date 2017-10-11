@@ -2,7 +2,7 @@
     <!--<i class="close icon"></i>-->
     <div class="header" th:text="#{render.modal.edit.title}">Edit</div>
     <div class="content">
-        <form th:with="groupNum=2" class="ui form segment" style="border: none;">
+        <form th:with="groupNum=2" class="ui form segment" style="border: none;" id="edit-form">
 
             <!--/*/ <th:block th:each="el: ${editEl.hiddenGroup}"> /*/-->
                 <th:block th:switch="${el.tag.toString()}">
@@ -24,7 +24,7 @@
                     <!--/*/ <th:block th:each="el: ${editEl.wellGroup}"> /*/-->
                         <!--/*/ <th:block th:if="${(elStat.count > ((groupElStat.count - 1) * groupNum))
                          && (elStat.count <= (groupElStat.count * groupNum))}"> /*/-->
-                            <div class="field" th:switch="${el.tag.toString()}">
+                            <div class="field" th:switch="${el.tag.toString()}" th:id="'field_' + ${el.name}">
                                 <th:block th:case="'INPUT'">
                                     <label th:if="${not el.hidden}" th:text="${el.label}" th:for="${el.id}">Name</label>
                                     <input th:type="${el.type.toString().toLowerCase()}"
@@ -43,14 +43,14 @@
             <!--/*/ </th:block> /*/-->
 
             <!--/*/ <th:block th:each="el: ${editEl.rowGroup}"> /*/-->
-                <div class="field" th:switch="${el.tag.toString()}">
+                <div class="field" th:switch="${el.tag.toString()}" th:id="'field_' + ${el.name}">
                     <label th:if="${not el.hidden}" th:text="${el.label}" th:for="${el.id}">Name</label>
                     <th:block th:case="'TEXTAREA'">
                         <textarea th:type="${el.type.toString().toLowerCase()}"
-                               type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
+                               th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
                                th:placeholder="${el.placeholder}" th:class="${el.clazz}"
                                stars:attributes="${el.attributes}"
-                               th:style="${el.style}" th:value="${el.value}"></textarea>
+                               th:style="${el.style}" th:text="${el.value}"></textarea>
                     </th:block>
                     <th:block th:case="*">
                         <input type="text" placeholder="Unsupported Row Element Yet...">
@@ -62,6 +62,6 @@
     </div>
     <div class="actions">
         <div class="ui button deny" th:text="#{render.modal.button.cancel}">Cancel</div>
-        <div class="ui green button deny" th:text="#{render.modal.button.submit}">Submit</div>
+        <div class="ui green button" th:attr="data-action-type=${actionType}" th:text="#{render.modal.button.submit}">Submit</div>
     </div>
 </div>
