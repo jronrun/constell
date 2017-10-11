@@ -142,12 +142,16 @@ var mgr = {};
 
     });
 
-    function getFormData(selector) {
+    function getFormData(selector, isGetEmptyField) {
         var indexed = {};
         $.map($(selector).serializeArray(), function (n) {
-            var val = n['value'];
-            if (val && val.length > 0) {
-                indexed[n['name']] = val;
+            var key = n['name'], val = n['value'];
+            if (isGetEmptyField) {
+                indexed[key] = val;
+            } else {
+                if (val && val.length > 0) {
+                    indexed[key] = val;
+                }
             }
         });
 
@@ -166,8 +170,8 @@ var mgr = {};
             }), wait);
         },
 
-        getFormData: function (selector) {
-            return getFormData(selector);
+        getFormData: function (selector, isGetEmptyField) {
+            return getFormData(selector, isGetEmptyField);
         },
 
         decodes: function (target) {

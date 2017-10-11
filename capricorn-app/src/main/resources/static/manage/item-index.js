@@ -137,6 +137,19 @@ var index = {};
                         transition: 'fade',
                         onHidden: function () {
                             $('.ui.modal').remove();
+                        },
+                        onVisible: function () {
+                            // when change disappear error
+                            var fields = {};
+                            $.each(getFormData(formId, true), function (k) {
+                                fields[k] = {};
+                            });
+
+                            $(formId).form({
+                                inline: true,
+                                on: 'blur',
+                                fields: fields
+                            });
                         }
                         // blurring: true
                     }).modal('show');
