@@ -84,6 +84,7 @@ var index = {};
                     return;
                 }
 
+                core.edit.formCleanError();
                 $(el).addClass(load);
                 var data = getFormData(formId);
 
@@ -94,10 +95,9 @@ var index = {};
                             $.each(xhr.responseJSON.messages, function (k, v) {
                                 $('#field_' + k)
                                     .addClass('error')
-                                    .append('<div class="ui basic red pointing prompt label transition visible">' + v + '</div>')
+                                    .append('<div data-error-tip="1" class="ui basic red pointing prompt label transition visible">' + v + '</div>')
                                     ;
                             });
-                            //$(formId).form('clear')
                         } else {
                             swal('Oops...', mgr.failMsg(xhr), 'warning');
                         }
@@ -112,6 +112,15 @@ var index = {};
                         }, 1100);
                         core.list.query({pageNo: 0});
                     });
+            },
+
+            formClear: function () {
+                $(formId).form('clear');
+            },
+
+            formCleanError: function () {
+                $(formId + ' .field').removeClass('error');
+                $('div[data-error-tip="1"]').remove();
             },
 
             retrieve: function (el) {

@@ -53,7 +53,7 @@ public class PropertyAttributeTagProcessor extends AbstractAttributeTagProcessor
             return;
         }
 
-        //noinspection unchecked
+        @SuppressWarnings("unchecked")
         List<Pair<String, String>> attributes = (List<Pair<String, String>>) result;
 
         if (attributes.size() < 1) {

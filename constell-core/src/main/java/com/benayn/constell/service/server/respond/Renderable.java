@@ -12,6 +12,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Supports <a href="http://beanvalidation.org/1.0/spec/">JSR 303: Bean Validation</a>
+ */
 @Getter
 @Setter
 @ToString
