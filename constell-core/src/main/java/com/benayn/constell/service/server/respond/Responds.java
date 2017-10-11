@@ -11,6 +11,10 @@ public class Responds {
         return of(body, HttpStatus.OK);
     }
 
+    public static <T> ResponseEntity<Message> failure(@Nullable T body) {
+        return of(body, HttpStatus.CONFLICT);
+    }
+
     public static ResponseEntity<Message> of(HttpStatus status) {
         return new ResponseEntity<>(status);
     }

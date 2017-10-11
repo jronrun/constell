@@ -342,7 +342,8 @@ var mgr = {};
         isMobile: isMobile,
         scrollable: scrollable,
         failMsg: function (xhr, defaultMessage) {
-            return (xhr.responseJSON || {}).result || xhr.responseText || (defaultMessage || 'request fail');
+            var resp = (xhr.responseJSON || {});
+            return resp.message || resp.result || xhr.responseText || (defaultMessage || 'request fail');
         },
         request: function (action, data, options) {
             return request(action, data, options);

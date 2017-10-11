@@ -27,7 +27,7 @@ public class RoleVo extends Renderable {
     private Long id;
 
     @NotNull
-    @Pattern(regexp = "^ROLE_", message = "{valid.role.code.pattern}")
+    @Pattern(regexp = "^ROLE_.*", message = "{valid.role.code.pattern}")
     @DefineElement("render.role.code")
     @Searchable(like = true)
     @Listable
