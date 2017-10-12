@@ -15,16 +15,16 @@ import lombok.ToString;
 @Setter
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Menuitem {
+public class MenuBread {
 
     private String id;
     private String title;
     private String action;
     private boolean authorized;
 
-    private List<Menuitem> children = Lists.newArrayList();
+    private List<MenuBread> children = Lists.newArrayList();
 
-    public Menuitem(String title, String action) {
+    public MenuBread(String title, String action) {
         this.title = title;
         this.action = action;
         this.id = Hashing.crc32().hashString(this.title, UTF_8).toString();

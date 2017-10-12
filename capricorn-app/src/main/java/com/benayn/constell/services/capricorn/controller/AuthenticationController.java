@@ -9,7 +9,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import com.benayn.constell.service.server.menu.AuthorityMenuitem;
 import com.benayn.constell.service.server.menu.MenuCapability;
-import com.benayn.constell.service.server.menu.Menuitem;
+import com.benayn.constell.service.server.menu.MenuBread;
 import com.benayn.constell.services.capricorn.repository.domain.Account;
 import com.benayn.constell.services.capricorn.request.RegisterRequest;
 import com.benayn.constell.services.capricorn.service.AccountService;
@@ -101,12 +101,12 @@ public class AuthenticationController {
     }
 
     @RequestMapping(value="/usermenu", method= GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Menuitem>> usermenu(){
+    public ResponseEntity<List<MenuBread>> usermenu(){
         return new ResponseEntity<>(userService.getUserMenus(24L, true), HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(value="/usermenuless", method= GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Menuitem>> usermenuless(){
+    public ResponseEntity<List<MenuBread>> usermenuless(){
         return new ResponseEntity<>(userService.getUserMenus(24L, false), HttpStatus.ACCEPTED);
     }
 

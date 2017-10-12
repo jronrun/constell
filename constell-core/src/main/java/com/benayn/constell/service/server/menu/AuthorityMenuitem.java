@@ -9,7 +9,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AuthorityMenuitem extends Menuitem {
+public class AuthorityMenuitem extends MenuBread {
 
     private String role;
     private String authority;
@@ -25,8 +25,8 @@ public class AuthorityMenuitem extends Menuitem {
         this.order = order;
     }
 
-    public Menuitem asMenu(boolean authorized) {
-        Menuitem menu = new Menuitem();
+    public MenuBread asMenu(boolean authorized) {
+        MenuBread menu = new MenuBread();
         menu.setId(getId());
         menu.setTitle(getTitle());
         menu.setAction(getAction());

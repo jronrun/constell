@@ -2,7 +2,7 @@ package com.benayn.constell.services.capricorn.service.bean;
 
 import com.benayn.constell.service.enums.Gender;
 import com.benayn.constell.service.server.menu.AuthorityMenuitem;
-import com.benayn.constell.service.server.menu.Menuitem;
+import com.benayn.constell.service.server.menu.MenuBread;
 import com.benayn.constell.services.capricorn.enums.AccountStatus;
 import com.benayn.constell.services.capricorn.repository.AccountRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Account;
@@ -44,8 +44,8 @@ public class AccountServiceBean implements AccountService {
 
     @Override
     @Cacheable("menus")
-    public List<Menuitem> getUserMenus(Long accountId, boolean fetchUnauthorized) {
-        List<Menuitem> menus = Lists.newArrayList();
+    public List<MenuBread> getUserMenus(Long accountId, boolean fetchUnauthorized) {
+        List<MenuBread> menus = Lists.newArrayList();
         List<AuthorityMenuitem> authorityMenus = authorityService.getAuthorityMenus();
 
         List<Role> roles = authorityService.getRolesByAccountId(accountId);
@@ -56,7 +56,7 @@ public class AccountServiceBean implements AccountService {
         return menus;
     }
 
-    private void authenticateMenu(List<Menuitem> menus, List<AuthorityMenuitem> authorityMenus,
+    private void authenticateMenu(List<MenuBread> menus, List<AuthorityMenuitem> authorityMenus,
         List<Role> roles, List<Permission> permissions, boolean fetchUnauthorized) {
 
         authorityMenus.forEach(authorityMenu -> {
@@ -84,9 +84,9 @@ public class AccountServiceBean implements AccountService {
         });
     }
 
-    private void asMenuitem(List<Menuitem> menus, AuthorityMenuitem authorityMenu,
+    private void asMenuitem(List<MenuBread> menus, AuthorityMenuitem authorityMenu,
         List<Role> roles, List<Permission> permissions, boolean fetchUnauthorized, boolean authorized) {
-        Menuitem menu = authorityMenu.asMenu(authorized);
+        MenuBread menu = authorityMenu.asMenu(authorized);
 
         if (authorityMenu.hasChild()) {
             authenticateMenu(menu.getChildren(),
