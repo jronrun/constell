@@ -1,16 +1,14 @@
-<div xmlns:th="http://www.thymeleaf.org"
-     th:if="${pageEl.extra.get('definedAction').hasCreate && !pageEl.extra.get('definedAction').hasCreateFragment}"
+<html xmlns:th="http://www.thymeleaf.org" th:with="defact=${pageEl.extra.get('definedAction')}">
+<div th:if="${defact.hasCreate && !defact.hasCreateFragment}"
      class="ui submit grey labeled icon button" data-replaceable="1" data-edit-id="0">
     <i class="plus icon"></i>
     <div th:text="#{render.action.create}">Create</div>
 </div>
-<th:block xmlns:th="http://www.thymeleaf.org"
-          th:if="${pageEl.extra.get('definedAction').hasCreate && pageEl.extra.get('definedAction').hasCreateFragment}"
+<th:block th:if="${defact.hasCreate && defact.hasCreateFragment}"
           th:attr="data-replaceable=1" th:utext="${defact.createFragmentValue}">
 </th:block>
 
-<table xmlns:th="http://www.thymeleaf.org" class="ui celled table"
-       th:with="defact=${pageEl.extra.get('definedAction')}" data-replaceable="1">
+<table class="ui celled table" data-replaceable="1">
     <thead>
     <tr>
         <th th:each="column: ${pageEl.columns}" th:text="${pageEl.titles.get(column)}">Header</th>
@@ -90,3 +88,4 @@
     </tr>
     </tfoot>
 </table>
+</html>
