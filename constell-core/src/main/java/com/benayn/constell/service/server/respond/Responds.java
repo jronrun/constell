@@ -8,28 +8,27 @@ import org.springframework.util.MultiValueMap;
 public class Responds {
 
     public static <T> ResponseEntity<Message> success(@Nullable T body) {
-        return of(body, HttpStatus.OK);
+        return of(HttpStatus.OK, body);
     }
 
-    public static <T> ResponseEntity<Message> failure(@Nullable T body) {
-        return of(body, HttpStatus.CONFLICT);
+    public static ResponseEntity<Message> failure(String message) {
+        return failure(HttpStatus.CONFLICT, message);
     }
 
-    public static ResponseEntity<Message> of(HttpStatus status) {
-        return new ResponseEntity<>(status);
+    public static ResponseEntity<Message> failure(HttpStatus status, String message) {
+        return of(status, null, message);
     }
 
-    public static <T> ResponseEntity<Message> of(@Nullable T body, HttpStatus status) {
-        return new ResponseEntity<>(Message.of(body), status);
+    public static <T> ResponseEntity<Message> of(HttpStatus status, @Nullable T body) {
+        return of(Message.of(status, body, null), null);
     }
 
-    public static ResponseEntity<Message> of(MultiValueMap<String, String> headers, HttpStatus status) {
-        return new ResponseEntity<>(headers, status);
+    public static <T> ResponseEntity<Message> of(HttpStatus status, @Nullable T body, String message) {
+        return of(Message.of(status, body, message), null);
     }
 
-    public static <T> ResponseEntity<Message> of(@Nullable T body,
-        @Nullable MultiValueMap<String, String> headers, HttpStatus status) {
-        return new ResponseEntity<>(Message.of(body), headers, status);
+    public static ResponseEntity<Message> of(Message message, @Nullable MultiValueMap<String, String> headers) {
+        return new ResponseEntity<>(message, headers, HttpStatus.valueOf(message.getCode()));
     }
 
 }

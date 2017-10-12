@@ -36,7 +36,7 @@ public abstract class BaseExceptionHandler {
 
     @ExceptionHandler({ ServiceException.class, BusinessException.class })
     public ResponseEntity<Message> handleServiceException(ServiceException ex, HttpServletRequest request) {
-        ApiError responseBody = exceptionAttributes.getExceptionAttributes(
+        Message responseBody = exceptionAttributes.getExceptionAttributes(
             ex, request, HttpStatus.CONFLICT, null);
 
         String message = responseBody.getMessage();
@@ -60,7 +60,7 @@ public abstract class BaseExceptionHandler {
      * @return
      */
     @ExceptionHandler({ MethodArgumentNotValidException.class })
-    public ResponseEntity<ApiError> handleMethodArgumentNotValid(
+    public ResponseEntity<Message> handleMethodArgumentNotValid(
         MethodArgumentNotValidException ex, HttpServletRequest request) {
         return doHandle(ex, request, BAD_REQUEST, new MethodArgumentNotValidProvider());
     }
@@ -72,7 +72,7 @@ public abstract class BaseExceptionHandler {
      * @return
      */
     @ExceptionHandler({ AccessDeniedException.class })
-    public ResponseEntity<ApiError> handleAccessDeniedException(
+    public ResponseEntity<Message> handleAccessDeniedException(
         AccessDeniedException ex, HttpServletRequest request) {
         return doHandle(ex, request, FORBIDDEN, null);
     }
@@ -84,7 +84,7 @@ public abstract class BaseExceptionHandler {
      * @return
      */
     @ExceptionHandler({ ConstraintViolationException.class })
-    public ResponseEntity<ApiError> handleConstraintViolation(
+    public ResponseEntity<Message> handleConstraintViolation(
         ConstraintViolationException ex, HttpServletRequest request) {
         return doHandle(ex, request, BAD_REQUEST, new ConstraintViolationProvider());
     }
@@ -98,29 +98,30 @@ public abstract class BaseExceptionHandler {
      * @return A ResponseEntity containing the Exception Attributes in the body and a HTTP status code 500.
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleException(Exception exception, HttpServletRequest request) {
+    public ResponseEntity<Message> handleException(Exception exception, HttpServletRequest request) {
 
         log.error("> handleException");
         log.error("- Exception: ", exception);
 
-        ApiError responseBody = exceptionAttributes.getExceptionAttributes(
+        Message responseBody = exceptionAttributes.getExceptionAttributes(
             exception, request, INTERNAL_SERVER_ERROR);
 
         log.error("< handleException");
-        return new ResponseEntity<>(responseBody, INTERNAL_SERVER_ERROR);
+        return Responds.of(responseBody, null);
     }
 
     /**
      *
      */
-    protected <T> ResponseEntity<ApiError> doHandle(Exception exception,
+    @SuppressWarnings("WeakerAccess")
+    protected <T> ResponseEntity<Message> doHandle(Exception exception,
         HttpServletRequest request, HttpStatus httpStatus, MessageProvider<T> messageProvider) {
-        ApiError responseBody = exceptionAttributes.getExceptionAttributes(
+        Message responseBody = exceptionAttributes.getExceptionAttributes(
             exception, request, httpStatus, messageProvider);
 
         log.warn("- {}", responseBody);
 
-        return new ResponseEntity<>(responseBody, httpStatus);
+        return Responds.of(responseBody, null);
     }
 
     @Autowired

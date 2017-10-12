@@ -134,7 +134,8 @@ public abstract class GenericRepository<T, E, M> implements Repository<T, E> {
      * Returns SqlSession
      * @return SqlSession
      */
-    private SqlSession getSqlSession() {
+    @SuppressWarnings("WeakerAccess")
+    protected SqlSession getSqlSession() {
         return sqlSession;
     }
 

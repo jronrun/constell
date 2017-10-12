@@ -72,7 +72,7 @@ public class RoleController extends BaseManageController<RoleVo> {
             return Responds.success(entityId);
         }
 
-        return Responds.of(getMessage("render.record.none.exist"), HttpStatus.NO_CONTENT);
+        return Responds.failure(HttpStatus.NO_CONTENT, getMessage("render.record.none.exist"));
     }
 
 

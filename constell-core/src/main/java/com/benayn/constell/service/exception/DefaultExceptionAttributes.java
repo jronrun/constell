@@ -2,6 +2,7 @@ package com.benayn.constell.service.exception;
 
 import static com.google.common.collect.Lists.newArrayList;
 
+import com.benayn.constell.service.server.respond.Message;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -16,11 +17,11 @@ import org.springframework.web.context.request.RequestAttributes;
  * {@link RequestAttributes}. This class uses the {@link Exception},
  * {@link HttpServletRequest}, and {@link HttpStatus} values.
  *
- * Provides a Map of the following attributes when they are available:
+ * Provides a {@link Message} of the following attributes when they are available:
  * <ul>
  * <li>timestamp - The time that the exception attributes were processed
- * <li>status - The HTTP status code in the response
- * <li>error - The HTTP status reason text
+ * <li>code - The HTTP status code in the response
+ * <li>reasonPhrase - The HTTP status reason text
  * <li>exception - The class name of the Exception
  * <li>message - The Exception message
  * <li>path - The HTTP request servlet path when the exception was thrown
@@ -32,16 +33,16 @@ import org.springframework.web.context.request.RequestAttributes;
 public class DefaultExceptionAttributes implements ExceptionAttributes {
 
     @Override
-    public ApiError getExceptionAttributes(Exception exception,
+    public Message getExceptionAttributes(Exception exception,
         HttpServletRequest httpRequest, HttpStatus httpStatus) {
         return getExceptionAttributes(exception, httpRequest, httpStatus, null);
     }
 
     @Override
-    public <T> ApiError getExceptionAttributes(Exception exception,
+    public <T> Message getExceptionAttributes(Exception exception,
         HttpServletRequest httpRequest, HttpStatus httpStatus, MessageProvider<T> messagesProvider) {
 
-        ApiError apiError = new ApiError();
+        Message apiError = new Message();
 
         apiError.setTimestamp(new Date());
         addHttpStatus(apiError, httpStatus);
@@ -57,9 +58,9 @@ public class DefaultExceptionAttributes implements ExceptionAttributes {
      * @param apiError The Entity of exception attributes.
      * @param httpStatus The HttpStatus enum value.
      */
-    private void addHttpStatus(ApiError apiError, HttpStatus httpStatus) {
-        apiError.setStatus(httpStatus.value());
-        apiError.setError(httpStatus.getReasonPhrase());
+    private void addHttpStatus(Message apiError, HttpStatus httpStatus) {
+        apiError.setCode(httpStatus.value());
+        apiError.setReasonPhrase(httpStatus.getReasonPhrase());
     }
 
     /**
@@ -68,7 +69,7 @@ public class DefaultExceptionAttributes implements ExceptionAttributes {
      * @param apiError The Entity of exception attributes.
      * @param exception The Exception object.
      */
-    private <T> void addExceptionDetail(ApiError apiError,
+    private <T> void addExceptionDetail(Message apiError,
         Exception exception, MessageProvider<T> messagesProvider) {
         apiError.setException(exception.getClass().getName());
 
@@ -86,7 +87,7 @@ public class DefaultExceptionAttributes implements ExceptionAttributes {
      * @param apiError The Entity of exception attributes.
      * @param httpRequest The HttpServletRequest object.
      */
-    private void addPath(ApiError apiError, HttpServletRequest httpRequest) {
+    private void addPath(Message apiError, HttpServletRequest httpRequest) {
         apiError.setPath(httpRequest.getServletPath());
     }
 
