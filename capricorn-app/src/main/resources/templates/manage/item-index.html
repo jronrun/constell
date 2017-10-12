@@ -1,5 +1,4 @@
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:stars="http://www.benayn.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{manage/layout}">
 <head>
@@ -27,16 +26,10 @@
                             <div th:if="${el.fragmentValue}" th:utext="${el.value}" class="field"></div>
                             <div th:if="${not el.fragmentValue}" th:switch="${el.tag.toString()}" class="field">
                                 <div th:case="'INPUT'" class="ui icon input">
-                                    <input th:type="${el.type.toString().toLowerCase()}"
-                                           type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
-                                           th:placeholder="${el.placeholder}" th:class="${el.clazz}"
-                                           stars:attributes="${el.attributes}"
-                                           th:style="${el.style}" th:value="${el.value}"/>
+                                    <input th:replace="element::input (${el})"/>
                                 </div>
                                 <div th:case="*">
-                                    <div class="ui icon input">
-                                        <input type="text" placeholder="Unsupported Yet...">
-                                    </div>
+                                    <div th:replace="element::unsupported (${el.tag.toString()})"></div>
                                 </div>
                                 <div class="field" th:remove="all">
                                     <div class="ui icon input">

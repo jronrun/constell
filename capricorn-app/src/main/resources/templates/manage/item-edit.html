@@ -1,4 +1,4 @@
-<div xmlns:th="http://www.thymeleaf.org" xmlns:stars="http://www.benayn.org" class="ui standard modal">
+<div xmlns:th="http://www.thymeleaf.org" class="ui standard modal">
     <!--<i class="close icon"></i>-->
     <div class="header" th:text="#{render.modal.edit.title}">Edit</div>
     <div class="content">
@@ -6,15 +6,9 @@
 
             <!--/*/ <th:block th:each="el: ${editEl.hiddenGroup}"> /*/-->
                 <th:block th:switch="${el.tag.toString()}">
-                    <th:block th:case="'INPUT'">
-                        <input th:type="${el.type.toString().toLowerCase()}"
-                               type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
-                               th:placeholder="${el.placeholder}" th:class="${el.clazz}"
-                               stars:attributes="${el.attributes}"
-                               th:style="${el.style}" th:value="${el.value}"/>
+                    <th:block th:case="'INPUT'" th:insert="element::input (${el})">
                     </th:block>
-                    <th:block th:case="*">
-                        <input type="text" placeholder="Unsupported Hidden Tag Yet...">
+                    <th:block th:case="*" th:insert="element::unsupported (${el.tag.toString()})">
                     </th:block>
                 </th:block>
             <!--/*/ </th:block> /*/-->
@@ -27,14 +21,9 @@
                             <div class="field" th:switch="${el.tag.toString()}" th:id="'field_' + ${el.name}">
                                 <th:block th:case="'INPUT'">
                                     <label th:if="${not el.hidden}" th:text="${el.label}" th:for="${el.id}">Name</label>
-                                    <input th:type="${el.type.toString().toLowerCase()}"
-                                           type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
-                                           th:placeholder="${el.placeholder}" th:class="${el.clazz}"
-                                           stars:attributes="${el.attributes}"
-                                           th:style="${el.style}" th:value="${el.value}"/>
+                                    <input th:replace="element::input (${el})"/>
                                 </th:block>
-                                <th:block th:case="*">
-                                    <input type="text" placeholder="Unsupported Well Element Yet...">
+                                <th:block th:case="*" th:insert="element::unsupported (${el.tag.toString()})">
                                 </th:block>
                             </div>
                         <!--/*/ </th:block> /*/-->
@@ -45,15 +34,9 @@
             <!--/*/ <th:block th:each="el: ${editEl.rowGroup}"> /*/-->
                 <div class="field" th:switch="${el.tag.toString()}" th:id="'field_' + ${el.name}">
                     <label th:if="${not el.hidden}" th:text="${el.label}" th:for="${el.id}">Name</label>
-                    <th:block th:case="'TEXTAREA'">
-                        <textarea th:type="${el.type.toString().toLowerCase()}"
-                               th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
-                               th:placeholder="${el.placeholder}" th:class="${el.clazz}"
-                               stars:attributes="${el.attributes}"
-                               th:style="${el.style}" th:text="${el.value}"></textarea>
+                    <th:block th:case="'TEXTAREA'" th:insert="element::textarea (${el})">
                     </th:block>
-                    <th:block th:case="*">
-                        <input type="text" placeholder="Unsupported Row Element Yet...">
+                    <th:block th:case="*" th:insert="element::unsupported (${el.tag.toString()})">
                     </th:block>
                 </div>
             <!--/*/ </th:block> /*/-->
