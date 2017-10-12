@@ -56,14 +56,12 @@ public class RoleController extends BaseManageController<RoleVo> {
 
     @PostMapping(value = "role", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> create(@Valid @RequestBody RoleVo entity) throws ServiceException {
-        roleService.save(entity);
-        return Responds.success(null);
+        return Responds.success(roleService.save(entity));
     }
 
     @PutMapping(value = "role", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> update(@Valid @RequestBody RoleVo entity) throws ServiceException {
-        roleService.save(entity);
-        return Responds.success(null);
+        return Responds.success(roleService.save(entity));
     }
 
     @DeleteMapping(value = "role/{entityId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)

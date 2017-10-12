@@ -2,34 +2,34 @@ package com.benayn.constell.services.capricorn.service.bean;
 
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.repository.Page;
-import com.benayn.constell.services.capricorn.repository.RoleRepository;
-import com.benayn.constell.services.capricorn.repository.domain.Role;
-import com.benayn.constell.services.capricorn.repository.domain.RoleExample;
-import com.benayn.constell.services.capricorn.repository.domain.RoleExample.Criteria;
-import com.benayn.constell.services.capricorn.service.RoleService;
-import com.benayn.constell.services.capricorn.viewobject.RoleVo;
+import com.benayn.constell.services.capricorn.repository.PermissionRepository;
+import com.benayn.constell.services.capricorn.repository.domain.Permission;
+import com.benayn.constell.services.capricorn.repository.domain.PermissionExample;
+import com.benayn.constell.services.capricorn.repository.domain.PermissionExample.Criteria;
+import com.benayn.constell.services.capricorn.service.PermissionService;
+import com.benayn.constell.services.capricorn.viewobject.PermissionVo;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RoleServiceBean implements RoleService {
+public class PermissionServiceBean implements PermissionService {
 
-    private RoleRepository roleRepository;
+    private PermissionRepository permissionRepository;
 
     @Autowired
-    public RoleServiceBean(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
+    public PermissionServiceBean(PermissionRepository permissionRepository) {
+        this.permissionRepository = permissionRepository;
     }
 
     @Override
-    public Role selectById(long entityId) {
-        return roleRepository.selectById(entityId);
+    public Permission selectById(long entityId) {
+        return permissionRepository.selectById(entityId);
     }
 
     @Override
-    public Page<Role> selectPageBy(RoleVo condition) {
-        RoleExample example = new RoleExample();
+    public Page<Permission> selectPageBy(PermissionVo condition) {
+        PermissionExample example = new PermissionExample();
         Criteria criteria = example.createCriteria();
 
         if (null != condition.getCode()) {
@@ -48,43 +48,38 @@ public class RoleServiceBean implements RoleService {
             }
         }
 
-        return roleRepository.selectPageBy(example, condition.getPageNo(), condition.getPageSize());
+        return permissionRepository.selectPageBy(example, condition.getPageNo(), condition.getPageSize());
     }
 
     @Override
-    public int deleteById(Long entityId) {
-        return roleRepository.deleteById(entityId);
-    }
-
-    @Override
-    public int save(RoleVo entity) throws ServiceException {
+    public int save(PermissionVo entity) throws ServiceException {
         Date now = new Date();
 
-        Role item = new Role();
+        Permission item = new Permission();
         item.setId(entity.getId());
         item.setCode(entity.getCode());
         item.setLabel(entity.getLabel());
         item.setLastModifyTime(now);
 
         int result;
-        Role savedRole = roleRepository.getByCode(item.getCode());
+        Permission savedPermission = permissionRepository.getByCode(item.getCode());
 
         // create
         if (null == item.getId()) {
-            if (null != savedRole) {
+            if (null != savedPermission) {
                 throw new ServiceException("{render.record.already.exist}", new Object[] {item.getCode()});
             }
 
             item.setCreateTime(now);
-            result = roleRepository.insertAll(item);
+            result = permissionRepository.insertAll(item);
         }
         // update
         else {
-            if (null != savedRole && savedRole.getId().longValue() != item.getId()) {
+            if (null != savedPermission && savedPermission.getId().longValue() != item.getId()) {
                 throw new ServiceException("{render.record.already.exist}", new Object[] {item.getCode()});
             }
 
-            result = roleRepository.updateById(item);
+            result = permissionRepository.updateById(item);
         }
 
         if (result < 1) {

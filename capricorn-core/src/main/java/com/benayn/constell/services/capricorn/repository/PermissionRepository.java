@@ -9,4 +9,6 @@ public interface PermissionRepository extends Repository<Permission, PermissionE
 
     List<Permission> getByRoleId(Long roleId);
 
+    Permission getByCode(String code);
+
 }

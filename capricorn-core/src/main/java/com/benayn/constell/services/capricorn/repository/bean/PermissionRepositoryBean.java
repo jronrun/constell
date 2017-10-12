@@ -46,4 +46,13 @@ public class PermissionRepositoryBean
 
         return selectBy(example);
     }
+
+    @Override
+    @Cacheable(sync = true)
+    public Permission getByCode(String code) {
+        PermissionExample example = new PermissionExample();
+        example.createCriteria().andCodeEqualTo(code);
+
+        return selectOne(example);
+    }
 }
