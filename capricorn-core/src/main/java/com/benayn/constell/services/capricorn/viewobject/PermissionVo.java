@@ -16,7 +16,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@Actionable(create = false, delete = false)
+@Actionable(createFragment = "permission_create", delete = false)
 public class PermissionVo extends Renderable {
 
     @DefineElement("render.common.id")

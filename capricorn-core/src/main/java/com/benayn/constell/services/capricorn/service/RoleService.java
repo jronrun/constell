@@ -11,7 +11,7 @@ public interface RoleService {
 
     Page<Role> selectPageBy(RoleVo condition);
 
-    int deleteById(Long entityId);
+    int deleteById(Long entityId) throws ServiceException;
 
     int save(RoleVo entity) throws ServiceException;
 }

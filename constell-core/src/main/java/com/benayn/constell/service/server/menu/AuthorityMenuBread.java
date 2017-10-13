@@ -9,15 +9,15 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AuthorityMenuitem extends MenuBread {
+public class AuthorityMenuBread extends MenuBread {
 
     private String role;
     private String authority;
     private String parent;
     private int order;
-    private List<AuthorityMenuitem> child = Lists.newArrayList();
+    private List<AuthorityMenuBread> child = Lists.newArrayList();
 
-    public AuthorityMenuitem(String title, String action, String role, String authority, String parent, int order) {
+    public AuthorityMenuBread(String title, String action, String role, String authority, String parent, int order) {
         super(title, action);
         this.role = role;
         this.authority = authority;

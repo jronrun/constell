@@ -13,4 +13,5 @@ public interface PermissionService {
 
     int save(PermissionVo entity) throws ServiceException;
 
+    int deleteById(Long entityId) throws ServiceException;
 }

@@ -10,6 +10,7 @@ import com.benayn.constell.services.capricorn.service.RoleService;
 import com.benayn.constell.services.capricorn.viewobject.RoleVo;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -52,8 +53,13 @@ public class RoleServiceBean implements RoleService {
     }
 
     @Override
-    public int deleteById(Long entityId) {
-        return roleRepository.deleteById(entityId);
+    public int deleteById(Long entityId) throws ServiceException {
+        int result = roleRepository.deleteById(entityId);
+        if (result < 1) {
+            throw new ServiceException(HttpStatus.NO_CONTENT.value(), "{render.record.none.exist}");
+        }
+
+        return result;
     }
 
     @Override

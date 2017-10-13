@@ -8,13 +8,24 @@ public class ServiceException extends Exception {
 
     @Getter
     private Object[] args = null;
+    @Getter
+    private int code;
 
     public ServiceException(final String message) {
-        super(message);
+        this(0, message);
     }
 
     public ServiceException(final String message, Object[] messageArgs) {
+        this(0, message, messageArgs);
+    }
+
+    public ServiceException(final int code, final String message) {
         super(message);
+    }
+
+    public ServiceException(final int code, final String message, Object[] messageArgs) {
+        super(message);
+        this.code = code;
         this.args = messageArgs;
     }
 

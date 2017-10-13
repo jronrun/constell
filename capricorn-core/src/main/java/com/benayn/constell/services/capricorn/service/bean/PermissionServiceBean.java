@@ -10,6 +10,7 @@ import com.benayn.constell.services.capricorn.service.PermissionService;
 import com.benayn.constell.services.capricorn.viewobject.PermissionVo;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -84,6 +85,16 @@ public class PermissionServiceBean implements PermissionService {
 
         if (result < 1) {
             throw new ServiceException("{render.record.save.fail}");
+        }
+
+        return result;
+    }
+
+    @Override
+    public int deleteById(Long entityId) throws ServiceException {
+        int result = permissionRepository.deleteById(entityId);
+        if (result < 1) {
+            throw new ServiceException(HttpStatus.NO_CONTENT.value(), "{render.record.none.exist}");
         }
 
         return result;

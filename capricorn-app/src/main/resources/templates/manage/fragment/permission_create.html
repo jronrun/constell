@@ -1,0 +1,13 @@
+<html xmlns:th="http://www.thymeleaf.org">
+    <div class="ui submit grey labeled icon button" data-replaceable="1" id="permission_create">
+        <i class="plus icon"></i>
+        <div>Create</div>
+    </div>
+    <script th:inline="javascript">
+        $(function () {
+            $('#permission_create').click(function () {
+                $(this).text('test' + new Date().getTime());
+            });
+        });
+    </script>
+</html>
