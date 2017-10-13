@@ -23,6 +23,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.CookieLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
@@ -39,7 +40,7 @@ public class CapricornAppConfiguration {
 
     @Bean
     public ViewObjectResolver viewObjectResolver(MessageSource messageSource) {
-        return new ViewObjectResolverBean(messageSource, fragmentTemplateEngine());
+        return new ViewObjectResolverBean(messageSource, fragmentTemplateEngine(messageSource));
     }
 
     @Bean
@@ -47,7 +48,7 @@ public class CapricornAppConfiguration {
         return new LocaleChangeInterceptor();
     }
 
-    @Bean(name="localeResolver")
+    @Bean(name = "localeResolver")
     public LocaleResolver localeResolverBean() {
         return new CookieLocaleResolver();
     }
@@ -76,11 +77,11 @@ public class CapricornAppConfiguration {
         public void addResourceHandlers(ResourceHandlerRegistry registry) {
             capricornConfigurer.getResources()
                 .forEach(resource -> {
-                    registry
-                        .addResourceHandler(resource.getHandler())
-                        .addResourceLocations(resource.getLocation());
-                }
-            );
+                        registry
+                            .addResourceHandler(resource.getHandler())
+                            .addResourceLocations(resource.getLocation());
+                    }
+                );
         }
 
     }
@@ -108,6 +109,7 @@ public class CapricornAppConfiguration {
         @Data
         @NoArgsConstructor
         static class StaticResourcesConfigurer {
+
             private String handler;
             private String location;
         }
@@ -151,9 +153,10 @@ public class CapricornAppConfiguration {
         }
      */
     @Bean(name = "fragmentTemplateEngine")
-    public TemplateEngine fragmentTemplateEngine() {
-        TemplateEngine templateEngine = new TemplateEngine();
+    public TemplateEngine fragmentTemplateEngine(MessageSource messageSource) {
+        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
         templateEngine.addTemplateResolver(fragmentTemplateResolver());
+        templateEngine.setMessageSource(messageSource);
         return templateEngine;
     }
 

@@ -555,7 +555,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     }
 
     private String getFragmentValue(Object value, String fragment) {
-        Context context = new Context();
+        Context context = new Context(LocaleContextHolder.getLocale());
         context.setVariable("item", value);
 
         return fragmentTemplateEngine.process(fragment, context);

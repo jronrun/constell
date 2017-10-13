@@ -48,7 +48,6 @@ public class PermissionRepositoryBean
     }
 
     @Override
-    @Cacheable(sync = true)
     public Permission getByCode(String code) {
         PermissionExample example = new PermissionExample();
         example.createCriteria().andCodeEqualTo(code);

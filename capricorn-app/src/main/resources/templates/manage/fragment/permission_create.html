@@ -1,12 +1,21 @@
 <html xmlns:th="http://www.thymeleaf.org">
-    <div class="ui submit grey labeled icon button" data-replaceable="1" id="permission_create">
+    <div class="ui submit grey labeled icon button"
+         data-eff="fade up"
+         th:attr="data-title=#{render.permission.create.tooltip.title},data-content=#{render.permission.create.tooltip.content}"
+         data-replaceable="1" data-permission-create="1">
         <i class="plus icon"></i>
         <div>Create</div>
     </div>
     <script th:inline="javascript">
         $(function () {
-            $('#permission_create').click(function () {
-                $(this).text('test' + new Date().getTime());
+            var selector = '[data-permission-create]'; $(selector).popup();
+            index.register(selector, function (pi, el) {
+                if (mgr.loading(el)) {
+                    mgr.post(pi.create).done(function () {
+                        mgr.unloading(el);
+                        index.reload();
+                    });
+                }
             });
         });
     </script>

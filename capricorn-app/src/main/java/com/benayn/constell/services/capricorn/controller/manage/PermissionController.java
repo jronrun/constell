@@ -38,19 +38,19 @@ public class PermissionController extends BaseManageController<PermissionVo> {
     }
 
     @MenuCapability(value = Menus.PERMISSION_MANAGE, parent = Menus.AUTHORIZATION)
-    @PreAuthorize(Authorities.PERMISSION_INDEX)
+//    @PreAuthorize(Authorities.PERMISSION_INDEX)
     @GetMapping("permission/index")
     public String index(Model model) {
         return genericIndex(model);
     }
 
-    @PreAuthorize(Authorities.PERMISSION_INDEX)
+//    @PreAuthorize(Authorities.PERMISSION_INDEX)
     @GetMapping("permissions")
     public String permissions(Model model, PermissionVo condition) {
         return genericList(model, permissionService.selectPageBy(condition));
     }
 
-    @PreAuthorize(Authorities.PERMISSION_RETRIEVE)
+//    @PreAuthorize(Authorities.PERMISSION_RETRIEVE)
     @GetMapping(value = "permission/{entityId}")
     public String retrieve(Model model, @PathVariable("entityId") Long entityId) {
         Permission item = null;
@@ -61,19 +61,19 @@ public class PermissionController extends BaseManageController<PermissionVo> {
         return genericEdit(model, item);
     }
 
-    @PreAuthorize(Authorities.PERMISSION_CREATE)
+//    @PreAuthorize(Authorities.PERMISSION_CREATE)
     @PostMapping(value = "permission", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> create() throws ServiceException {
         return Responds.success(permissionService.saveFromAuthorities());
     }
 
-    @PreAuthorize(Authorities.PERMISSION_UPDATE)
+//    @PreAuthorize(Authorities.PERMISSION_UPDATE)
     @PutMapping(value = "permission", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> update(@Valid @RequestBody PermissionVo entity) throws ServiceException {
         return Responds.success(permissionService.save(entity));
     }
 
-    @PreAuthorize(Authorities.PERMISSION_DELETE)
+//    @PreAuthorize(Authorities.PERMISSION_DELETE)
     @DeleteMapping(value = "permission/{entityId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> delete(@PathVariable("entityId") Long entityId) throws ServiceException {
         return Responds.success(permissionService.deleteById(entityId));

@@ -3,14 +3,14 @@
 var index = {};
 (function ($, root, register) {
 
-    function liveClk(selector, callback) {
-        $('body').on('click', selector, function (evt) {
+    function liveClk(selector, callback, event) {
+        $('body').on(event || 'click', selector, function (evt) {
             var el = evt.currentTarget;
             callback && callback(el, evt);
         });
     }
 
-    var pageInfo = null, load = 'loading', formId = '#edit-form', editId = '#edit-content', core = {
+    var pageInfo = null, formId = '#edit-form', editId = '#edit-content', core = {
 
         index: {
             init: function () {
@@ -22,15 +22,13 @@ var index = {};
             init: function () {
                 liveClk('[data-page-no]', function (el) {
                     var pn = parseInt($(el).data('pageNo'));
-                    if ($(el).hasClass(load)) {
+                    if (!mgr.loading(el)) {
                         return;
                     }
-
-                    $(el).addClass(load);
                     core.list.query($.extend({
                         pageNo: pn
                     }, getFormData('#form-search')), function () {
-                        $(el).removeClass(load);
+                        mgr.unloading(el);
                     });
                 });
 
@@ -80,17 +78,16 @@ var index = {};
                     msgKey = 1 === actionType ? 'create' : 'update',
                     action = 1 === actionType ? pageInfo.create : pageInfo.update,
                     method = 1 === actionType ? 'post' : 'put';
-                if ($(el).hasClass(load)) {
+                if (!mgr.loading(el)) {
                     return;
                 }
 
                 core.edit.formCleanError();
-                $(el).addClass(load);
                 var data = getFormData(formId);
 
                 mgr[method](action, JSON.stringify(data))
                     .fail(function (xhr) {
-                        $(el).removeClass(load);
+                        mgr.unloading(el);
                         if (400 === xhr.status) {
                             $.each(xhr.responseJSON.messages, function (k, v) {
                                 $('#field_' + k)
@@ -103,7 +100,7 @@ var index = {};
                         }
                     })
                     .done(function (resp) {
-                        $(el).removeClass(load);
+                        mgr.unloading(el);
                         swal(getMessage(fmt('render.alert.{0}.title', msgKey)),
                             getMessage(fmt('render.alert.{0}.text', msgKey)), 'success');
 
@@ -198,7 +195,29 @@ var index = {};
         }
     };
 
-    $.extend(register, {});
+    var regs = {};
+    function reg(selector, handle, event) {
+        event = event || 'click';
+        var selectorHandle = regs[selector], eventHandle = (selectorHandle || {})[event];
+        if (!selectorHandle && !eventHandle) {
+            var aSelectorHandle = {};
+            aSelectorHandle[event] = handle;
+            regs[selector] = aSelectorHandle;
+
+            liveClk(selector, function (el, evt) {
+                handle(pageInfo, el, evt);
+            }, event);
+        }
+    }
+
+    $.extend(register, {
+        reload: function () {
+            core.list.query({pageNo: 0});
+        },
+        register: function (selector, handle, event) {
+            return reg(selector, handle, event);
+        }
+    });
 
     $(function () {
         core.initialize();

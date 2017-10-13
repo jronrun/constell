@@ -38,19 +38,19 @@ public class RoleController extends BaseManageController<RoleVo> {
     }
 
     @MenuCapability(value = Menus.ROLE_MANAGE, parent = Menus.AUTHORIZATION)
-    @PreAuthorize(Authorities.ROLE_INDEX)
+//    @PreAuthorize(Authorities.ROLE_INDEX)
     @GetMapping("role/index")
     public String index(Model model) {
         return genericIndex(model);
     }
 
-    @PreAuthorize(Authorities.ROLE_INDEX)
+//    @PreAuthorize(Authorities.ROLE_INDEX)
     @GetMapping("roles")
     public String roles(Model model, RoleVo condition) {
         return genericList(model, roleService.selectPageBy(condition));
     }
 
-    @PreAuthorize(Authorities.ROLE_RETRIEVE)
+//    @PreAuthorize(Authorities.ROLE_RETRIEVE)
     @GetMapping(value = "role/{entityId}")
     public String retrieve(Model model, @PathVariable("entityId") Long entityId) {
         Role item = null;
@@ -61,19 +61,19 @@ public class RoleController extends BaseManageController<RoleVo> {
         return genericEdit(model, item);
     }
 
-    @PreAuthorize(Authorities.ROLE_CREATE)
+//    @PreAuthorize(Authorities.ROLE_CREATE)
     @PostMapping(value = "role", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> create(@Valid @RequestBody RoleVo entity) throws ServiceException {
         return Responds.success(roleService.save(entity));
     }
 
-    @PreAuthorize(Authorities.ROLE_UPDATE)
+//    @PreAuthorize(Authorities.ROLE_UPDATE)
     @PutMapping(value = "role", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> update(@Valid @RequestBody RoleVo entity) throws ServiceException {
         return Responds.success(roleService.save(entity));
     }
 
-    @PreAuthorize(Authorities.ROLE_DELETE)
+//    @PreAuthorize(Authorities.ROLE_DELETE)
     @DeleteMapping(value = "role/{entityId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> delete(@PathVariable("entityId") Long entityId) throws ServiceException {
         return Responds.success(roleService.deleteById(entityId));

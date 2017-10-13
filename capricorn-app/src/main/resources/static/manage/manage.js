@@ -204,6 +204,20 @@ var mgr = {};
         return JSON.parse(LZString.decompressFromEncodedURIComponent(target));
     }
 
+    var load = 'loading';
+    function loading(selector, clazz) {
+        if ($(selector).hasClass(clazz || load)) {
+            return false;
+        }
+
+        $(selector).addClass(clazz || load);
+        return true;
+    }
+
+    function unloading(selector, clazz) {
+        $(selector).removeClass(clazz || load);
+    }
+
     function scrollable(selector, options) {
         $(selector || 'body').niceScroll($.extend({
             cursorcolor: 'grey',
@@ -353,6 +367,12 @@ var mgr = {};
         },
         script: function (action, callback) {
             return script(action, callback)
+        },
+        loading: function (selector, clazz) {
+            return loading(selector, clazz);
+        },
+        unloading: function (selector, clazz) {
+            unloading(selector);
         }
     });
 
