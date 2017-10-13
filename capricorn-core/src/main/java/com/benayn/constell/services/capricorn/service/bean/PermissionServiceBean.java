@@ -1,8 +1,8 @@
 package com.benayn.constell.services.capricorn.service.bean;
 
-import static com.benayn.constell.service.util.Assets.checkRecordAlreadyExist;
+import static com.benayn.constell.service.util.Assets.checkRecordDeleted;
 import static com.benayn.constell.service.util.Assets.checkRecordNoneExist;
-import static com.benayn.constell.service.util.Assets.checkRecordNoneSaved;
+import static com.benayn.constell.service.util.Assets.checkRecordSaved;
 
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.repository.Page;
@@ -104,23 +104,23 @@ public class PermissionServiceBean implements PermissionService {
 
         // create
         if (null == item.getId()) {
-            checkRecordAlreadyExist(null != savedPermission, item.getCode());
+            checkRecordNoneExist(null == savedPermission, item.getCode());
 
             item.setCreateTime(now);
             result = permissionRepository.insertAll(item);
         }
         // update
         else {
-            checkRecordAlreadyExist(null != savedPermission
-                && savedPermission.getId().longValue() != item.getId(), item.getCode());
+            checkRecordNoneExist(null == savedPermission
+                || savedPermission.getId().longValue() == item.getId(), item.getCode());
             result = permissionRepository.updateById(item);
         }
 
-        return checkRecordNoneSaved(result);
+        return checkRecordSaved(result);
     }
 
     @Override
     public int deleteById(Long entityId) throws ServiceException {
-        return checkRecordNoneExist(permissionRepository.deleteById(entityId));
+        return checkRecordDeleted(permissionRepository.deleteById(entityId));
     }
 }

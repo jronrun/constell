@@ -1,8 +1,8 @@
 package com.benayn.constell.services.capricorn.service.bean;
 
-import static com.benayn.constell.service.util.Assets.checkRecordAlreadyExist;
+import static com.benayn.constell.service.util.Assets.checkRecordDeleted;
 import static com.benayn.constell.service.util.Assets.checkRecordNoneExist;
-import static com.benayn.constell.service.util.Assets.checkRecordNoneSaved;
+import static com.benayn.constell.service.util.Assets.checkRecordSaved;
 
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.repository.Page;
@@ -57,7 +57,7 @@ public class RoleServiceBean implements RoleService {
 
     @Override
     public int deleteById(Long entityId) throws ServiceException {
-        return checkRecordNoneExist(roleRepository.deleteById(entityId));
+        return checkRecordDeleted(roleRepository.deleteById(entityId));
     }
 
     @Override
@@ -75,18 +75,18 @@ public class RoleServiceBean implements RoleService {
 
         // create
         if (null == item.getId()) {
-            checkRecordAlreadyExist(null != savedRole, item.getCode());
+            checkRecordNoneExist(null == savedRole, item.getCode());
 
             item.setCreateTime(now);
             result = roleRepository.insertAll(item);
         }
         // update
         else {
-            checkRecordAlreadyExist(null != savedRole
-                && savedRole.getId().longValue() != item.getId(), item.getCode());
+            checkRecordNoneExist(null == savedRole
+                || savedRole.getId().longValue() == item.getId(), item.getCode());
             result = roleRepository.updateById(item);
         }
 
-        return checkRecordNoneSaved(result);
+        return checkRecordSaved(result);
     }
 }
