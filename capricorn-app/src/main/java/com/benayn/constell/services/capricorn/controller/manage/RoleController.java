@@ -9,7 +9,7 @@ import com.benayn.constell.service.server.respond.Message;
 import com.benayn.constell.service.server.respond.Responds;
 import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.service.RoleService;
-import com.benayn.constell.services.capricorn.settings.constant.Authorities;
+import com.benayn.constell.services.capricorn.config.Authorities;
 import com.benayn.constell.services.capricorn.settings.constant.Menus;
 import com.benayn.constell.services.capricorn.viewobject.RoleVo;
 import javax.validation.Valid;

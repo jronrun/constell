@@ -6,7 +6,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import com.benayn.constell.service.server.menu.AuthorityMenuBread;
 import com.benayn.constell.service.server.menu.MenuCapability;
 import com.benayn.constell.services.capricorn.service.AuthorityService;
-import com.benayn.constell.services.capricorn.settings.constant.Authorities;
+import com.benayn.constell.services.capricorn.config.Authorities;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;

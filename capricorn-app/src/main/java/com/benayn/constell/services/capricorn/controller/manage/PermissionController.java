@@ -7,9 +7,9 @@ import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.menu.MenuCapability;
 import com.benayn.constell.service.server.respond.Message;
 import com.benayn.constell.service.server.respond.Responds;
+import com.benayn.constell.services.capricorn.config.Authorities;
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
 import com.benayn.constell.services.capricorn.service.PermissionService;
-import com.benayn.constell.services.capricorn.settings.constant.Authorities;
 import com.benayn.constell.services.capricorn.settings.constant.Menus;
 import com.benayn.constell.services.capricorn.viewobject.PermissionVo;
 import javax.validation.Valid;
@@ -63,8 +63,8 @@ public class PermissionController extends BaseManageController<PermissionVo> {
 
     @PreAuthorize(Authorities.PERMISSION_CREATE)
     @PostMapping(value = "permission", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Message> create(@Valid @RequestBody PermissionVo entity) throws ServiceException {
-        return null;
+    public ResponseEntity<Message> create() throws ServiceException {
+        return Responds.success(permissionService.saveFromAuthorities());
     }
 
     @PreAuthorize(Authorities.PERMISSION_UPDATE)

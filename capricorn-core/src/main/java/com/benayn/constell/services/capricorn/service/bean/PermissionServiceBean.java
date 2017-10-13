@@ -2,13 +2,20 @@ package com.benayn.constell.services.capricorn.service.bean;
 
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.repository.Page;
+import com.benayn.constell.services.capricorn.config.Authorities;
 import com.benayn.constell.services.capricorn.repository.PermissionRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
 import com.benayn.constell.services.capricorn.repository.domain.PermissionExample;
 import com.benayn.constell.services.capricorn.repository.domain.PermissionExample.Criteria;
 import com.benayn.constell.services.capricorn.service.PermissionService;
 import com.benayn.constell.services.capricorn.viewobject.PermissionVo;
+import com.google.common.base.Ascii;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -50,6 +57,45 @@ public class PermissionServiceBean implements PermissionService {
         }
 
         return permissionRepository.selectPageBy(example, condition.getPageNo(), condition.getPageSize());
+    }
+
+    public static void main(String[] args) {
+        String target = "ROLE_INDEX";
+        List<String> labels = Splitter.on("_").splitToList(target);
+        labels.forEach(label -> {
+            System.out.println(Ascii.toUpperCase(label.charAt(0)) + Ascii.toLowerCase(label.substring(1)));
+        });
+
+        System.out.println();
+
+    }
+
+    @Override
+    public boolean saveFromAuthorities() {
+        Arrays
+            .stream(Authorities.class.getDeclaredFields())
+            .forEach(field -> {
+                String code = field.getName();
+                if (null == permissionRepository.getByCode(code)) {
+                    Date now = new Date();
+                    Permission permission = new Permission();
+                    permission.setCode(code);
+                    permission.setLabel(asLabel(code));
+                    permission.setCreateTime(now);
+                    permission.setLastModifyTime(now);
+
+                    permissionRepository.insertAll(permission);
+                }
+            });
+
+        return true;
+    }
+
+    private String asLabel(String code) {
+        return Joiner.on(" ").join(
+            Splitter.on("_").splitToList(code).stream()
+            .map(label -> Ascii.toUpperCase(label.charAt(0)) + Ascii.toLowerCase(label.substring(1)))
+            .collect(Collectors.toList()));
     }
 
     @Override

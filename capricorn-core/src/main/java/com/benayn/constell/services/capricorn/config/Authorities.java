@@ -1,4 +1,4 @@
-package com.benayn.constell.services.capricorn.settings.constant;
+package com.benayn.constell.services.capricorn.config;
 
 public class Authorities {
 
