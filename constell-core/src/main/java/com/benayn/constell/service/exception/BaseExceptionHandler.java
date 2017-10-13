@@ -36,8 +36,16 @@ public abstract class BaseExceptionHandler {
 
     @ExceptionHandler({ ServiceException.class, BusinessException.class })
     public ResponseEntity<Message> handleServiceException(ServiceException ex, HttpServletRequest request) {
+        HttpStatus httpStatus = HttpStatus.CONFLICT;
+
+        if (ex.getCode() > 0) {
+            try {
+                httpStatus = HttpStatus.valueOf(ex.getCode());
+            } catch (IllegalArgumentException ignored) { /**/ }
+        }
+
         Message responseBody = exceptionAttributes.getExceptionAttributes(
-            ex, request, HttpStatus.CONFLICT, null);
+            ex, request, httpStatus, null);
 
         String message = responseBody.getMessage();
         if (!isNullOrEmpty(message) && message.startsWith("{") && message.endsWith("}")) {
