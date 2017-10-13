@@ -14,7 +14,6 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -57,17 +56,6 @@ public class PermissionServiceBean implements PermissionService {
         }
 
         return permissionRepository.selectPageBy(example, condition.getPageNo(), condition.getPageSize());
-    }
-
-    public static void main(String[] args) {
-        String target = "ROLE_INDEX";
-        List<String> labels = Splitter.on("_").splitToList(target);
-        labels.forEach(label -> {
-            System.out.println(Ascii.toUpperCase(label.charAt(0)) + Ascii.toLowerCase(label.substring(1)));
-        });
-
-        System.out.println();
-
     }
 
     @Override
