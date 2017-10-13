@@ -106,7 +106,7 @@ var index = {};
 
                         delay(function () {
                             $('.ui.modal').modal('hide');
-                        }, 1100);
+                        }, 1000);
                         core.list.query({pageNo: 0});
                     });
             },

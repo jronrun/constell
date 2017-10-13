@@ -1,5 +1,9 @@
 package com.benayn.constell.services.capricorn.service.bean;
 
+import static com.benayn.constell.service.util.Assets.checkRecordAlreadyExist;
+import static com.benayn.constell.service.util.Assets.checkRecordNoneExist;
+import static com.benayn.constell.service.util.Assets.checkRecordNoneSaved;
+
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.services.capricorn.config.Authorities;
@@ -16,7 +20,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -101,36 +104,23 @@ public class PermissionServiceBean implements PermissionService {
 
         // create
         if (null == item.getId()) {
-            if (null != savedPermission) {
-                throw new ServiceException("{render.record.already.exist}", new Object[] {item.getCode()});
-            }
+            checkRecordAlreadyExist(null != savedPermission, item.getCode());
 
             item.setCreateTime(now);
             result = permissionRepository.insertAll(item);
         }
         // update
         else {
-            if (null != savedPermission && savedPermission.getId().longValue() != item.getId()) {
-                throw new ServiceException("{render.record.already.exist}", new Object[] {item.getCode()});
-            }
-
+            checkRecordAlreadyExist(null != savedPermission
+                && savedPermission.getId().longValue() != item.getId(), item.getCode());
             result = permissionRepository.updateById(item);
         }
 
-        if (result < 1) {
-            throw new ServiceException("{render.record.save.fail}");
-        }
-
-        return result;
+        return checkRecordNoneSaved(result);
     }
 
     @Override
     public int deleteById(Long entityId) throws ServiceException {
-        int result = permissionRepository.deleteById(entityId);
-        if (result < 1) {
-            throw new ServiceException(HttpStatus.NO_CONTENT.value(), "{render.record.none.exist}");
-        }
-
-        return result;
+        return checkRecordNoneExist(permissionRepository.deleteById(entityId));
     }
 }
