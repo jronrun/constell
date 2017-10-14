@@ -19,9 +19,9 @@ public @interface Editable {
     String value() default "";
 
     /**
-     * Element Tag, will use {@link DefineElement#value()} if not {@link TagName#UNDEFINED}
+     * Element Tag, will use {@link DefineElement#value()} if not {@link HtmlTag#UNDEFINED}
      */
-    TagName tag() default TagName.UNDEFINED;
+    HtmlTag tag() default HtmlTag.UNDEFINED;
 
     /**
      * Element ID, will use {@link DefineElement#id()} if not set
@@ -66,7 +66,7 @@ public @interface Editable {
     /**
      * Element Hidden Flag,
      * will set {@link Editable#type()} to {@link InputType#HIDDEN}
-     * if {@link Editable#tag()} is {@link TagName#INPUT}
+     * if {@link Editable#tag()} is {@link HtmlTag#INPUT}
      * <br/>otherwise will append "display:none;" to {@link Editable#style()} if true
      */
     boolean hidden() default false;

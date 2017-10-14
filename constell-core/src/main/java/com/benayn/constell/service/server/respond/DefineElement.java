@@ -21,7 +21,7 @@ public @interface DefineElement {
     /**
      * Element Tag
      */
-    TagName tag() default TagName.INPUT;
+    HtmlTag tag() default HtmlTag.INPUT;
 
     /**
      * Element ID, auto generator if none, "el_{fieldName}"

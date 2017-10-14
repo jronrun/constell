@@ -2,9 +2,9 @@ package com.benayn.constell.service.server.component;
 
 import static com.benayn.constell.service.server.respond.DefineType.EDITABLE;
 import static com.benayn.constell.service.server.respond.DefineType.SEARCHABLE;
-import static com.benayn.constell.service.server.respond.TagName.INPUT;
-import static com.benayn.constell.service.server.respond.TagName.TEXTAREA;
-import static com.benayn.constell.service.server.respond.TagName.UNDEFINED;
+import static com.benayn.constell.service.server.respond.HtmlTag.INPUT;
+import static com.benayn.constell.service.server.respond.HtmlTag.TEXTAREA;
+import static com.benayn.constell.service.server.respond.HtmlTag.UNDEFINED;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -19,12 +19,12 @@ import com.benayn.constell.service.server.respond.DefinedAction;
 import com.benayn.constell.service.server.respond.DefinedEditElement;
 import com.benayn.constell.service.server.respond.DefinedElement;
 import com.benayn.constell.service.server.respond.Editable;
+import com.benayn.constell.service.server.respond.HtmlTag;
 import com.benayn.constell.service.server.respond.InputType;
 import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.PageInfo;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
-import com.benayn.constell.service.server.respond.TagName;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -206,7 +206,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                         aValue = getFragmentValue(value, fragment);
                         render.addFieldFragmentValue(fieldName, (String) aValue);
                     } else {
-                        aValue = getFieldValueByName(value, valueFields, fieldName);
+                        aValue = getFieldValueByName(value, valueFields, fieldName, null, field);
 
                         String dateStyle = listable.dateStyle();
                         if (isNullOrEmpty(dateStyle) && hasDefineElement) {
@@ -311,7 +311,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             }
 
             //tag
-            TagName tag = UNDEFINED;
+            HtmlTag tag = UNDEFINED;
             if (isEditable) {
                 tag = editable.tag();
             }
@@ -511,7 +511,22 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
             //value
             if (null != valueFields && valueFields.size() > 0) {
-                element.setValue(getFieldValueByName(value, valueFields, fieldName));
+
+                //date style
+                String dateStyle = null;
+                if (isEditable) {
+                    dateStyle = editable.dateStyle();
+                }
+
+                if (isSearchable) {
+                    dateStyle = searchable.dateStyle();
+                }
+
+                if (isNullOrEmpty(dateStyle) && hasDefineElement) {
+                    dateStyle = defineElement.dateStyle();
+                }
+
+                element.setValue(getFieldValueByName(value, valueFields, fieldName, dateStyle, field));
             }
 
             return element;
@@ -531,12 +546,19 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         }
     }
 
-    private Object getFieldValueByName(Object valueObj, List<Field> fields, String fieldName) {
+    private Object getFieldValueByName(Object valueObj, List<Field> fields,
+        String fieldName, String dateStyle, Field defineField) {
         Optional<Field> valueField = getFieldByName(fields, fieldName);
         if (valueField.isPresent()) {
             try {
                 valueField.get().setAccessible(true);
-                return valueField.get().get(valueObj);
+                Object fieldValue = valueField.get().get(valueObj);
+
+                if (!isNullOrEmpty(dateStyle)) {
+                    fieldValue = convertDate(defineField, fieldValue, dateStyle);
+                }
+
+                return fieldValue;
             } catch (IllegalAccessException e) {
                 log.warn("value object {}.{} is not present", valueObj.getClass().getSimpleName(), fieldName);
                 Throwables.throwIfUnchecked(e);

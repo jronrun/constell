@@ -1,6 +1,6 @@
 package com.benayn.constell.service.server.respond;
 
-public enum TagName {
+public enum HtmlTag {
     INPUT, TEXTAREA, SELECT,
     UNDEFINED
 }

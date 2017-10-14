@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 public class DefinedElement {
 
-    private TagName tag;
+    private HtmlTag tag;
     private String id;
     private String name;
     private InputType type;

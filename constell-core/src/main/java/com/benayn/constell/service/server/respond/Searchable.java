@@ -19,9 +19,9 @@ public @interface Searchable {
     String value() default "";
 
     /**
-     * Element Tag, will use {@link DefineElement#value()} if not {@link TagName#UNDEFINED}
+     * Element Tag, will use {@link DefineElement#value()} if not {@link HtmlTag#UNDEFINED}
      */
-    TagName tag() default TagName.UNDEFINED;
+    HtmlTag tag() default HtmlTag.UNDEFINED;
 
     /**
      * Element ID, will use {@link DefineElement#id()} if not set
