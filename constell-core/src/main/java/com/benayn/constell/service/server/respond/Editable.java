@@ -54,6 +54,16 @@ public @interface Editable {
     String style() default "";
 
     /**
+     * Element readonly, will use {@link DefineElement#readonly()}  if not set
+     */
+    boolean readonly() default false;
+
+    /**
+     * Element disabled, will use {@link DefineElement#disabled()}  if not set
+     */
+    boolean disabled() default false;
+
+    /**
      * Element Placeholder, will use {@link DefineElement#placeholder()}  if not set
      */
     String placeholder() default "";

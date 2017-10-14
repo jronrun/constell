@@ -29,7 +29,7 @@ public class PermissionVo extends Renderable {
     @DefineElement("render.permission.code")
     @Searchable(like = true)
     @Listable
-    @Editable
+    @Editable(readonly = true, disabled = true)
     private String code;
 
     @NotNull

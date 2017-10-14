@@ -4,13 +4,13 @@
     <input th:fragment="input (el)" th:type="${el.type.toString().toLowerCase()}"
            type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
            th:placeholder="${el.placeholder}" th:class="${el.clazz}"
-           stars:attributes="${el.attributes}"
+           stars:attributes="${el.attributes}" th:readonly="${el.readonly}" th:disabled="${el.disabled}"
            th:style="${el.style}" th:value="${el.value}"/>
 
     <textarea th:fragment="textarea (el)" th:type="${el.type.toString().toLowerCase()}"
               th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
               th:placeholder="${el.placeholder}" th:class="${el.clazz}"
-              stars:attributes="${el.attributes}"
+              stars:attributes="${el.attributes}" th:readonly="${el.readonly}" th:disabled="${el.disabled}"
               th:style="${el.style}" th:text="${el.value}"></textarea>
 
     <div th:fragment="unsupported (desc)" th:text="'Unsupported ' + ${desc} + ' Yet ...'"></div>

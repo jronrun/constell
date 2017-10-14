@@ -59,6 +59,16 @@ public @interface DefineElement {
     String placeholder() default "";
 
     /**
+     * Element readonly
+     */
+    boolean readonly() default false;
+
+    /**
+     * Element disabled
+     */
+    boolean disabled() default false;
+
+    /**
      * Element Attributes, eg: attributes = {"src=test", "custom=custom"})
      */
     String[] attributes() default {};

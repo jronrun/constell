@@ -14,6 +14,8 @@ public class DefinedElement {
     private String title;
     private String clazz;
     private String style;
+    private Boolean readonly;
+    private Boolean disabled;
     private String label;
     private String placeholder;
     private List<Pair<String, String>> attributes;

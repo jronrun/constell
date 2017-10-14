@@ -434,6 +434,28 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             }
             element.setStyle(style);
 
+            //readonly
+            Boolean readonly = null;
+            if (isEditable) {
+                readonly = editable.readonly();
+            }
+
+            if (null == readonly && hasDefineElement) {
+                readonly = defineElement.readonly();
+            }
+            element.setReadonly(readonly);
+
+            //disabled
+            Boolean disabled = null;
+            if (isEditable) {
+                disabled = editable.disabled();
+            }
+
+            if (null == disabled && hasDefineElement) {
+                disabled = defineElement.disabled();
+            }
+            element.setDisabled(disabled);
+
             //label
             String label = null;
             if (isEditable) {
