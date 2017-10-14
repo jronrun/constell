@@ -1,17 +1,25 @@
 package com.benayn.constell.services.capricorn.service.bean;
 
+import static com.benayn.constell.service.util.Assets.checkRecordDeleted;
+import static com.benayn.constell.service.util.Assets.checkRecordNoneExist;
+import static com.benayn.constell.service.util.Assets.checkRecordSaved;
+
 import com.benayn.constell.service.enums.Gender;
+import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.menu.AuthorityMenuBread;
 import com.benayn.constell.service.server.menu.MenuBread;
+import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.services.capricorn.enums.AccountStatus;
 import com.benayn.constell.services.capricorn.repository.AccountRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Account;
 import com.benayn.constell.services.capricorn.repository.domain.AccountExample;
+import com.benayn.constell.services.capricorn.repository.domain.AccountExample.Criteria;
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
 import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.repository.model.AccountDetails;
 import com.benayn.constell.services.capricorn.service.AccountService;
 import com.benayn.constell.services.capricorn.service.AuthorityService;
+import com.benayn.constell.services.capricorn.viewobject.AccountVo;
 import com.google.common.collect.Lists;
 import java.util.Date;
 import java.util.List;
@@ -23,17 +31,14 @@ import org.springframework.stereotype.Service;
 public class AccountServiceBean implements AccountService {
 
     @Autowired
-    private AccountRepository userRepository;
+    private AccountRepository accountRepository;
     @Autowired
     private AuthorityService authorityService;
 
     @Override
     @Cacheable(value = "accounts", sync = true)
     public AccountDetails getAccountDetails(String email) {
-        AccountExample example = new AccountExample();
-        example.createCriteria().andEmailEqualTo(email);
-
-        Account account = userRepository.selectOne(example);
+        Account account = accountRepository.getByEmail(email);
         if (null == account) {
             return null;
         }
@@ -110,8 +115,78 @@ public class AccountServiceBean implements AccountService {
         user.setLastModifyTime(now);
         user.setEnabled(true);
 
-        userRepository.insertAll(user);
+        accountRepository.insertAll(user);
         return user;
     }
 
+    @Override
+    public Account selectById(long entityId) {
+        return accountRepository.selectById(entityId);
+    }
+
+    @Override
+    public Page<Account> selectPageBy(AccountVo condition) {
+        AccountExample example = new AccountExample();
+        Criteria criteria = example.createCriteria();
+
+        if (null != condition.getId()) {
+            criteria.andIdEqualTo(condition.getId());
+        }
+
+        if (null != condition.getUsername()) {
+            criteria.andUsernameLike(condition.like(condition.getUsername()));
+        }
+
+        if (null != condition.getEmail()) {
+            criteria.andEmailLike(condition.like(condition.getEmail()));
+        }
+
+        if (null != condition.getStatus()) {
+            criteria.andStatusEqualTo(condition.getStatus());
+        }
+
+        return accountRepository.selectPageBy(example, condition.getPageNo(), condition.getPageSize());
+    }
+
+    @Override
+    public int deleteById(Long entityId) throws ServiceException {
+        return checkRecordDeleted(accountRepository.deleteById(entityId));
+    }
+
+    @Override
+    public int save(AccountVo entity) throws ServiceException {
+        Date now = new Date();
+
+        Account item = new Account();
+        item.setId(entity.getId());
+        item.setEmail(entity.getEmail());
+        item.setUsername(entity.getUsername());
+        item.setGender(entity.getGender());
+        item.setStatus(entity.getStatus());
+        item.setCreateTime(now);
+        item.setLastModifyTime(now);
+        item.setEnabled(entity.isEnabled());
+        item.setCredentialsExpired(entity.isCredentialsExpired());
+        item.setExpired(entity.isExpired());
+        item.setLocked(entity.isLocked());
+
+        int result;
+        Account savedAccount = accountRepository.getByEmail(entity.getEmail());
+
+        // create
+        if (null == item.getId()) {
+            checkRecordNoneExist(null == savedAccount, item.getEmail());
+
+            item.setCreateTime(now);
+            result = accountRepository.insertAll(item);
+        }
+        // update
+        else {
+            checkRecordNoneExist(null == savedAccount
+                || savedAccount.getId().longValue() == item.getId(), item.getEmail());
+            result = accountRepository.updateById(item);
+        }
+
+        return checkRecordSaved(result);
+    }
 }

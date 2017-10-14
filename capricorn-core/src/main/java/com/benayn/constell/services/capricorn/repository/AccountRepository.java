@@ -6,4 +6,6 @@ import com.benayn.constell.services.capricorn.repository.domain.AccountExample;
 
 public interface AccountRepository extends Repository<Account, AccountExample> {
 
+    Account getByEmail(String email);
+
 }

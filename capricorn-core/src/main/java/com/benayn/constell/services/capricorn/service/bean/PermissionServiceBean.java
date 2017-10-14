@@ -43,19 +43,11 @@ public class PermissionServiceBean implements PermissionService {
         Criteria criteria = example.createCriteria();
 
         if (null != condition.getCode()) {
-            if (condition.isLike("code")) {
-                criteria.andCodeLike(condition.like(condition.getCode()));
-            } else {
-                criteria.andCodeEqualTo(condition.getCode());
-            }
+            criteria.andCodeLike(condition.like(condition.getCode()));
         }
 
         if (null != condition.getLabel()) {
-            if (condition.isLike("label")) {
-                criteria.andLabelLike(condition.like(condition.getLabel()));
-            } else {
-                criteria.andLabelEqualTo(condition.getLabel());
-            }
+            criteria.andLabelLike(condition.like(condition.getLabel()));
         }
 
         return permissionRepository.selectPageBy(example, condition.getPageNo(), condition.getPageSize());

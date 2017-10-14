@@ -282,11 +282,28 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
         Editable editable = field.getAnnotation(Editable.class);
         boolean isEditable = EDITABLE == defineType && null != editable;
+        boolean isCreate = isEditable && null == value;
 
         Searchable searchable = field.getAnnotation(Searchable.class);
         boolean isSearchable = SEARCHABLE == defineType && null != searchable;
 
         if (isEditable || isSearchable) {
+
+            if (isEditable) {
+                switch (editable.edit()) {
+                    case UPDATE:
+                        if (isCreate) {
+                            return null;
+                        }
+                        break;
+                    case CREATE:
+                        if (!isCreate) {
+                            return null;
+                        }
+                        break;
+                }
+            }
+
             DefinedElement element = new DefinedElement();
 
             //fragment

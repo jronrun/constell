@@ -87,6 +87,13 @@ public @interface Editable {
     String dateStyle() default "";
 
     /**
+     * Show property in create & update if {@link EditType#BOTH} <br/>
+     * Show only in create if {@link EditType#CREATE} <br/>
+     * Show only in update if {@link EditType#UPDATE}
+     */
+    EditType edit() default EditType.BOTH;
+
+    /**
      * Define By Fragment, if set then above set will be ignore
      */
     String fragment() default "";
