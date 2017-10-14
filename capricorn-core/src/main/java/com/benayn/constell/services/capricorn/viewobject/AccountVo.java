@@ -1,14 +1,15 @@
 package com.benayn.constell.services.capricorn.viewobject;
 
 import com.benayn.constell.service.server.respond.Actionable;
+import com.benayn.constell.service.server.respond.Creatable;
 import com.benayn.constell.service.server.respond.DefineElement;
-import com.benayn.constell.service.server.respond.EditType;
 import com.benayn.constell.service.server.respond.Editable;
 import com.benayn.constell.service.server.respond.HtmlTag;
 import com.benayn.constell.service.server.respond.InputType;
 import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
+import com.benayn.constell.service.server.respond.Updatable;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,12 +40,13 @@ public class AccountVo extends Renderable {
     @DefineElement("render.account.email")
     @Searchable(like = true)
     @Listable
-    @Editable
+    @Updatable(readonly = true, disabled = true)
+    @Creatable
     private String email;
 
     @NotNull
     @DefineElement("render.account.password")
-    @Editable(edit = EditType.CREATE)
+    @Creatable
     private String password;
 
     @NotNull

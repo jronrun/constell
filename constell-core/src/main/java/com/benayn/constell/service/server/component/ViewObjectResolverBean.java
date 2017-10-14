@@ -1,7 +1,8 @@
 package com.benayn.constell.service.server.component;
 
-import static com.benayn.constell.service.server.respond.DefineType.EDITABLE;
+import static com.benayn.constell.service.server.respond.DefineType.CREATABLE;
 import static com.benayn.constell.service.server.respond.DefineType.SEARCHABLE;
+import static com.benayn.constell.service.server.respond.DefineType.UPDATABLE;
 import static com.benayn.constell.service.server.respond.HtmlTag.INPUT;
 import static com.benayn.constell.service.server.respond.HtmlTag.TEXTAREA;
 import static com.benayn.constell.service.server.respond.HtmlTag.UNDEFINED;
@@ -13,6 +14,7 @@ import static java.lang.String.format;
 import com.benayn.constell.service.common.Pair;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.respond.Actionable;
+import com.benayn.constell.service.server.respond.Creatable;
 import com.benayn.constell.service.server.respond.DefineElement;
 import com.benayn.constell.service.server.respond.DefineType;
 import com.benayn.constell.service.server.respond.DefinedAction;
@@ -25,6 +27,7 @@ import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.PageInfo;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
+import com.benayn.constell.service.server.respond.Updatable;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -70,7 +73,8 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     @Override
     public DefinedEditElement getDefinedEdit(Class<? extends Renderable> viewObjectType, Object value) {
         DefinedEditElement defined = new DefinedEditElement();
-        List<DefinedElement> elements = getDefinedElements(EDITABLE, viewObjectType, value);
+        DefineType defineType = null == value ? CREATABLE : UPDATABLE;
+        List<DefinedElement> elements = getDefinedElements(defineType, viewObjectType, value);
 
         elements.forEach(element -> {
             // hidden element
@@ -281,28 +285,37 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         boolean hasDefineElement = null != defineElement;
 
         Editable editable = field.getAnnotation(Editable.class);
-        boolean isEditable = EDITABLE == defineType && null != editable;
-        boolean isCreate = isEditable && null == value;
+        boolean isEditable = (CREATABLE == defineType || UPDATABLE == defineType) && null != editable;
 
-        Searchable searchable = field.getAnnotation(Searchable.class);
-        boolean isSearchable = SEARCHABLE == defineType && null != searchable;
+        Creatable creatable = field.getAnnotation(Creatable.class);
+        boolean isCreatable = CREATABLE == defineType && null != creatable;
 
-        if (isEditable || isSearchable) {
+        Updatable updatable = field.getAnnotation(Updatable.class);
+        boolean isUpdatable = UPDATABLE == defineType && null != updatable;
 
-            if (isEditable) {
-                switch (editable.edit()) {
-                    case UPDATE:
-                        if (isCreate) {
+        // create || update
+        if (CREATABLE == defineType || UPDATABLE == defineType) {
+            // has not define both create and update
+            if (null == editable) {
+                switch (defineType) {
+                    case UPDATABLE:
+                        if (null == updatable) {
                             return null;
                         }
                         break;
-                    case CREATE:
-                        if (!isCreate) {
+                    case CREATABLE:
+                        if (null == creatable) {
                             return null;
                         }
                         break;
                 }
             }
+        }
+
+        Searchable searchable = field.getAnnotation(Searchable.class);
+        boolean isSearchable = SEARCHABLE == defineType && null != searchable;
+
+        if (isEditable || isCreatable || isUpdatable || isSearchable) {
 
             DefinedElement element = new DefinedElement();
 
@@ -310,6 +323,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             String fragment = null;
             if (isEditable) {
                 fragment = editable.fragment();
+            }
+
+            if (isCreatable) {
+                fragment = creatable.fragment();
+            }
+
+            if (isUpdatable) {
+                fragment = updatable.fragment();
             }
 
             if (isSearchable) {
@@ -333,6 +354,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 tag = editable.tag();
             }
 
+            if (isCreatable) {
+                tag = creatable.tag();
+            }
+
+            if (isUpdatable) {
+                tag = updatable.tag();
+            }
+
             if (isSearchable) {
                 tag = searchable.tag();
             }
@@ -349,6 +378,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             String id = null;
             if (isEditable) {
                 id = editable.id();
+            }
+
+            if (isCreatable) {
+                id = creatable.id();
+            }
+
+            if (isUpdatable) {
+                id = updatable.id();
             }
 
             if (isSearchable) {
@@ -371,6 +408,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 name = editable.name();
             }
 
+            if (isCreatable) {
+                name = creatable.name();
+            }
+
+            if (isUpdatable) {
+                name = updatable.name();
+            }
+
             if (isSearchable) {
                 name = searchable.name();
             }
@@ -389,6 +434,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             InputType inputType = InputType.UNDEFINED;
             if (isEditable) {
                 inputType = editable.type();
+            }
+
+            if (isCreatable) {
+                inputType = creatable.type();
+            }
+
+            if (isUpdatable) {
+                inputType = updatable.type();
             }
 
             if (isSearchable) {
@@ -412,6 +465,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 title = editable.title();
             }
 
+            if (isCreatable) {
+                title = creatable.title();
+            }
+
+            if (isUpdatable) {
+                title = updatable.title();
+            }
+
             if (isSearchable) {
                 title = searchable.title();
             }
@@ -425,6 +486,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             String clazz = null;
             if (isEditable) {
                 clazz = editable.clazz();
+            }
+
+            if (isCreatable) {
+                clazz = creatable.clazz();
+            }
+
+            if (isUpdatable) {
+                clazz = updatable.clazz();
             }
 
             if (isSearchable) {
@@ -442,6 +511,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 style = editable.style();
             }
 
+            if (isCreatable) {
+                style = creatable.style();
+            }
+
+            if (isUpdatable) {
+                style = updatable.style();
+            }
+
             if (isSearchable) {
                 style = searchable.style();
             }
@@ -457,6 +534,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 readonly = editable.readonly();
             }
 
+            if (isCreatable) {
+                readonly = creatable.readonly();
+            }
+
+            if (isUpdatable) {
+                readonly = updatable.readonly();
+            }
+
             if (null == readonly && hasDefineElement) {
                 readonly = defineElement.readonly();
             }
@@ -468,6 +553,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 disabled = editable.disabled();
             }
 
+            if (isCreatable) {
+                disabled = creatable.disabled();
+            }
+
+            if (isUpdatable) {
+                disabled = updatable.disabled();
+            }
+
             if (null == disabled && hasDefineElement) {
                 disabled = defineElement.disabled();
             }
@@ -477,6 +570,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             String label = null;
             if (isEditable) {
                 label = editable.value();
+            }
+
+            if (isCreatable) {
+                label = creatable.value();
+            }
+
+            if (isUpdatable) {
+                label = updatable.value();
             }
 
             if (isSearchable) {
@@ -492,6 +593,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             String placeholder = null;
             if (isEditable) {
                 placeholder = editable.placeholder();
+            }
+
+            if (isCreatable) {
+                placeholder = creatable.placeholder();
+            }
+
+            if (isUpdatable) {
+                placeholder = updatable.placeholder();
             }
 
             if (isSearchable) {
@@ -513,6 +622,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
             if (isEditable) {
                 attributes = editable.attributes();
+            }
+
+            if (isCreatable) {
+                attributes = creatable.attributes();
+            }
+
+            if (isUpdatable) {
+                attributes = updatable.attributes();
             }
 
             if (isSearchable) {
@@ -555,6 +672,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 String dateStyle = null;
                 if (isEditable) {
                     dateStyle = editable.dateStyle();
+                }
+
+                if (isCreatable) {
+                    dateStyle = creatable.dateStyle();
+                }
+
+                if (isUpdatable) {
+                    dateStyle = updatable.dateStyle();
                 }
 
                 if (isSearchable) {

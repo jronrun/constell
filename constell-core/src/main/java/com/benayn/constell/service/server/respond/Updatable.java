@@ -8,13 +8,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Both define {@link Creatable} & {@link Updatable}
+ *
  */
 @Target({ ElementType.FIELD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-public @interface Editable {
+public @interface Updatable {
 
     /**
      * Element Label, will use {@link DefineElement#value()} if not set
