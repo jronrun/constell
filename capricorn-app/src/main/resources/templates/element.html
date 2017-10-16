@@ -2,8 +2,17 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:stars="http://www.benayn.org">
 
     <th:block th:fragment="input (el)" th:switch="${el.type.toString()}">
-        <input th:case="RADIO"/>
-        <input th:case="CHECKBOX"/>
+        <th:block th:case="RADIO">
+            <div class="inline fields">
+                <div class="field" th:each="option: ${el.options}">
+                    <div class="ui radio checkbox" th:with="optionId=${el.id} + '_radio_' + ${optionStat.count}">
+                        <input th:if="${option.chosen}" th:id="${optionId}" type="radio" th:name="${el.name}" th:value="${option.value}" checked="checked">
+                        <input th:if="${not option.chosen}" th:id="${optionId}" type="radio" th:name="${el.name}" th:value="${option.value}">
+                        <label class="coloring red" th:text="${option.label}" th:for="${optionId}"></label>
+                    </div>
+                </div>
+            </div>
+        </th:block>
         <input th:case="*" th:type="${el.type.toString().toLowerCase()}"
                type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
                th:placeholder="${el.placeholder}" th:class="${el.clazz}"
