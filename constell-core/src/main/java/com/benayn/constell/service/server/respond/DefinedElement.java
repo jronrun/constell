@@ -22,5 +22,6 @@ public class DefinedElement {
     private Object value;
     private boolean fragmentValue;
     private boolean hidden;
+    private List<DefinedOption> options;
 
 }

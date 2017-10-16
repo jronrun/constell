@@ -1,5 +1,6 @@
 package com.benayn.constell.services.capricorn.viewobject;
 
+import com.benayn.constell.service.enums.Gender;
 import com.benayn.constell.service.server.respond.Actionable;
 import com.benayn.constell.service.server.respond.Creatable;
 import com.benayn.constell.service.server.respond.DefineElement;
@@ -10,6 +11,7 @@ import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
 import com.benayn.constell.service.server.respond.Updatable;
+import com.benayn.constell.services.capricorn.enums.AccountStatus;
 import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,7 +54,7 @@ public class AccountVo extends Renderable {
     @NotNull
     @DefineElement("render.account.gender")
     @Listable
-    @Editable(type = InputType.RADIO)
+    @Editable(type = InputType.RADIO, options = Gender.class)
     private Short gender;
 
     @DefineElement("render.account.enabled")
@@ -76,7 +78,7 @@ public class AccountVo extends Renderable {
     private boolean locked;
 
     @NotNull
-    @DefineElement("render.account.status")
+    @DefineElement(value = "render.account.status", options = AccountStatus.class)
     @Searchable
     @Listable
     @Editable(tag = HtmlTag.SELECT)

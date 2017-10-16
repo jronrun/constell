@@ -2,18 +2,28 @@ package com.benayn.constell.services.capricorn.enums;
 
 import static com.benayn.constell.service.util.Enumerates.find;
 
+import com.benayn.constell.service.server.respond.OptionValue;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public enum AccountStatus {
-    USING((short) 1),
-    DELETED((short) 9)
+public enum AccountStatus implements OptionValue<Short> {
+    USING((short) 1, "enum.account.status.using"),
+    DELETED((short) 9, "enum.account.status.deleted")
     ;
 
-    @Getter
-    private final short value;
+    private final Short value;
+    private final String label;
+
+    @Override
+    public Short getValue() {
+        return value;
+    }
+
+    @Override
+    public String getLabel() {
+        return label;
+    }
 
     public static AccountStatus get(int val) {
         return find(AccountStatus.class, x -> x.value == val);

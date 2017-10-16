@@ -69,6 +69,11 @@ public @interface Searchable {
     String dateStyle() default "";
 
     /**
+     * Element options, {@link Enum} class that implements {@link OptionValue}, will use {@link DefineElement#options()}  if not set
+     */
+    Class<? extends Enum> options() default Enum.class;
+
+    /**
      * Define By Fragment, if set then above set will be ignore
      */
     String fragment() default "";

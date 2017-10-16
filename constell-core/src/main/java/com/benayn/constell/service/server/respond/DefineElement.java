@@ -74,6 +74,11 @@ public @interface DefineElement {
     String[] attributes() default {};
 
     /**
+     * Element options, {@link Enum} class that implements {@link OptionValue}
+     */
+    Class<? extends Enum> options() default Enum.class;
+
+    /**
      * Element Define By Fragment, if set then above set will be ignore
      */
     String fragment() default "";

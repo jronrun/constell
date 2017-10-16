@@ -20,10 +20,12 @@ import com.benayn.constell.service.server.respond.DefineType;
 import com.benayn.constell.service.server.respond.DefinedAction;
 import com.benayn.constell.service.server.respond.DefinedEditElement;
 import com.benayn.constell.service.server.respond.DefinedElement;
+import com.benayn.constell.service.server.respond.DefinedOption;
 import com.benayn.constell.service.server.respond.Editable;
 import com.benayn.constell.service.server.respond.HtmlTag;
 import com.benayn.constell.service.server.respond.InputType;
 import com.benayn.constell.service.server.respond.Listable;
+import com.benayn.constell.service.server.respond.OptionValue;
 import com.benayn.constell.service.server.respond.PageInfo;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
@@ -36,9 +38,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.MessageSource;
@@ -652,8 +657,10 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             }
             element.setAttributes(elementAttributes);
 
-            //editable hidden behave
-            if (isEditable && editable.hidden()) {
+            // hidden behave
+            if ((isEditable && editable.hidden())
+                || (isCreatable && creatable.hidden())
+                || (isUpdatable && updatable.hidden())) {
                 //noinspection ConstantConditions
                 if (tag == INPUT) {
                     element.setType(InputType.HIDDEN);
@@ -693,10 +700,52 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 element.setValue(getFieldValueByName(value, valueFields, fieldName, dateStyle, field));
             }
 
+            //options
+            Class<? extends Enum> optionsClass = null;
+            if (isEditable) {
+                optionsClass = editable.options();
+            }
+
+            if (isCreatable) {
+                optionsClass = creatable.options();
+            }
+
+            if (isUpdatable) {
+                optionsClass = updatable.options();
+            }
+
+            if (isSearchable) {
+                optionsClass = searchable.options();
+            }
+
+            if (!hasOptionsValue(optionsClass) && hasDefineElement) {
+                optionsClass = defineElement.options();
+            }
+
+            if (hasOptionsValue(optionsClass)) {
+                //noinspection unchecked
+                List<DefinedOption> definedOptions = (List<DefinedOption>) EnumSet.allOf(optionsClass).stream()
+                    .map(item -> {
+                        OptionValue option = (OptionValue) item;
+                        return DefinedOption.of(option.getLabel(),
+                            option.getValue(), Objects.equals(option.getValue(), element.getValue()));
+                    })
+                    .collect(Collectors.toList());
+
+                element.setOptions(definedOptions);
+            } else {
+                checkArgument(Enum.class == optionsClass,
+                    "options enum class must implements OptionValue interface %s.%s", voName, fieldName);
+            }
+
             return element;
         }
 
         return null;
+    }
+
+    private boolean hasOptionsValue(Class<? extends Enum> optionsClass) {
+        return Lists.newArrayList(optionsClass.getInterfaces()).contains(OptionValue.class);
     }
 
     private void setFieldValue(Field field, Object valueObj, Object aValue, String dateStyle) {
