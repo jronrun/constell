@@ -727,7 +727,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 List<DefinedOption> definedOptions = (List<DefinedOption>) EnumSet.allOf(optionsClass).stream()
                     .map(item -> {
                         OptionValue option = (OptionValue) item;
-                        return DefinedOption.of(option.getLabel(),
+                        return DefinedOption.of(getMessage(option.getLabel(), option.getLabel()),
                             option.getValue(), Objects.equals(option.getValue(), element.getValue()));
                     })
                     .collect(Collectors.toList());
