@@ -24,4 +24,27 @@ public class DefinedElement {
     private boolean hidden;
     private List<DefinedOption> options;
 
+    public DefinedElement clones() {
+        DefinedElement el = new DefinedElement();
+
+        el.setId(getId());
+        el.setName(getName());
+        el.setReadonly(getReadonly());
+        el.setDisabled(getDisabled());
+
+        el.setTag(getTag());
+        el.setType(getType());
+        el.setTitle(getTitle());
+        el.setClazz(getClazz());
+        el.setStyle(getStyle());
+        el.setLabel(getLabel());
+        el.setPlaceholder(getPlaceholder());
+        el.setAttributes(getAttributes());
+        el.setValue(getValue());
+        el.setFragmentValue(isFragmentValue());
+        el.setHidden(isHidden());
+        el.setOptions(getOptions());
+
+        return el;
+    }
 }

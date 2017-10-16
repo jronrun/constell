@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:stars="http://www.benayn.org">
 
-    <input th:fragment="input (el)" th:type="${el.type.toString().toLowerCase()}"
-           type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
-           th:placeholder="${el.placeholder}" th:class="${el.clazz}"
-           stars:attributes="${el.attributes}" th:readonly="${el.readonly}" th:disabled="${el.disabled}"
-           th:style="${el.style}" th:value="${el.value}"/>
+    <th:block th:fragment="input (el)" th:switch="${el.type.toString()}">
+        <input th:case="RADIO"/>
+        <input th:case="CHECKBOX"/>
+        <input th:case="*" th:type="${el.type.toString().toLowerCase()}"
+               type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
+               th:placeholder="${el.placeholder}" th:class="${el.clazz}"
+               stars:attributes="${el.attributes}" th:readonly="${el.readonly}" th:disabled="${el.disabled}"
+               th:style="${el.style}" th:value="${el.value}"/>
+    </th:block>
 
     <textarea th:fragment="textarea (el)" th:type="${el.type.toString().toLowerCase()}"
               th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"

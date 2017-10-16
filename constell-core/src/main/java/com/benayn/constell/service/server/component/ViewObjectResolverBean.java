@@ -58,6 +58,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     private TemplateEngine fragmentTemplateEngine;
     private static final String ELEMENT_ID_FORMAT = "el_%s";
     private static final String HIDDEN_STYLE = "display:none;";
+    private static final String UNCHANGEABLE_MARK = "%s_unchangeable";
 
     public ViewObjectResolverBean(MessageSource messageSource, TemplateEngine fragmentTemplateEngine) {
         this.messageSource = messageSource;
@@ -274,6 +275,23 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         defineFields.forEach(field -> {
             DefinedElement element = asDefinedElement(defineType, field, viewObjectType, value, finalValueFields);
             if (null != element) {
+
+                // readonly or disabled behave
+                if ((null != element.getReadonly() && element.getReadonly())
+                    || (null != element.getDisabled() && element.getDisabled())) {
+
+                    DefinedElement hiddenEl = element.clones();
+                    hiddenEl.setId(element.getId());
+                    hiddenEl.setName(element.getName());
+                    hiddenEl.setDisabled(null);
+                    hiddenEl.setReadonly(null);
+                    addHiddenBehave(hiddenEl);
+                    elements.add(hiddenEl);
+
+                    element.setId(format(UNCHANGEABLE_MARK, element.getId()));
+                    element.setName(format(UNCHANGEABLE_MARK, element.getName()));
+                }
+
                 elements.add(element);
             }
         });
@@ -657,21 +675,6 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             }
             element.setAttributes(elementAttributes);
 
-            // hidden behave
-            if ((isEditable && editable.hidden())
-                || (isCreatable && creatable.hidden())
-                || (isUpdatable && updatable.hidden())) {
-                //noinspection ConstantConditions
-                if (tag == INPUT) {
-                    element.setType(InputType.HIDDEN);
-                } else {
-                    String aStyle = isNullOrEmpty(element.getStyle())
-                        ? HIDDEN_STYLE : (element.getStyle() + HIDDEN_STYLE);
-                    element.setStyle(aStyle);
-                }
-                element.setHidden(true);
-            }
-
             //value
             if (null != valueFields && valueFields.size() > 0) {
 
@@ -738,10 +741,30 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                     "options enum class must implements OptionValue interface %s.%s", voName, fieldName);
             }
 
+            /* additional behaves */
+
+            // hidden behave
+            if ((isEditable && editable.hidden())
+                || (isCreatable && creatable.hidden())
+                || (isUpdatable && updatable.hidden())) {
+                addHiddenBehave(element);
+            }
+
             return element;
         }
 
         return null;
+    }
+
+    private void addHiddenBehave(DefinedElement element) {
+        if (element.getTag() == INPUT) {
+            element.setType(InputType.HIDDEN);
+        } else {
+            String aStyle = isNullOrEmpty(element.getStyle()) ? HIDDEN_STYLE : (element.getStyle() + HIDDEN_STYLE);
+            element.setStyle(aStyle);
+        }
+
+        element.setHidden(true);
     }
 
     private boolean hasOptionsValue(Class<? extends Enum> optionsClass) {
