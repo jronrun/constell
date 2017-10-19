@@ -396,6 +396,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             checkArgument(tag != UNDEFINED,
                 "undefined field tag %s.%s", voName, fieldName);
             element.setTag(tag);
+            element.setTagName(tag.toString());
 
             //id
             String id = null;
@@ -480,6 +481,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                     "undefined field input type %s.%s", voName, fieldName);
             }
             element.setType(inputType);
+            element.setTypeName(inputType.toString());
 
 
             //title

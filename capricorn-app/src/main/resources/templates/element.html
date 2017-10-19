@@ -1,30 +1,52 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:stars="http://www.benayn.org">
 
-    <th:block th:fragment="input (el)" th:switch="${el.type.toString()}">
-        <th:block th:case="RADIO">
+    <th:block th:fragment="input (el)">
+        <th:block th:if="${el.typeName eq 'RADIO'}">
             <div class="inline fields">
                 <div class="field" th:each="option: ${el.options}">
                     <div class="ui radio checkbox" th:with="optionId=${el.id} + '_radio_' + ${optionStat.count}">
-                        <input th:if="${option.chosen}" th:id="${optionId}" type="radio" th:name="${el.name}" th:value="${option.value}" checked="checked">
-                        <input th:if="${not option.chosen}" th:id="${optionId}" type="radio" th:name="${el.name}" th:value="${option.value}">
+                        <input th:if="${option.chosen}" th:id="${optionId}" type="radio" th:name="${el.name}" th:value="${option.value}" checked="checked"/>
+                        <input th:if="${not option.chosen}" th:id="${optionId}" type="radio" th:name="${el.name}" th:value="${option.value}"/>
                         <label class="coloring red" th:text="${option.label}" th:for="${optionId}"></label>
                     </div>
                 </div>
             </div>
         </th:block>
-        <input th:case="*" th:type="${el.type.toString().toLowerCase()}"
-               type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
-               th:placeholder="${el.placeholder}" th:class="${el.clazz}"
-               stars:attributes="${el.attributes}" th:readonly="${el.readonly}" th:disabled="${el.disabled}"
-               th:style="${el.style}" th:value="${el.value}"/>
+
+        <th:block th:unless="${el.typeName eq 'RADIO'}">
+            <input th:type="${el.type.toString().toLowerCase()}"
+                   type="text" th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
+                   th:placeholder="${el.placeholder}" th:class="${el.clazz}"
+                   stars:attributes="${el.attributes}" th:readonly="${el.readonly}" th:disabled="${el.disabled}"
+                   th:style="${el.style}" th:value="${el.value}"/>
+        </th:block>
+
     </th:block>
 
-    <textarea th:fragment="textarea (el)" th:type="${el.type.toString().toLowerCase()}"
-              th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
-              th:placeholder="${el.placeholder}" th:class="${el.clazz}"
-              stars:attributes="${el.attributes}" th:readonly="${el.readonly}" th:disabled="${el.disabled}"
-              th:style="${el.style}" th:text="${el.value}"></textarea>
+    <th:block th:fragment="textarea (el)">
+        <textarea th:type="${el.type.toString().toLowerCase()}"
+                  th:id="${el.id}" th:name="${el.name}" th:title="${el.title}"
+                  th:placeholder="${el.placeholder}" th:class="${el.clazz}"
+                  stars:attributes="${el.attributes}" th:readonly="${el.readonly}" th:disabled="${el.disabled}"
+                  th:style="${el.style}" th:text="${el.value}">
+        </textarea>
+    </th:block>
+
+    <th:block th:fragment="select (el)">
+        select
+    </th:block>
+
+    <th:block th:fragment="toggleOnOff (el)">
+        <div class="ui toggle checkbox">
+            <input th:if="${el.tagName eq 'ON_OFF'}" type="checkbox"
+                   th:name="${el.name}" th:id="${el.id}"
+                   th:title="${el.title}" th:class="${el.clazz}"
+                   stars:attributes="${el.attributes}" th:readonly="${el.readonly}"
+                   th:disabled="${el.disabled}" th:style="${el.style}" th:checked="${#bools.isTrue(el.value)}"/>
+            <label th:text="${el.label}">Toggle On Off</label>
+        </div>
+    </th:block>
 
     <div th:fragment="unsupported (desc)" th:text="'Unsupported ' + ${desc} + ' Yet ...'"></div>
 

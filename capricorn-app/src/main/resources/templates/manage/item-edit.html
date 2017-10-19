@@ -5,7 +5,7 @@
         <form th:with="groupNum=2" class="ui form segment" style="border: none;" id="edit-form">
 
             <!--/*/ <th:block th:each="el: ${editEl.hiddenGroup}"> /*/-->
-                <th:block th:switch="${el.tag.toString()}">
+                <th:block th:switch="${el.tagName}">
                     <th:block th:case="'INPUT'" th:insert="element::input (${el})">
                     </th:block>
                     <th:block th:case="*" th:insert="element::unsupported (${el.tag.toString()})">
@@ -18,14 +18,21 @@
                     <!--/*/ <th:block th:each="el: ${editEl.wellGroup}"> /*/-->
                         <!--/*/ <th:block th:if="${(elStat.count > ((groupElStat.count - 1) * groupNum))
                          && (elStat.count <= (groupElStat.count * groupNum))}"> /*/-->
-                            <div class="field" th:switch="${el.tag.toString()}" th:id="'field_' + ${el.name}">
+
+                            <div class="field" th:id="'field_' + ${el.name}" th:switch="${el.tagName}">
                                 <th:block th:case="'INPUT'">
                                     <label th:if="${not el.hidden}" th:text="${el.label}" th:for="${el.id}">Name</label>
-                                    <input th:replace="element::input (${el})"/>
+                                    <th:block th:insert="element::input (${el})">
+                                    </th:block>
+                                </th:block>
+                                <th:block th:case="'ON_OFF'" th:insert="element::toggleOnOff (${el})">
+                                </th:block>
+                                <th:block th:case="'SELECT'" th:insert="element::select (${el})">
                                 </th:block>
                                 <th:block th:case="*" th:insert="element::unsupported (${el.tag.toString()})">
                                 </th:block>
                             </div>
+
                         <!--/*/ </th:block> /*/-->
                     <!--/*/ </th:block> /*/-->
                 </div>

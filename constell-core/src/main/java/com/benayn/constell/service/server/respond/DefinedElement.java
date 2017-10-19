@@ -8,9 +8,11 @@ import lombok.Data;
 public class DefinedElement {
 
     private HtmlTag tag;
+    private String tagName;
     private String id;
     private String name;
     private InputType type;
+    private String typeName;
     private String title;
     private String clazz;
     private String style;
@@ -33,7 +35,9 @@ public class DefinedElement {
         el.setDisabled(getDisabled());
 
         el.setTag(getTag());
+        el.setTagName(getTagName());
         el.setType(getType());
+        el.setTypeName(getTypeName());
         el.setTitle(getTitle());
         el.setClazz(getClazz());
         el.setStyle(getStyle());
