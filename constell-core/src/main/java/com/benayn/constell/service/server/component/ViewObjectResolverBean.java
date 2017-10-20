@@ -214,6 +214,8 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 String createFragmentValue = getFragmentValue(viewObjectType, actionable.createFragment());
                 definedAction.setCreateFragmentValue(createFragmentValue);
             }
+        } else {
+            definedAction.setUniqueField("id");
         }
 
         return definedAction;
