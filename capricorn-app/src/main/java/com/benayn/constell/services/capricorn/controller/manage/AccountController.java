@@ -64,6 +64,8 @@ public class AccountController extends BaseManageController<AccountVo> {
     @PostMapping(value = "account", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> create(@Valid @RequestBody AccountVo entity) throws ServiceException {
         Assets.checkNotNull(entity.getPassword(), "{render.account.assets.password}");
+        Assets.checkResults(entity.getPassword().equals(entity.getPassword2()),
+            "{render.account.assets.password.confirm}");
         return success(accountService.save(entity));
     }
 

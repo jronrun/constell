@@ -177,6 +177,7 @@ public class AccountServiceBean implements AccountService {
         if (null == item.getId()) {
             checkRecordNoneExist(null == savedAccount, item.getEmail());
 
+            item.setPassword(entity.getPassword());
             item.setCreateTime(now);
             result = accountRepository.insertAll(item);
         }

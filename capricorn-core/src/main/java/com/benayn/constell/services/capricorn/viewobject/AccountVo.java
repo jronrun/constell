@@ -47,8 +47,12 @@ public class AccountVo extends Renderable {
     private String email;
 
     @DefineElement("render.account.password")
-    @Creatable
+    @Creatable(type = InputType.PASSWORD)
     private String password;
+
+    @DefineElement("render.account.password.retype")
+    @Creatable(type = InputType.PASSWORD)
+    private String password2;
 
     @NotNull
     @DefineElement(value = "render.account.gender", options = Gender.class)
