@@ -28,6 +28,8 @@
                                 <div th:case="'INPUT'" class="ui icon input">
                                     <input th:replace="element::input (${el})"/>
                                 </div>
+                                <th:block th:case="'SELECT'" th:insert="element::select (${el})">
+                                </th:block>
                                 <div th:case="*">
                                     <div th:replace="element::unsupported (${el.tag.toString()})"></div>
                                 </div>

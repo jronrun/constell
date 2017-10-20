@@ -84,10 +84,10 @@ public class AccountVo extends Renderable {
     private boolean locked;
 
     @NotNull
-    @DefineElement(value = "render.account.status", options = AccountStatus.class)
+    @DefineElement(value = "render.account.status", options = AccountStatus.class, tag = SELECT)
     @Searchable
     @Listable
-    @Editable(tag = SELECT)
+    @Editable
     private Short status;
 
     @Listable("render.common.createTime")
