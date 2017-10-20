@@ -19,9 +19,14 @@ public @interface Listable {
     String value() default "";
 
     /**
-     * Date style
+     * Date style, will use {@link DefineElement#dateStyle()} if not set
      */
     String dateStyle() default "yyyy-MM-dd HH:mm:ss";
+
+    /**
+     * Element options, {@link Enum} class that implements {@link OptionValue}, will use {@link DefineElement#options()}  if not set
+     */
+    Class<? extends Enum> options() default Enum.class;
 
     /**
      * Define By Fragment, if set then above set will be ignore

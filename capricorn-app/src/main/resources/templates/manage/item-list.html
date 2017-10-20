@@ -1,4 +1,4 @@
-<html xmlns:th="http://www.thymeleaf.org" th:with="defact=${pageEl.extra.get('definedAction')}">
+<html xmlns:th="http://www.thymeleaf.org" th:with="defact=${pageEl.extra.get('definedAction')},labelValue=${pageEl.extra.get('labelValue')}">
 <div th:if="${defact.hasCreate && !defact.hasCreateFragment}"
      class="ui submit grey labeled icon button" data-replaceable="1" data-edit-id="0">
     <i class="plus icon"></i>
@@ -17,20 +17,21 @@
     </thead>
     <tbody>
     <tr th:each="item: ${pageEl.resource}">
-        <td th:each="column: ${pageEl.columns}">
+        <td th:each="column: ${pageEl.columns}"
+            th:with="aValue=${#maps.containsKey(labelValue, column) ? labelValue.get(column).get(item[column]) : item[column]}">
 
             <th:block th:if="${!#maps.containsKey(item.fieldFragmentValue, column) && defact.hasEditField}">
                 <th:block th:if="${#strings.equals(column, defact.editField)}">
-                    <a class="ui blue basic" style="cursor: pointer;" th:text="${item[column]}"
+                    <a class="ui blue basic" style="cursor: pointer;" th:text="${aValue}"
                        th:attr="data-edit-id=${item[defact.uniqueField]}">Edit</a>
                 </th:block>
-                <th:block th:if="${not #strings.equals(column, defact.editField)}" th:text="${item[column]}">
+                <th:block th:if="${not #strings.equals(column, defact.editField)}" th:text="${aValue}">
                     TD Content A
                 </th:block>
             </th:block>
 
             <th:block th:if="${!#maps.containsKey(item.fieldFragmentValue, column) && !defact.hasEditField}"
-                      th:text="${item[column]}">
+                      th:text="${aValue}">
                 TD Content B
             </th:block>
 
@@ -38,6 +39,7 @@
                       th:utext="${item.fieldFragmentValue.get(column)}">
                 TD Content C
             </th:block>
+
         </td>
 
         <td th:if="${defact.hasAction && defact.hasActionFragment}" th:utext="${defact.actionFragment}">Action

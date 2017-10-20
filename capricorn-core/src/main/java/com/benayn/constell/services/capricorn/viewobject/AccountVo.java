@@ -51,9 +51,9 @@ public class AccountVo extends Renderable {
     private String password;
 
     @NotNull
-    @DefineElement("render.account.gender")
+    @DefineElement(value = "render.account.gender", options = Gender.class)
     @Listable
-    @Editable(type = InputType.RADIO, options = Gender.class)
+    @Editable(type = InputType.RADIO)
     private Short gender;
 
     @DefineElement("render.account.enabled")

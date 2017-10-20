@@ -33,6 +33,7 @@ import com.benayn.constell.service.server.respond.Updatable;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -41,6 +42,7 @@ import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -114,7 +116,12 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
         DefinedAction definedAction = getDefinedAction(viewObjectType);
         newPage.addExtra("definedAction", definedAction);
+
+        // label value <column, <value, label>>
+        Map<String, Map<Object, String>> labelValue = Maps.newHashMap();
+
         defineFields.forEach(field -> {
+            String column = field.getName();
             DefineElement defineElement = field.getAnnotation(DefineElement.class);
             boolean hasDefineElement = null != defineElement;
 
@@ -126,20 +133,41 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 }
 
                 if (!isNullOrEmpty(definedAction.getUniqueField())
-                    && field.getName().equals(definedAction.getUniqueField())) {
+                    && column.equals(definedAction.getUniqueField())) {
                     isDefinedUniqueField[0] = true;
                 }
 
                 checkArgument(!isNullOrEmpty(title), "undefined listable column title %s.%s",
-                    viewObjectType.getSimpleName(), field.getName());
-                newPage.addColumn(field.getName());
-                newPage.addTitle(field.getName(), getMessage(title, title));
+                    viewObjectType.getSimpleName(), column);
+
+                //options
+                Class<? extends Enum> optionsClass = listable.options();
+
+                if (!hasOptionsValue(optionsClass) && hasDefineElement) {
+                    optionsClass = defineElement.options();
+                }
+
+                if (hasOptionsValue(optionsClass)) {
+                    Map<Object, String> columnLabelValue = Maps.newHashMap();
+                    //noinspection unchecked
+                    EnumSet.allOf(optionsClass).forEach(item -> {
+                        OptionValue option = (OptionValue) item;
+                        columnLabelValue.put(option.getValue(), getMessage(option.getLabel(), option.getLabel()));
+                    });
+
+                    labelValue.put(column, columnLabelValue);
+                }
+
+                newPage.addColumn(column);
+                newPage.addTitle(column, getMessage(title, title));
             }
         });
 
         checkArgument(isDefinedUniqueField[0],
             "undefined actionable unique field on type %s, unique field: %s",
             viewObjectType.getSimpleName(), definedAction.getUniqueField());
+
+        newPage.addExtra("labelValue", labelValue);
 
         List<Field> itemFields = null;
         if (items.size() > 0) {
