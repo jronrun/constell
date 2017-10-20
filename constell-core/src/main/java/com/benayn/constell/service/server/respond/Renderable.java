@@ -14,6 +14,14 @@ import lombok.ToString;
 
 /**
  * Supports <a href="http://beanvalidation.org/1.0/spec/">JSR 303: Bean Validation</a>
+ *
+ * @see Actionable
+ * @see DefineElement
+ * @see Searchable
+ * @see Listable
+ * @see Editable
+ * @see Creatable
+ * @see Updatable
  */
 @Getter
 @Setter
