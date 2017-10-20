@@ -37,29 +37,16 @@
 
     <th:block th:fragment="select (el)">
         <label th:text="${el.label}">select label</label>
-        <div class="ui dropdown selection" data-com-dropdown="1" tabindex="0">
-
-            <select th:id="${el.id}" th:name="${el.name}"
-                    th:title="${el.title}" th:class="${el.clazz}" th:style="${el.style}"
-                    stars:attributes="${el.attributes}" th:readonly="${el.readonly}" th:disabled="${el.disabled}">
-                <option th:each="option: ${el.options}" th:id="${el.id} + '_option_' + ${optionStat.count}"
-                        th:value="${option.value}" th:text="${option.label}"
-                        th:checked="${#bools.isTrue(option.chosen)}">
-                    option
-                </option>
-            </select>
-            <i class="dropdown icon"></i>
-            <div class="default text" th:text="${el.label}">default text</div>
-            <div class="menu" tabindex="-1"
-                 th:id="${el.id} + '_dd'" th:name="${el.name} + '_dd'"
-                 th:title="${el.title}" th:class="'menu ' + ${el.clazz}" th:style="${el.style}"
-                 stars:attributes="${el.attributes}" th:readonly="${el.readonly}" th:disabled="${el.disabled}">
-                <div th:each="option: ${el.options}" class="item" th:id="${el.id} + '_dd_option_' + ${optionStat.count}"
-                     th:attr="data-value=${option.value}" th:text="${option.label}" data-value="male">
-                    option
-                </div>
-            </div>
-        </div>
+        <select th:id="${el.id}" th:name="${el.name}" data-com-dropdown="1"
+                th:title="${el.title}" th:class="'ui dropdown ' + ${el.clazz}" th:style="${el.style}"
+                stars:attributes="${el.attributes}" th:readonly="${el.readonly}" th:disabled="${el.disabled}">
+            <option value="" th:text="${el.label}">default text</option>
+            <option th:each="option: ${el.options}" th:id="${el.id} + '_option_' + ${optionStat.count}"
+                    th:value="${option.value}" th:text="${option.label}"
+                    th:selected="${#bools.isTrue(option.chosen)}">
+                option
+            </option>
+        </select>
     </th:block>
 
     <th:block th:fragment="toggleOnOff (el)">
