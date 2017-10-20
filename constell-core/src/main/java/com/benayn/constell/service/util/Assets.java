@@ -23,6 +23,11 @@ public class Assets {
         checkResults(expression, "{render.record.already.exist}", errorMessageArgs);
     }
 
+    public static <T> T checkNotNull(T reference, String errorMessage, Object... errorMessageArgs) throws ServiceException {
+        checkResults(null != reference, errorMessage, errorMessageArgs);
+        return reference;
+    }
+
     public static void checkResults(boolean expression, String errorMessage, Object... errorMessageArgs)
         throws ServiceException {
         checkResults(expression, 0, errorMessage, errorMessageArgs);

@@ -7,6 +7,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.menu.MenuCapability;
 import com.benayn.constell.service.server.respond.Message;
+import com.benayn.constell.service.util.Assets;
 import com.benayn.constell.services.capricorn.repository.domain.Account;
 import com.benayn.constell.services.capricorn.service.AccountService;
 import com.benayn.constell.services.capricorn.settings.constant.Menus;
@@ -62,6 +63,7 @@ public class AccountController extends BaseManageController<AccountVo> {
     //    @PreAuthorize(Authorities.ACCOUNT_CREATE)
     @PostMapping(value = "account", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> create(@Valid @RequestBody AccountVo entity) throws ServiceException {
+        Assets.checkNotNull(entity.getPassword(), "{render.account.assets.password}");
         return success(accountService.save(entity));
     }
 
