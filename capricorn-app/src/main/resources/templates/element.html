@@ -6,8 +6,10 @@
             <div class="inline fields">
                 <div class="field" th:each="option: ${el.options}">
                     <div class="ui radio checkbox" th:with="optionId=${el.id} + '_radio_' + ${optionStat.count}">
-                        <input th:if="${option.chosen}" th:id="${optionId}" type="radio" th:name="${el.name}" th:value="${option.value}" checked="checked"/>
-                        <input th:if="${not option.chosen}" th:id="${optionId}" type="radio" th:name="${el.name}" th:value="${option.value}"/>
+                        <input type="radio" th:id="${optionId}" th:name="${el.name}"
+                               th:value="${option.value}" th:checked="${#bools.isTrue(option.chosen)}"
+                               stars:attributes="${el.attributes}" th:readonly="${el.readonly}" th:disabled="${el.disabled}"
+                               th:class="${el.clazz}" th:style="${el.style}" th:title="${el.title}"/>
                         <label class="coloring red" th:text="${option.label}" th:for="${optionId}"></label>
                     </div>
                 </div>
@@ -34,12 +36,35 @@
     </th:block>
 
     <th:block th:fragment="select (el)">
-        select
+        <label th:text="${el.label}">select label</label>
+        <div class="ui dropdown selection" data-com-dropdown="1" tabindex="0">
+
+            <select th:id="${el.id}" th:name="${el.name}"
+                    th:title="${el.title}" th:class="${el.clazz}" th:style="${el.style}"
+                    stars:attributes="${el.attributes}" th:readonly="${el.readonly}" th:disabled="${el.disabled}">
+                <option th:each="option: ${el.options}" th:id="${el.id} + '_option_' + ${optionStat.count}"
+                        th:value="${option.value}" th:text="${option.label}"
+                        th:checked="${#bools.isTrue(option.chosen)}">
+                    option
+                </option>
+            </select>
+            <i class="dropdown icon"></i>
+            <div class="default text" th:text="${el.label}">default text</div>
+            <div class="menu" tabindex="-1"
+                 th:id="${el.id} + '_dd'" th:name="${el.name} + '_dd'"
+                 th:title="${el.title}" th:class="'menu ' + ${el.clazz}" th:style="${el.style}"
+                 stars:attributes="${el.attributes}" th:readonly="${el.readonly}" th:disabled="${el.disabled}">
+                <div th:each="option: ${el.options}" class="item" th:id="${el.id} + '_dd_option_' + ${optionStat.count}"
+                     th:attr="data-value=${option.value}" th:text="${option.label}" data-value="male">
+                    option
+                </div>
+            </div>
+        </div>
     </th:block>
 
     <th:block th:fragment="toggleOnOff (el)">
         <div class="ui toggle checkbox">
-            <input th:if="${el.tagName eq 'ON_OFF'}" type="checkbox"
+            <input th:if="${el.tagName eq 'ON_OFF'}" type="checkbox" data-com-onoff="1"
                    th:name="${el.name}" th:id="${el.id}"
                    th:title="${el.title}" th:class="${el.clazz}"
                    stars:attributes="${el.attributes}" th:readonly="${el.readonly}"

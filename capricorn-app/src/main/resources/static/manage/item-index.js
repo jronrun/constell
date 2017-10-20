@@ -135,6 +135,9 @@ var index = {};
                         onHidden: function () {
                             $('.ui.modal').remove();
                         },
+                        onShow: function () {
+                            core.component.init();
+                        },
                         onVisible: function () {
                             // when change disappear error
                             var fields = {};
@@ -188,10 +191,17 @@ var index = {};
             }
         },
 
+        component: {
+            init: function () {
+                $('[data-com-dropdown]').dropdown();
+            }
+        },
+
         initialize: function () {
             core.index.init();
             core.list.init();
             core.edit.init();
+            core.component.init();
         }
     };
 

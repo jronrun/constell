@@ -57,6 +57,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     private MessageSource messageSource;
     private TemplateEngine fragmentTemplateEngine;
     private static final String ELEMENT_ID_FORMAT = "el_%s";
+    private static final String SEARCH_ELEMENT_ID_FORMAT = "qry_%s";
     private static final String HIDDEN_STYLE = "display:none;";
     private static final String UNCHANGEABLE_MARK = "%s_unchangeable";
 
@@ -423,6 +424,10 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             if (isNullOrEmpty(id)) {
                 //auto generator "el_{fieldName}"
                 id = format(ELEMENT_ID_FORMAT, fieldName);
+            }
+
+            if (isSearchable) {
+                id = format(SEARCH_ELEMENT_ID_FORMAT, id);
             }
             element.setId(id);
 
