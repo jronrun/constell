@@ -46,7 +46,6 @@ public class AccountVo extends Renderable {
     @Creatable
     private String email;
 
-    @NotNull
     @DefineElement("render.account.password")
     @Creatable
     private String password;

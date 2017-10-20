@@ -1,13 +1,12 @@
 package com.benayn.constell.services.capricorn.controller.manage;
 
+import static com.benayn.constell.service.server.respond.Responds.success;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.MANAGE_BASE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.menu.MenuCapability;
 import com.benayn.constell.service.server.respond.Message;
-import com.benayn.constell.service.server.respond.Responds;
-import com.benayn.constell.services.capricorn.config.Authorities;
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
 import com.benayn.constell.services.capricorn.service.PermissionService;
 import com.benayn.constell.services.capricorn.settings.constant.Menus;
@@ -15,7 +14,6 @@ import com.benayn.constell.services.capricorn.viewobject.PermissionVo;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -64,19 +62,19 @@ public class PermissionController extends BaseManageController<PermissionVo> {
 //    @PreAuthorize(Authorities.PERMISSION_CREATE)
     @PostMapping(value = "permission", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> create() throws ServiceException {
-        return Responds.success(permissionService.saveFromAuthorities());
+        return success(permissionService.saveFromAuthorities());
     }
 
 //    @PreAuthorize(Authorities.PERMISSION_UPDATE)
     @PutMapping(value = "permission", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> update(@Valid @RequestBody PermissionVo entity) throws ServiceException {
-        return Responds.success(permissionService.save(entity));
+        return success(permissionService.save(entity));
     }
 
 //    @PreAuthorize(Authorities.PERMISSION_DELETE)
     @DeleteMapping(value = "permission/{entityId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> delete(@PathVariable("entityId") Long entityId) throws ServiceException {
-        return Responds.success(permissionService.deleteById(entityId));
+        return success(permissionService.deleteById(entityId));
     }
 
 }

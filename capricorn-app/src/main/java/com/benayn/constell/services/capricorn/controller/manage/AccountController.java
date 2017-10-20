@@ -1,12 +1,12 @@
 package com.benayn.constell.services.capricorn.controller.manage;
 
+import static com.benayn.constell.service.server.respond.Responds.success;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.MANAGE_BASE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.menu.MenuCapability;
 import com.benayn.constell.service.server.respond.Message;
-import com.benayn.constell.service.server.respond.Responds;
 import com.benayn.constell.services.capricorn.repository.domain.Account;
 import com.benayn.constell.services.capricorn.service.AccountService;
 import com.benayn.constell.services.capricorn.settings.constant.Menus;
@@ -62,18 +62,18 @@ public class AccountController extends BaseManageController<AccountVo> {
     //    @PreAuthorize(Authorities.ACCOUNT_CREATE)
     @PostMapping(value = "account", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> create(@Valid @RequestBody AccountVo entity) throws ServiceException {
-        return Responds.success(accountService.save(entity));
+        return success(accountService.save(entity));
     }
 
     //    @PreAuthorize(Authorities.ACCOUNT_UPDATE)
     @PutMapping(value = "account", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> update(@Valid @RequestBody AccountVo entity) throws ServiceException {
-        return Responds.success(accountService.save(entity));
+        return success(accountService.save(entity));
     }
 
     //    @PreAuthorize(Authorities.ACCOUNT_DELETE)
     @DeleteMapping(value = "account/{entityId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> delete(@PathVariable("entityId") Long entityId) throws ServiceException {
-        return Responds.success(accountService.deleteById(entityId));
+        return success(accountService.deleteById(entityId));
     }
 }
