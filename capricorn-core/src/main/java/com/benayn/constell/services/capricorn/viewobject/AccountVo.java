@@ -83,7 +83,6 @@ public class AccountVo extends Renderable {
     @Editable(tag = TOGGLE)
     private boolean locked;
 
-    @NotNull
     @DefineElement(value = "render.account.status", options = AccountStatus.class, tag = SELECT)
     @Searchable
     @Listable
