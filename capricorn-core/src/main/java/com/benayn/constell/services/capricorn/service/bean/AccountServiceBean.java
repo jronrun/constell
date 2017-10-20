@@ -150,7 +150,10 @@ public class AccountServiceBean implements AccountService {
 
     @Override
     public int deleteById(Long entityId) throws ServiceException {
-        return checkRecordDeleted(accountRepository.deleteById(entityId));
+        Account delete = new Account();
+        delete.setId(entityId);
+        delete.setStatus(AccountStatus.DELETED.getValue());
+        return checkRecordDeleted(accountRepository.updateById(delete));
     }
 
     @Override

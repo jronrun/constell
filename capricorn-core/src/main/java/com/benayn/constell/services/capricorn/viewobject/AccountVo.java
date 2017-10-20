@@ -24,7 +24,7 @@ import org.hibernate.validator.constraints.Email;
 @Getter
 @Setter
 @ToString
-@Actionable
+@Actionable(editField = "username")
 public class AccountVo extends Renderable {
 
     @DefineElement("render.common.id")
@@ -59,7 +59,7 @@ public class AccountVo extends Renderable {
 
     @NotNull
     @DefineElement(value = "render.account.gender", options = Gender.class)
-    @Listable
+    @Listable(fragment = "account_list_gender")
     @Editable(type = RADIO)
     private Short gender;
 
@@ -87,7 +87,6 @@ public class AccountVo extends Renderable {
     @DefineElement(value = "render.account.status", options = AccountStatus.class, tag = SELECT)
     @Searchable
     @Listable
-    @Editable
     private Short status;
 
     @Listable("render.common.createTime")
