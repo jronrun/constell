@@ -89,12 +89,21 @@ var index = {};
                     .fail(function (xhr) {
                         mgr.unloading(el);
                         if (400 === xhr.status) {
+                            var fieldCount = 0;
                             $.each(xhr.responseJSON.messages, function (k, v) {
-                                $('#field_' + k)
-                                    .addClass('error')
-                                    .append('<div data-error-tip="1" class="ui basic red pointing prompt label transition visible">' + v + '</div>')
-                                    ;
+                                var $field = $('#field_' + k);
+                                if ($field.length) {
+                                    fieldCount++;
+                                    $field
+                                        .addClass('error')
+                                        .append('<div data-error-tip="1" class="ui basic red pointing prompt label transition visible">' + v + '</div>')
+                                        ;
+                                }
                             });
+
+                            if (fieldCount < 1) {
+                                swal('Oops...', mgr.failMsg(xhr), 'warning');
+                            }
                         } else {
                             swal('Oops...', mgr.failMsg(xhr), 'warning');
                         }

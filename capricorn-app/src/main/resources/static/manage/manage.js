@@ -155,6 +155,10 @@ var mgr = {};
             }
         });
 
+        $.map($('input[type="checkbox"]:checked'), function (el) {
+            indexed[$(el).attr('name')] = 'true';
+        });
+
         return indexed;
     }
 
