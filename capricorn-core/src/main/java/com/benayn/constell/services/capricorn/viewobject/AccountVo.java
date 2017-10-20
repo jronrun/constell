@@ -1,12 +1,15 @@
 package com.benayn.constell.services.capricorn.viewobject;
 
+import static com.benayn.constell.service.server.respond.HtmlTag.SELECT;
+import static com.benayn.constell.service.server.respond.HtmlTag.TOGGLE;
+import static com.benayn.constell.service.server.respond.InputType.PASSWORD;
+import static com.benayn.constell.service.server.respond.InputType.RADIO;
+
 import com.benayn.constell.service.enums.Gender;
 import com.benayn.constell.service.server.respond.Actionable;
 import com.benayn.constell.service.server.respond.Creatable;
 import com.benayn.constell.service.server.respond.DefineElement;
 import com.benayn.constell.service.server.respond.Editable;
-import com.benayn.constell.service.server.respond.HtmlTag;
-import com.benayn.constell.service.server.respond.InputType;
 import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
@@ -47,44 +50,44 @@ public class AccountVo extends Renderable {
     private String email;
 
     @DefineElement("render.account.password")
-    @Creatable(type = InputType.PASSWORD)
+    @Creatable(type = PASSWORD)
     private String password;
 
     @DefineElement("render.account.password.retype")
-    @Creatable(type = InputType.PASSWORD)
+    @Creatable(type = PASSWORD)
     private String password2;
 
     @NotNull
     @DefineElement(value = "render.account.gender", options = Gender.class)
     @Listable
-    @Editable(type = InputType.RADIO)
+    @Editable(type = RADIO)
     private Short gender;
 
     @DefineElement("render.account.enabled")
-    @Listable
-    @Editable(tag = HtmlTag.ON_OFF)
+    @Listable(toggleWidget = true)
+    @Editable(tag = TOGGLE)
     private boolean enabled;
 
     @DefineElement("render.account.credentials.expired")
-    @Listable
-    @Editable(tag = HtmlTag.ON_OFF)
+    @Listable(toggleWidget = true)
+    @Editable(tag = TOGGLE)
     private boolean credentialsExpired;
 
     @DefineElement("render.account.expired")
-    @Listable
-    @Editable(tag = HtmlTag.ON_OFF)
+    @Listable(toggleWidget = true)
+    @Editable(tag = TOGGLE)
     private boolean expired;
 
     @DefineElement("render.account.locked")
-    @Listable
-    @Editable(tag = HtmlTag.ON_OFF)
+    @Listable(toggleWidget = true)
+    @Editable(tag = TOGGLE)
     private boolean locked;
 
     @NotNull
     @DefineElement(value = "render.account.status", options = AccountStatus.class)
     @Searchable
     @Listable
-    @Editable(tag = HtmlTag.SELECT)
+    @Editable(tag = SELECT)
     private Short status;
 
     @Listable("render.common.createTime")

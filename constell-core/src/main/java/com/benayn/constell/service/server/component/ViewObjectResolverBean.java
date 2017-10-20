@@ -119,6 +119,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
         // label value <column, <value, label>>
         Map<String, Map<Object, String>> labelValue = Maps.newHashMap();
+        List<String> toggleWidget = Lists.newArrayList();
 
         defineFields.forEach(field -> {
             String column = field.getName();
@@ -158,6 +159,11 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                     labelValue.put(column, columnLabelValue);
                 }
 
+                //toggle widget
+                if (listable.toggleWidget()) {
+                    toggleWidget.add(column);
+                }
+
                 newPage.addColumn(column);
                 newPage.addTitle(column, getMessage(title, title));
             }
@@ -167,6 +173,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             "undefined actionable unique field on type %s, unique field: %s",
             viewObjectType.getSimpleName(), definedAction.getUniqueField());
 
+        newPage.addExtra("toggleWidget", toggleWidget);
         newPage.addExtra("labelValue", labelValue);
 
         List<Field> itemFields = null;

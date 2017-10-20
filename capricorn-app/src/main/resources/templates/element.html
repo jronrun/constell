@@ -49,9 +49,9 @@
         </select>
     </th:block>
 
-    <th:block th:fragment="toggleOnOff (el)">
+    <th:block th:fragment="toggle (el)">
         <div class="ui toggle checkbox">
-            <input th:if="${el.tagName eq 'ON_OFF'}" type="checkbox" data-com-onoff="1"
+            <input th:if="${el.tagName eq 'TOGGLE'}" type="checkbox" data-com-onoff="1"
                    th:name="${el.name}" th:id="${el.id}"
                    th:title="${el.title}" th:class="${el.clazz}"
                    stars:attributes="${el.attributes}" th:readonly="${el.readonly}"

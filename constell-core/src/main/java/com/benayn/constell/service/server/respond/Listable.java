@@ -24,6 +24,13 @@ public @interface Listable {
     String dateStyle() default "yyyy-MM-dd HH:mm:ss";
 
     /**
+     * Display as toggle on off widget, same as {@link HtmlTag#TOGGLE},
+     * Will not work if {@link Actionable#editField()} define this field.
+     * Relationship between toggle and {@link Actionable#editField()} is mutually exclusive
+     */
+    boolean toggleWidget() default false;
+
+    /**
      * Element options, {@link Enum} class that implements {@link OptionValue}, will use {@link DefineElement#options()}  if not set
      */
     Class<? extends Enum> options() default Enum.class;
