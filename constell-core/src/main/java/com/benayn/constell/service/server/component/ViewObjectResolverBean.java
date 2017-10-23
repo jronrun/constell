@@ -103,6 +103,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         return defined;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Page<Renderable> getDefinedPage(Class<? extends Renderable> viewObjectType, Page<?> page) {
         List<?> items = page.getResource();
@@ -150,7 +151,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
                 if (hasOptionsValue(optionsClass)) {
                     Map<Object, String> columnLabelValue = Maps.newHashMap();
-                    //noinspection unchecked
+
                     EnumSet.allOf(optionsClass).forEach(item -> {
                         OptionValue option = (OptionValue) item;
                         columnLabelValue.put(option.getValue(), getMessage(option.getLabel(), option.getLabel()));
@@ -337,6 +338,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         return elements;
     }
 
+    @SuppressWarnings("unchecked")
     private DefinedElement asDefinedElement(DefineType defineType, Field field,
         Class<? extends Renderable> viewObjectType, Object value, List<Field> valueFields) {
         String  voName = viewObjectType.getSimpleName();
@@ -770,7 +772,6 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             }
 
             if (hasOptionsValue(optionsClass)) {
-                //noinspection unchecked
                 List<DefinedOption> definedOptions = (List<DefinedOption>) EnumSet.allOf(optionsClass).stream()
                     .map(item -> {
                         OptionValue option = (OptionValue) item;
