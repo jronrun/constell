@@ -1,26 +1,8 @@
 package com.benayn.constell.services.capricorn.controller;
 
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.BASE_API_V1;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
-import com.benayn.constell.service.server.menu.AuthorityMenuBread;
-import com.benayn.constell.service.server.menu.MenuBread;
-import com.benayn.constell.service.server.menu.MenuCapability;
-import com.benayn.constell.services.capricorn.repository.domain.Account;
-import com.benayn.constell.services.capricorn.request.RegisterRequest;
-import com.benayn.constell.services.capricorn.service.AccountService;
-import com.benayn.constell.services.capricorn.service.AuthorityService;
-import java.util.List;
-import javax.annotation.security.RolesAllowed;
-import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,10 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AuthenticationController {
 
-    @Autowired
+    /*
     private AccountService userService;
-    @Autowired
     private AuthorityService authorityService;
+
+    @Autowired
+    public AuthenticationController(AccountService userService, AuthorityService authorityService) {
+        this.userService = userService;
+        this.authorityService = authorityService;
+    }
+
 
     @MenuCapability("系统菜单")
     @RolesAllowed("ROLE_USER")
@@ -106,5 +94,6 @@ public class AuthenticationController {
     public ResponseEntity<List<MenuBread>> usermenuless(){
         return new ResponseEntity<>(userService.getUserMenus(24L, false), HttpStatus.ACCEPTED);
     }
+     */
 
 }

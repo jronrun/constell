@@ -3,6 +3,9 @@
 
 <groups xmlns="http://www.isdc.ro/wro">
 
+    <!-- Capricorn App Start -->
+
+    <!-- Capricorn App End -->
     <!-- Capricorn Manage Start -->
 
     <group name="manage">
@@ -10,6 +13,7 @@
         <css>/manage/golgi/css/main.css</css>
         <css>/components/sweetalert2/dist/sweetalert2.css</css>
         <css>/components/PACE/themes/blue/pace-theme-minimal.css</css>
+        <css>/manage/logo.css</css>
         <css>/manage/manage.css</css>
 
         <js minimize="false">/components/jquery/dist/jquery.min.js</js>
