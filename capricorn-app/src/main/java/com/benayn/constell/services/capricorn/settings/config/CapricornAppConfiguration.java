@@ -104,6 +104,8 @@ public class CapricornAppConfiguration {
     @ConfigurationProperties(prefix = "capricorn.configurer")
     public static class CapricornConfigurer {
 
+        private String clientId;
+        private String clientSecret;
         private List<StaticResourcesConfigurer> resources = Lists.newArrayList();
 
         @Data

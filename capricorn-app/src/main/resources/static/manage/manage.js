@@ -162,7 +162,19 @@ var mgr = {};
         return indexed;
     }
 
+    var lz = LZString;
+    LZString = undefined;
+
+    function sign(target) {
+        return lz.compressToEncodedURIComponent(target);
+    }
+
+    function unSign(target) {
+        return lz.decompressFromEncodedURIComponent(target);
+    }
+
     $.extend(root, {
+
         $$: function (selector) {
             return $(pageable + ' ' + selector);
         },
@@ -176,10 +188,6 @@ var mgr = {};
 
         getFormData: function (selector, isGetEmptyField) {
             return getFormData(selector, isGetEmptyField);
-        },
-
-        decodes: function (target) {
-            return decodes(target);
         },
 
         fmt: function () {
@@ -204,9 +212,11 @@ var mgr = {};
         }
     });
 
-    function decodes(target) {
-        return JSON.parse(LZString.decompressFromEncodedURIComponent(target));
-    }
+    $.each(['error', 'info', 'success', 'warning'], function (idx, type) {
+        root[type] = function (title, msg, arg1, arg2, arg3) {
+            swal(title || '', getMessage(msg, arg1, arg2, arg3) || msg, type);
+        }
+    });
 
     var load = 'loading';
     function loading(selector, clazz) {
@@ -377,6 +387,12 @@ var mgr = {};
         },
         unloading: function (selector, clazz) {
             unloading(selector);
+        },
+        s: function (target) {
+            return sign(target);
+        },
+        us: function (target) {
+            return unSign(target);
         }
     });
 
@@ -399,7 +415,7 @@ $(function () {
     $(document).ajaxError(function( event, xhr, settings, thrownError ) {
         switch (xhr.status) {
             case 403:
-                swal(getMessage(getTitleKey(403)), getMessage(getTextKey(403)), 'warning');
+                warning(getMessage(getTitleKey(403)), getMessage(getTextKey(403)));
                 break;
             case 500:
                 swal(

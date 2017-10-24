@@ -1,9 +1,11 @@
 package com.benayn.constell.service.util;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,6 +38,22 @@ public class LZString {
 
     public static String encodes(Object object) {
         return compressToEncodedURIComponent(JSON.toJSONString(object));
+    }
+
+    public static Map<String, Object> decodesAsMap(String target) {
+        return decodes(target, new TypeReference<HashMap<String, Object>>(){});
+    }
+
+    public static <T> T decodes(String target, TypeReference<T> typeReference) {
+        return JSON.parseObject(decodes(target), typeReference);
+    }
+
+    public static <T> T decodes(String target, Class<T> clazz) {
+        return JSON.parseObject(decodes(target), clazz);
+    }
+
+    public static String decodes(String target) {
+        return decompressFromEncodedURIComponent(target);
     }
 
     public static String compressToBase64(String input) {

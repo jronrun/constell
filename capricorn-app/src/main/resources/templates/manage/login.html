@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Capricorn Manage - Login</title>
+    <link th:href="@{/module/manage.css}" rel="stylesheet"/>
+    <script type="text/javascript" th:src="@{/module/manage.js}"></script>
+    <script type="text/javascript" th:src="@{/module/login.js}"></script>
+</head>
+
+<body class="signin" style="background: none;">
+
+<div class="ui container">
+    <div class="ui equal width center aligned padded grid stackable">
+        <div class="row">
+            <div class="six wide column">
+                <div class="ui segments" style="border-color: whitesmoke;">
+                    <div class="ui segment nightli borderless">
+                        <h3 class="ui header">
+                            <div layout:insert="~{logo}" class="ui image logoImg">logo</div>&nbsp;&nbsp;&nbsp;&nbsp;
+                             Constellation Capricorn
+                        </h3>
+                    </div>
+                    <div class="ui segment">
+                        <div class="ui divider hidden"></div>
+                        <div class="ui large input fluid">
+                            <input type="text" data-name="username" placeholder="Your Email..." th:placeholder="#{render.login.email.placeholder}">
+                        </div>
+                        <div class="ui divider hidden"></div>
+                        <div class="ui large input fluid">
+                            <input type="password" data-name="password" placeholder="Your Password..." th:placeholder="#{render.login.password.placeholder}">
+                        </div>
+                        <div class="ui divider hidden"></div>
+                        <div class="ui divider hidden"></div>
+
+                        <button class="ui large primary fluid button" data-login="login">
+                            <i class="key icon"></i>
+                            <span th:text="#{render.login.button.submit}">Sign In</span>
+                        </button>
+                        <div class="ui divider hidden"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<!--/*/ <th:block th:include="message">internationalization message</th:block> /*/-->
+</body>
+</html>

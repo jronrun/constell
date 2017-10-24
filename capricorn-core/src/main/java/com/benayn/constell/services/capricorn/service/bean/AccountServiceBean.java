@@ -1,9 +1,15 @@
 package com.benayn.constell.services.capricorn.service.bean;
 
+import static com.benayn.constell.service.util.Assets.checkNotBlank;
+import static com.benayn.constell.service.util.Assets.checkNotNull;
 import static com.benayn.constell.service.util.Assets.checkRecordDeleted;
 import static com.benayn.constell.service.util.Assets.checkRecordNoneExist;
 import static com.benayn.constell.service.util.Assets.checkRecordSaved;
+import static com.google.common.io.BaseEncoding.base64;
+import static com.google.common.net.HttpHeaders.AUTHORIZATION;
+import static java.lang.String.format;
 
+import com.alibaba.fastjson.JSON;
 import com.benayn.constell.service.enums.Gender;
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.menu.AuthorityMenuBread;
@@ -17,23 +23,65 @@ import com.benayn.constell.services.capricorn.repository.domain.AccountExample.C
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
 import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.repository.model.AccountDetails;
+import com.benayn.constell.services.capricorn.repository.model.UserToken;
 import com.benayn.constell.services.capricorn.service.AccountService;
 import com.benayn.constell.services.capricorn.service.AuthorityService;
 import com.benayn.constell.services.capricorn.viewobject.AccountVo;
 import com.google.common.collect.Lists;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class AccountServiceBean implements AccountService {
 
-    @Autowired
+    @Value("${server.oauth.token.url}")
+    private String oauthTokenUrl;
+
     private AccountRepository accountRepository;
-    @Autowired
     private AuthorityService authorityService;
+
+    @Autowired
+    public AccountServiceBean(AccountRepository accountRepository, AuthorityService authorityService) {
+        this.accountRepository = accountRepository;
+        this.authorityService = authorityService;
+    }
+
+    @Override
+    public UserToken login(String clientId, String clientSecret, String username, String password) throws ServiceException {
+        FormBody body = new FormBody.Builder()
+            .add("grant_type", "password")
+            .add("username", checkNotBlank(username, "{render.account.assets.username}"))
+            .add("password", checkNotBlank(password, "{render.account.assets.password}"))
+            .build();
+
+        Request request = new Request.Builder().url(oauthTokenUrl)
+            .header(AUTHORIZATION, format("Basic %s", base64().encode(format("%s:%s", clientId, clientSecret).getBytes())))
+            .post(body)
+            .build();
+
+        try {
+            Response response = new OkHttpClient().newCall(request).execute();
+            if (response.isSuccessful()) {
+                return JSON.parseObject(checkNotNull(
+                    response.body(), "response body is null").string(), UserToken.class);
+            }
+        } catch (IOException e) {
+            log.warn("{} login failed: {}", username, e.getMessage());
+        }
+
+        throw new ServiceException("{render.account.login.fail}");
+    }
 
     @Override
     @Cacheable(value = "accounts", sync = true)

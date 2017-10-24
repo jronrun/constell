@@ -41,10 +41,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Value("${config.oauth2.publicKey}")
     private String publicKey;
 
-    @Autowired
     private ConstellationUserDetailsService userDetailsService;
-
-    @Autowired
     private AccountAuthenticationProvider accountAuthenticationProvider;
 
     @Override
@@ -66,7 +63,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public JwtAccessTokenConverter jwtAccessTokenConverter() {
-        log.info("Initializing JWT with public key:\n" + publicKey);
+        log.debug("Initializing JWT with public key:\n" + publicKey);
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         converter.setSigningKey(privateKey);
         converter.setVerifierKey(publicKey);
@@ -78,4 +75,13 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         return new JwtTokenStore(jwtAccessTokenConverter());
     }
 
+    @Autowired
+    public void setUserDetailsService(ConstellationUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
+    @Autowired
+    public void setAccountAuthenticationProvider(AccountAuthenticationProvider accountAuthenticationProvider) {
+        this.accountAuthenticationProvider = accountAuthenticationProvider;
+    }
 }

@@ -1,6 +1,10 @@
 package com.benayn.constell.service.util;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.nullToEmpty;
+
 import com.benayn.constell.service.exception.ServiceException;
+import com.google.common.base.CharMatcher;
 import org.springframework.http.HttpStatus;
 
 public class Assets {
@@ -23,14 +27,46 @@ public class Assets {
         checkResults(expression, "{render.record.already.exist}", errorMessageArgs);
     }
 
-    public static <T> T checkNotNull(T reference, String errorMessage, Object... errorMessageArgs) throws ServiceException {
-        checkResults(null != reference, errorMessage, errorMessageArgs);
+    public static String checkNotBlank(String reference) throws ServiceException {
+        return checkNotBlank(reference, "{assets.check.not.blank}", REFERENCE);
+    }
+
+    public static String checkNotBlank(String reference, String errorMessage, Object... errorMessageArgs) throws ServiceException {
+        checkArgument(!CharMatcher.whitespace().matchesAllOf(nullToEmpty(reference)), errorMessage, errorMessageArgs);
         return reference;
+    }
+
+    public static String checkNotEmpty(String reference) throws ServiceException {
+        return checkNotEmpty(reference, "{assets.check.not.empty}", REFERENCE);
+    }
+
+    public static String checkNotEmpty(String reference, String errorMessage, Object... errorMessageArgs) throws ServiceException {
+        checkArgument(!isNullOrEmpty(reference), errorMessage, errorMessageArgs);
+        return reference;
+    }
+
+    public static <T> T checkNotNull(T reference) throws ServiceException {
+        return checkNotNull(reference, "{assets.check.not.null}", REFERENCE);
+    }
+
+    public static <T> T checkNotNull(T reference, String errorMessage, Object... errorMessageArgs) throws ServiceException {
+        checkArgument(null != reference, errorMessage, errorMessageArgs);
+        return reference;
+    }
+
+    public static void checkArgument(boolean expression, String errorMessage, Object... errorMessageArgs)
+        throws ServiceException {
+        checkArgument(expression, ServiceException.DEFAULT_CODE, errorMessage, errorMessageArgs);
+    }
+
+    public static void checkArgument(boolean expression, int code, String errorMessage, Object... errorMessageArgs)
+        throws ServiceException {
+        checkResults(expression, code, errorMessage, errorMessageArgs);
     }
 
     public static void checkResults(boolean expression, String errorMessage, Object... errorMessageArgs)
         throws ServiceException {
-        checkResults(expression, 0, errorMessage, errorMessageArgs);
+        checkResults(expression, ServiceException.DEFAULT_CODE, errorMessage, errorMessageArgs);
     }
 
     public static void checkResults(boolean expression, int code, String errorMessage, Object... errorMessageArgs)
@@ -40,4 +76,5 @@ public class Assets {
         }
     }
 
+    private static final String REFERENCE = "reference";
 }

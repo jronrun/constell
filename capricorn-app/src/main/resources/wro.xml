@@ -13,7 +13,7 @@
         <css>/manage/golgi/css/main.css</css>
         <css>/components/sweetalert2/dist/sweetalert2.css</css>
         <css>/components/PACE/themes/blue/pace-theme-minimal.css</css>
-        <css>/manage/logo.css</css>
+        <css>/logo.css</css>
         <css>/manage/manage.css</css>
 
         <js minimize="false">/components/jquery/dist/jquery.min.js</js>
@@ -33,6 +33,10 @@
 
     <group name="item-index">
         <js>/manage/item-index.js</js>
+    </group>
+
+    <group name="login">
+        <js>/manage/login.js</js>
     </group>
 
     <!-- Capricorn Manage End -->

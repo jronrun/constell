@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConstellationPermissionEvaluator implements PermissionEvaluator {
 
-    @Autowired
     private AuthorityService authorityService;
 
     @Override
@@ -43,5 +42,10 @@ public class ConstellationPermissionEvaluator implements PermissionEvaluator {
     @Override
     public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
         return false;
+    }
+
+    @Autowired
+    public void setAuthorityService(AuthorityService authorityService) {
+        this.authorityService = authorityService;
     }
 }

@@ -5,10 +5,13 @@ import com.benayn.constell.service.server.menu.MenuBread;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.services.capricorn.repository.domain.Account;
 import com.benayn.constell.services.capricorn.repository.model.AccountDetails;
+import com.benayn.constell.services.capricorn.repository.model.UserToken;
 import com.benayn.constell.services.capricorn.viewobject.AccountVo;
 import java.util.List;
 
 public interface AccountService {
+
+    UserToken login(String clientId, String clientSecret, String username, String password) throws ServiceException;
 
     AccountDetails getAccountDetails(String email);
 

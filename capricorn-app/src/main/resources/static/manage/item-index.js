@@ -14,7 +14,7 @@ var index = {};
 
         index: {
             init: function () {
-                pageInfo = decodes($$('[data-page-info]').data('pageInfo'));
+                pageInfo = JSON.parse(mgr.us($$('[data-page-info]').data('pageInfo'))) || {};
             }
         },
 
@@ -25,6 +25,7 @@ var index = {};
                     if (!mgr.loading(el)) {
                         return;
                     }
+
                     core.list.query($.extend({
                         pageNo: pn
                     }, getFormData('#form-search')), function () {
@@ -43,7 +44,7 @@ var index = {};
                 var infoEl = '[data-list-info]', listInfo = {};
 
                 if ($$(infoEl).length) {
-                    listInfo = decodes($$(infoEl).data('listInfo')) || {};
+                    listInfo = JSON.parse(mgr.us($$(infoEl).data('listInfo'))) || {};
                 }
 
                 if (param.pageNo === listInfo.index) {

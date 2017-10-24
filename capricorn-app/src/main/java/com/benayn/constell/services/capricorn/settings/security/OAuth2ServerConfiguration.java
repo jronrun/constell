@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -25,8 +24,12 @@ public class OAuth2ServerConfiguration {
     @EnableResourceServer
     protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
-        @Autowired
         private TokenStore tokenStore;
+
+        @Autowired
+        public ResourceServerConfiguration(TokenStore tokenStore) {
+            this.tokenStore = tokenStore;
+        }
 
         @Override
         public void configure(ResourceServerSecurityConfigurer resources) {
@@ -41,10 +44,12 @@ public class OAuth2ServerConfiguration {
             // @formatter:off
             http
                 .csrf().disable()
+                /*
                 .formLogin()
                 .and()
                 .httpBasic().disable()
                 .anonymous().disable()
+                 */
                 .authorizeRequests()
                 .antMatchers("/api/**").authenticated()
                 ;
@@ -60,18 +65,31 @@ public class OAuth2ServerConfiguration {
     @EnableAuthorizationServer
     protected static class AuthorizationServerConfiguration extends AuthorizationServerConfigurerAdapter {
 
-        @Autowired
         private JwtAccessTokenConverter jwtAccessTokenConverter;
+        private TokenStore tokenStore;
+        private AuthenticationManager authenticationManager;
+        ConstellationUserDetailsService userDetailsService;
 
         @Autowired
-        private TokenStore tokenStore;
+        public void setJwtAccessTokenConverter(JwtAccessTokenConverter jwtAccessTokenConverter) {
+            this.jwtAccessTokenConverter = jwtAccessTokenConverter;
+        }
+
+        @Autowired
+        public void setTokenStore(TokenStore tokenStore) {
+            this.tokenStore = tokenStore;
+        }
 
         @Autowired
         @Qualifier("authenticationManagerBean")
-        private AuthenticationManager authenticationManager;
+        public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+            this.authenticationManager = authenticationManager;
+        }
 
         @Autowired
-        ConstellationUserDetailsService userDetailsService;
+        public void setUserDetailsService(ConstellationUserDetailsService userDetailsService) {
+            this.userDetailsService = userDetailsService;
+        }
 
         @Override
         public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {

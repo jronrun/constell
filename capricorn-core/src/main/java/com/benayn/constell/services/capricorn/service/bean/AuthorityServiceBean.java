@@ -1,6 +1,7 @@
 package com.benayn.constell.services.capricorn.service.bean;
 
 import com.benayn.constell.service.server.menu.AuthorityMenuBread;
+import com.benayn.constell.services.capricorn.config.Authorities;
 import com.benayn.constell.services.capricorn.repository.PermissionRepository;
 import com.benayn.constell.services.capricorn.repository.RoleRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
@@ -8,6 +9,7 @@ import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.repository.model.RoleDetails;
 import com.benayn.constell.services.capricorn.service.AuthorityService;
 import com.google.common.collect.Lists;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthorityServiceBean implements AuthorityService {
 
-    @Autowired
     private RoleRepository roleRepository;
-    @Autowired
     private PermissionRepository permissionRepository;
+
+    @Autowired
+    public AuthorityServiceBean(RoleRepository roleRepository, PermissionRepository permissionRepository) {
+        this.roleRepository = roleRepository;
+        this.permissionRepository = permissionRepository;
+    }
 
     @Override
     public boolean authenticate(String permission, List<String> authorities) {
@@ -46,7 +52,9 @@ public class AuthorityServiceBean implements AuthorityService {
 
     @Override
     public List<Role> getRolesByAccountId(Long accountId) {
-        return roleRepository.getByAccountId(accountId);
+        List<Role> roles = roleRepository.getByAccountId(accountId);
+        roles.add(getAnonymousRole());
+        return roles;
     }
 
     @Override
@@ -82,5 +90,16 @@ public class AuthorityServiceBean implements AuthorityService {
 
         List<Permission> permissions = permissionRepository.getByRoleId(role.getId());
         return new RoleDetails(role, permissions);
+    }
+
+    private static Role getAnonymousRole() {
+        Date now = new Date();
+        Role anonymous = new Role();
+        anonymous.setId(-1L);
+        anonymous.setCode(Authorities.ROLE_ANONYMOUS);
+        anonymous.setLabel("ROLE ANONYMOUS");
+        anonymous.setCreateTime(now);
+        anonymous.setLastModifyTime(now);
+        return anonymous;
     }
 }

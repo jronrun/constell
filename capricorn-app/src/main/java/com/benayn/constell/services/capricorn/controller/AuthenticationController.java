@@ -1,8 +1,26 @@
 package com.benayn.constell.services.capricorn.controller;
 
+import static com.benayn.constell.service.server.respond.Responds.success;
+import static com.benayn.constell.service.util.Assets.checkNotBlank;
+import static com.benayn.constell.service.util.Assets.checkNotNull;
+import static com.benayn.constell.service.util.LZString.decodesAsMap;
+import static com.benayn.constell.service.util.LZString.encodes;
+import static com.benayn.constell.services.capricorn.config.Authorities.ROLE_ANONYMOUS;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.BASE_API_V1;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import com.benayn.constell.service.exception.ServiceException;
+import com.benayn.constell.service.server.respond.Message;
+import com.benayn.constell.services.capricorn.repository.model.UserToken;
+import com.benayn.constell.services.capricorn.service.AccountService;
+import com.benayn.constell.services.capricorn.settings.config.CapricornAppConfiguration.CapricornConfigurer;
+import java.util.Map;
+import javax.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -11,15 +29,28 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class AuthenticationController {
 
-    /*
-    private AccountService userService;
-    private AuthorityService authorityService;
+    private AccountService accountService;
+    private CapricornConfigurer configurer;
 
     @Autowired
-    public AuthenticationController(AccountService userService, AuthorityService authorityService) {
-        this.userService = userService;
-        this.authorityService = authorityService;
+    public AuthenticationController(AccountService accountService, CapricornConfigurer configurer) {
+        this.accountService = accountService;
+        this.configurer = configurer;
     }
+
+    @RolesAllowed(ROLE_ANONYMOUS)
+    @PostMapping(value = "/login", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Message> login(@RequestBody String credentials) throws ServiceException {
+        Map<String, Object> authentic = checkNotNull(decodesAsMap(checkNotBlank(credentials)));
+        String username = checkNotBlank(checkNotNull(authentic.get("username")).toString());
+        String password = checkNotBlank(checkNotNull(authentic.get("password")).toString());
+
+        UserToken token = accountService.login(configurer.getClientId(), configurer.getClientSecret(), username, password);
+        return success(encodes(token.getAccessToken()));
+    }
+
+    /*
+
 
 
     @MenuCapability("系统菜单")

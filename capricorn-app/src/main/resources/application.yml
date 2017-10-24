@@ -11,8 +11,16 @@ spring:
     servlet:
       content-type: text/html
 
+capricorn:
+  configurer:
+    clientId: constellation-capricorn
+    clientSecret: 9ddf1f40ddea06837257a7e2653a69d0
+
 server:
   port: 8011
+  oauth:
+    token:
+      url: http://127.0.0.1:${server.port}/oauth/token
 
 logging:
   level:

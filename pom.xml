@@ -31,6 +31,8 @@
         <thymeleaf-extras-data-attribute.version>2.0.1</thymeleaf-extras-data-attribute.version>
         <wro4j-spring-boot-starter.version>0.3.6</wro4j-spring-boot-starter.version>
         <wro4j.version>1.8.0</wro4j.version>
+        <okhttp.version>3.9.0</okhttp.version>
+        <retrofit.version>2.3.0</retrofit.version>
     </properties>
 
     <dependencyManagement>

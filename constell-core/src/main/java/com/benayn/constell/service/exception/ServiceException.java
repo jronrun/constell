@@ -4,6 +4,7 @@ import lombok.Getter;
 
 public class ServiceException extends Exception {
 
+    public static final int DEFAULT_CODE = 0;
     private static final long serialVersionUID = -3653068626422310886L;
 
     @Getter
@@ -12,7 +13,7 @@ public class ServiceException extends Exception {
     private int code;
 
     public ServiceException(final String message) {
-        this(0, message);
+        this(DEFAULT_CODE, message);
     }
 
     public ServiceException(final String message, Object[] messageArgs) {
