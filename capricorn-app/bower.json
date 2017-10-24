@@ -16,6 +16,7 @@
     "jquery.nicescroll": "^3.7.6",
     "jquery-pjax": "^2.0.1",
     "lz-string": "^1.4.4",
-    "sweetalert2": "^6.10.1"
+    "sweetalert2": "^6.10.1",
+    "store.js": "^2.0.12"
   }
 }
