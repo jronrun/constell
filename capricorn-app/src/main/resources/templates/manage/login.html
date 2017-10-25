@@ -36,7 +36,7 @@
                         <div class="ui divider hidden"></div>
                         <div class="ui divider hidden"></div>
 
-                        <button class="ui large primary fluid button" data-login="login">
+                        <button class="ui large primary fluid button" th:attr="data-login=${info}">
                             <i class="key icon"></i>
                             <span th:text="#{render.login.button.submit}">Sign In</span>
                         </button>

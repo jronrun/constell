@@ -126,6 +126,19 @@ var mgr = {};
 
     $(document).pjax('a[data-pjax]', pageable);
 
+    var headers = {};
+
+    function addHeader(name, value) {
+        var aHeader = {};
+        if (1 === value) {
+            aHeader.Authorization = fmt('Bearer {0}',
+                /^\".*\"$/.test(name) ? (name.substring(1, name.length - 1)) : name);
+        } else {
+            aHeader[name] = value;
+        }
+        $.extend(headers, aHeader);
+    }
+
     /**
      * <a data-pjax data-query="{{selector}}" data-queries="{{encode json data}}" href="{{href}}"> {{text}} </a>
      */
@@ -134,6 +147,10 @@ var mgr = {};
 
         var origin = location.origin;
         xhr.setRequestHeader('Referer-Source', location.href.replace(origin, ''));
+
+        $.each(headers, function (name, value) {
+            xhr.setRequestHeader(name, value);
+        });
 
         return true;
     });
@@ -387,6 +404,10 @@ var mgr = {};
         },
         unloading: function (selector, clazz) {
             unloading(selector);
+        },
+        header: function (name, value) {
+            addHeader(name, value);
+            return register;
         },
         s: function (target) {
             return sign(target);

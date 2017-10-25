@@ -58,7 +58,7 @@ public class AccountServiceBean implements AccountService {
     }
 
     @Override
-    public UserToken login(String clientId, String clientSecret, String username, String password) throws ServiceException {
+    public UserToken authorization(String clientId, String clientSecret, String username, String password) throws ServiceException {
         FormBody body = new FormBody.Builder()
             .add("grant_type", "password")
             .add("username", checkNotBlank(username, "{render.account.assets.username}"))

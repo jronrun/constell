@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface AccountService {
 
-    UserToken login(String clientId, String clientSecret, String username, String password) throws ServiceException;
+    UserToken authorization(String clientId, String clientSecret, String username, String password) throws ServiceException;
 
     AccountDetails getAccountDetails(String email);
 

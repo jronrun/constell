@@ -24,12 +24,15 @@ var login = {};
                 return;
             }
 
-            mgr.post('/capricorn/api/v1/user/login', mgr.s(JSON.stringify(data))).fail(function (xhr) {
+            var info = JSON.parse(mgr.us($(el).data('login')));
+            mgr.post(info.authorization, mgr.s(JSON.stringify(data))).fail(function (xhr) {
                 warning('Oops...', mgr.failMsg(xhr));
                 mgr.unloading(el);
             }).done(function (resp) {
-                alert(mgr.us(resp.result));
+                mgr.header(mgr.us(resp.result), 1);
                 mgr.unloading(el);
+                $.pjax.defaults.fragment = 'html';
+                mgr.pjax(info.redirect, 'html');
             });
         },
         initialize: function () {

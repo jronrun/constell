@@ -39,13 +39,13 @@ public class AuthenticationController {
     }
 
     @RolesAllowed(ROLE_ANONYMOUS)
-    @PostMapping(value = "/login", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Message> login(@RequestBody String credentials) throws ServiceException {
+    @PostMapping(value = "/authorization", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Message> authorization(@RequestBody String credentials) throws ServiceException {
         Map<String, Object> authentic = checkNotNull(decodesAsMap(checkNotBlank(credentials)));
         String username = checkNotBlank(checkNotNull(authentic.get("username")).toString());
         String password = checkNotBlank(checkNotNull(authentic.get("password")).toString());
 
-        UserToken token = accountService.login(configurer.getClientId(), configurer.getClientSecret(), username, password);
+        UserToken token = accountService.authorization(configurer.getClientId(), configurer.getClientSecret(), username, password);
         return success(encodes(token.getAccessToken()));
     }
 
