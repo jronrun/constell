@@ -5,8 +5,7 @@ import static com.benayn.constell.service.util.Assets.checkNotBlank;
 import static com.benayn.constell.service.util.Assets.checkNotNull;
 import static com.benayn.constell.service.util.LZString.decodesAsMap;
 import static com.benayn.constell.service.util.LZString.encodes;
-import static com.benayn.constell.services.capricorn.config.Authorities.ROLE_ANONYMOUS;
-import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.BASE_API_V1;
+import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.MANAGE_BASE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.benayn.constell.service.exception.ServiceException;
@@ -17,19 +16,20 @@ import com.benayn.constell.services.capricorn.settings.config.CapricornAppConfig
 import com.google.common.collect.ImmutableMap;
 import com.google.common.hash.Hashing;
 import java.util.Map;
-import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping(value = BASE_API_V1 + "/user")
+@Controller
+@RequestMapping("/user")
 @Slf4j
 public class AuthenticationController {
 
@@ -42,7 +42,16 @@ public class AuthenticationController {
         this.configurer = configurer;
     }
 
-    @RolesAllowed(ROLE_ANONYMOUS)
+    @GetMapping("signin")
+    public String login(Model model) {
+        model.addAttribute("info", encodes(ImmutableMap.of(
+            "authorization", "/user/authorization",
+            "redirect", MANAGE_BASE + "index"
+        )));
+
+        return "/manage/login";
+    }
+
     @PostMapping(value = "/authorization", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> authorization(@RequestBody String credentials, HttpServletResponse response) throws ServiceException {
         Map<String, Object> authentic = checkNotNull(decodesAsMap(checkNotBlank(credentials)));

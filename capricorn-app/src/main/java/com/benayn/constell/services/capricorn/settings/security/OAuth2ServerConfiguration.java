@@ -1,5 +1,7 @@
 package com.benayn.constell.services.capricorn.settings.security;
 
+import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.BASE_API;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
@@ -39,27 +41,43 @@ public class OAuth2ServerConfiguration {
             // @formatter:on
         }
 
+        /*
+        http
+            .authorizeRequests()
+            .antMatchers(BASE_API + "/**", "/manage/**")
+            .authenticated()
+            .and()
+            .authorizeRequests()
+            .antMatchers("/manage/**")
+            .hasRole("MANAGE")
+            // login
+            .and()
+            .formLogin()
+            .loginPage("/login")
+            .failureUrl("/login?error=loginError")
+            .defaultSuccessUrl("/")
+            // logout
+            .and()
+            .logout()
+            .logoutUrl("/logout")
+            .logoutSuccessUrl("/login").deleteCookies("connect.credentials", "JSESSIONID")
+            .and()
+            .csrf().disable()
+        ;
+         */
         @Override
         public void configure(HttpSecurity http) throws Exception {
             // @formatter:off
             http
                 .csrf().disable()
-                /*
-                .formLogin()
-                .and()
-                .httpBasic().disable()
-                .anonymous().disable()
-                 */
                 .authorizeRequests()
-                .antMatchers("/api/**").authenticated()
+                .antMatchers(BASE_API + "/**", "/manage/**")
+                .authenticated()
                 ;
-
             // @formatter:on
         }
 
     }
-
-
 
     @Configuration
     @EnableAuthorizationServer

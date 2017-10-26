@@ -16,8 +16,6 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
-@Configuration
-@EnableWebSecurity
 /*
     @Secured({"ROLE_XXX"})
     @EnableGlobalMethodSecurity(securedEnabled = true)
@@ -31,6 +29,8 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
     @PostAuthorize("hasRole(‘ROLE_XXX‘)")
     @EnableGlobalMethodSecurity(prePostEnabled = true)
 */
+@Configuration
+@EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, jsr250Enabled = true)
 @Slf4j
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
