@@ -2,6 +2,7 @@ package com.benayn.constell.service.util;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.google.common.base.CharMatcher;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -37,7 +38,7 @@ public class LZString {
     }
 
     public static String encodes(Object object) {
-        return compressToEncodedURIComponent(JSON.toJSONString(object));
+        return CharMatcher.whitespace().trimFrom(compressToEncodedURIComponent(JSON.toJSONString(object)));
     }
 
     public static Map<String, Object> decodesAsMap(String target) {

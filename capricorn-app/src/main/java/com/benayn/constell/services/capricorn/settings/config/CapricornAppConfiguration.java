@@ -6,6 +6,7 @@ import com.benayn.constell.service.server.annotation.EnableBenaynSwagger;
 import com.benayn.constell.service.server.component.ViewObjectResolver;
 import com.benayn.constell.service.server.component.ViewObjectResolverBean;
 import com.benayn.constell.service.server.dialect.StarsDialect;
+import com.benayn.constell.service.server.filter.CredentialsFilter;
 import com.benayn.constell.service.server.service.BenaynServiceInfo;
 import com.google.common.collect.Lists;
 import java.util.List;
@@ -13,9 +14,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -41,6 +44,15 @@ public class CapricornAppConfiguration {
     @Bean
     public ViewObjectResolver viewObjectResolver(MessageSource messageSource) {
         return new ViewObjectResolverBean(messageSource, fragmentTemplateEngine(messageSource));
+    }
+
+    @Bean
+    public FilterRegistrationBean credentialsFilter() {
+        FilterRegistrationBean<CredentialsFilter> credentialsFilter = new FilterRegistrationBean<>();
+        credentialsFilter.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        credentialsFilter.addUrlPatterns("/*");
+        credentialsFilter.setFilter(new CredentialsFilter());
+        return credentialsFilter;
     }
 
     @Bean

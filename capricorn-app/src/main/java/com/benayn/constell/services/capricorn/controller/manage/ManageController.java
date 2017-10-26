@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +27,13 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 public class ManageController {
 
     @GetMapping(value = "index")
-    public void index(Model model) {
+    public void index(Model model, Authentication authentication) {
+        if (null != authentication) {
+            OAuth2AuthenticationDetails details = ((OAuth2AuthenticationDetails) authentication.getDetails());
+            System.out.println("token: " + String.format("%s %s", details.getTokenType(), details.getTokenValue()));
+            System.out.println(authentication.getPrincipal());
+            System.out.println(authentication);
+        }
         model.addAttribute("now", LocalDateTime.now());
     }
 

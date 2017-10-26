@@ -28,11 +28,8 @@ var login = {};
             mgr.post(info.authorization, mgr.s(JSON.stringify(data))).fail(function (xhr) {
                 warning('Oops...', mgr.failMsg(xhr));
                 mgr.unloading(el);
-            }).done(function (resp) {
-                mgr.header(mgr.us(resp.result), 1);
-                mgr.unloading(el);
-                $.pjax.defaults.fragment = 'html';
-                mgr.pjax(info.redirect, 'html');
+            }).done(function () {
+                location.href = info.redirect;
             });
         },
         initialize: function () {

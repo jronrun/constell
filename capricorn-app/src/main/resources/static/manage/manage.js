@@ -130,12 +130,7 @@ var mgr = {};
 
     function addHeader(name, value) {
         var aHeader = {};
-        if (1 === value) {
-            aHeader.Authorization = fmt('Bearer {0}',
-                /^\".*\"$/.test(name) ? (name.substring(1, name.length - 1)) : name);
-        } else {
-            aHeader[name] = value;
-        }
+        aHeader[name] = value;
         $.extend(headers, aHeader);
     }
 

@@ -16,6 +16,8 @@ import com.benayn.constell.services.capricorn.service.AccountService;
 import com.benayn.constell.services.capricorn.settings.config.CapricornAppConfiguration.CapricornConfigurer;
 import java.util.Map;
 import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,13 +42,19 @@ public class AuthenticationController {
 
     @RolesAllowed(ROLE_ANONYMOUS)
     @PostMapping(value = "/authorization", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Message> authorization(@RequestBody String credentials) throws ServiceException {
+    public ResponseEntity<Message> authorization(@RequestBody String credentials, HttpServletResponse response) throws ServiceException {
         Map<String, Object> authentic = checkNotNull(decodesAsMap(checkNotBlank(credentials)));
         String username = checkNotBlank(checkNotNull(authentic.get("username")).toString());
         String password = checkNotBlank(checkNotNull(authentic.get("password")).toString());
 
         UserToken token = accountService.authorization(configurer.getClientId(), configurer.getClientSecret(), username, password);
-        return success(encodes(token.getAccessToken()));
+
+        Cookie cookie = new Cookie("connect.credentials", encodes(token.getAccessToken()));
+        cookie.setPath("/");
+        cookie.setMaxAge(60);
+        response.addCookie(cookie);
+
+        return success(null);
     }
 
     /*
