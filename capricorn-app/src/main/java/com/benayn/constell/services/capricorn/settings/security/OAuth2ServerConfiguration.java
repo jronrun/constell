@@ -37,36 +37,38 @@ public class OAuth2ServerConfiguration {
         public void configure(ResourceServerSecurityConfigurer resources) {
             // @formatter:off
             resources
+                .authenticationEntryPoint(new DefaultOAuth2AuthenticationEntryPoint())
                 .resourceId(RESOURCE_ID).tokenStore(tokenStore);
             // @formatter:on
         }
 
-        /*
-        http
-            .authorizeRequests()
-            .antMatchers(BASE_API + "/**", "/manage/**")
-            .authenticated()
-            .and()
-            .authorizeRequests()
-            .antMatchers("/manage/**")
-            .hasRole("MANAGE")
-            // login
-            .and()
-            .formLogin()
-            .loginPage("/login")
-            .failureUrl("/login?error=loginError")
-            .defaultSuccessUrl("/")
-            // logout
-            .and()
-            .logout()
-            .logoutUrl("/logout")
-            .logoutSuccessUrl("/login").deleteCookies("connect.credentials", "JSESSIONID")
-            .and()
-            .csrf().disable()
-        ;
-         */
         @Override
         public void configure(HttpSecurity http) throws Exception {
+            /*
+            http
+                .authorizeRequests()
+                .antMatchers(BASE_API + "/**", "/manage/**")
+                .authenticated()
+                .and()
+                .authorizeRequests()
+                .antMatchers("/manage/**")
+                .hasRole("MANAGE")
+                // login
+                .and()
+                .formLogin()
+                .loginPage("/login")
+                .failureUrl("/login?error=loginError")
+                .defaultSuccessUrl("/")
+                // logout
+                .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login").deleteCookies("connect.credentials", "JSESSIONID")
+                .and()
+                .csrf().disable()
+            ;
+             */
+
             // @formatter:off
             http
                 .csrf().disable()

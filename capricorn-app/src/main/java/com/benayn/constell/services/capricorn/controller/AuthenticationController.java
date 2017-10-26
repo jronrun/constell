@@ -42,7 +42,7 @@ public class AuthenticationController {
         this.configurer = configurer;
     }
 
-    @GetMapping("signin")
+    @GetMapping("login")
     public String login(Model model) {
         model.addAttribute("info", encodes(ImmutableMap.of(
             "authorization", "/user/authorization",
