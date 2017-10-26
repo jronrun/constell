@@ -28,7 +28,8 @@ var login = {};
             mgr.post(info.authorization, mgr.s(JSON.stringify(data))).fail(function (xhr) {
                 warning('Oops...', mgr.failMsg(xhr));
                 mgr.unloading(el);
-            }).done(function () {
+            }).done(function (resp) {
+                mgr.header("token", resp.result);
                 location.href = info.redirect;
             });
         },

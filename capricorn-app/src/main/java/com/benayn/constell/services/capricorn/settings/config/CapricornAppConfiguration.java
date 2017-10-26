@@ -6,7 +6,7 @@ import com.benayn.constell.service.server.annotation.EnableBenaynSwagger;
 import com.benayn.constell.service.server.component.ViewObjectResolver;
 import com.benayn.constell.service.server.component.ViewObjectResolverBean;
 import com.benayn.constell.service.server.dialect.StarsDialect;
-import com.benayn.constell.service.server.filter.CredentialsFilter;
+import com.benayn.constell.service.server.filter.CookieCredentialsFilter;
 import com.benayn.constell.service.server.service.BenaynServiceInfo;
 import com.google.common.collect.Lists;
 import java.util.List;
@@ -47,11 +47,11 @@ public class CapricornAppConfiguration {
     }
 
     @Bean
-    public FilterRegistrationBean credentialsFilter() {
-        FilterRegistrationBean<CredentialsFilter> credentialsFilter = new FilterRegistrationBean<>();
+    public FilterRegistrationBean cookieCredentialsFilter() {
+        FilterRegistrationBean<CookieCredentialsFilter> credentialsFilter = new FilterRegistrationBean<>();
         credentialsFilter.setOrder(Ordered.HIGHEST_PRECEDENCE);
         credentialsFilter.addUrlPatterns("/*");
-        credentialsFilter.setFilter(new CredentialsFilter());
+        credentialsFilter.setFilter(new CookieCredentialsFilter());
         return credentialsFilter;
     }
 

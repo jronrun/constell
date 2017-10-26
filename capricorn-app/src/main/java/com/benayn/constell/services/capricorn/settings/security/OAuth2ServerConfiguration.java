@@ -114,6 +114,7 @@ public class OAuth2ServerConfiguration {
                 .authorizedGrantTypes("client_credentials", "password", "authorization_code", "refresh_token")
                 .scopes("read", "write")
                 .resourceIds(RESOURCE_ID)
+                .accessTokenValiditySeconds(12 * 60 * 60)
                 ;
 
             // @formatter:on

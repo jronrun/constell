@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CredentialsFilter implements Filter {
+public class CookieCredentialsFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -44,10 +44,12 @@ public class CredentialsFilter implements Filter {
                     if (!isNullOrEmpty(value)) {
                         mutableRequest.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + value);
 
-                        cookie.setValue(null);
-                        cookie.setMaxAge(0);
-                        cookie.setPath("/");
-                        response.addCookie(cookie);
+                        /* delete cookie
+                            cookie.setValue(null);
+                            cookie.setMaxAge(0);
+                            cookie.setPath("/");
+                            response.addCookie(cookie);
+                         */
                     }
                 });
         });

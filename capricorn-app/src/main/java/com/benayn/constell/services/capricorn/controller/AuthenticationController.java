@@ -14,6 +14,8 @@ import com.benayn.constell.service.server.respond.Message;
 import com.benayn.constell.services.capricorn.repository.model.UserToken;
 import com.benayn.constell.services.capricorn.service.AccountService;
 import com.benayn.constell.services.capricorn.settings.config.CapricornAppConfiguration.CapricornConfigurer;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.hash.Hashing;
 import java.util.Map;
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.Cookie;
@@ -51,10 +53,10 @@ public class AuthenticationController {
 
         Cookie cookie = new Cookie("connect.credentials", encodes(token.getAccessToken()));
         cookie.setPath("/");
-        cookie.setMaxAge(60);
+        cookie.setMaxAge(12 * 60 * 60);
         response.addCookie(cookie);
 
-        return success(null);
+        return success(ImmutableMap.of("token", Hashing.sha256().hashLong(System.currentTimeMillis()).toString()));
     }
 
     /*
