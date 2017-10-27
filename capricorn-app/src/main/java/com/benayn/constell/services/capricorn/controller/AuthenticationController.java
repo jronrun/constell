@@ -6,6 +6,7 @@ import static com.benayn.constell.service.util.Assets.checkNotNull;
 import static com.benayn.constell.service.util.LZString.decodesAsMap;
 import static com.benayn.constell.service.util.LZString.encodes;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.MANAGE_BASE;
+import static java.util.Optional.ofNullable;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.benayn.constell.service.exception.ServiceException;
@@ -15,8 +16,10 @@ import com.benayn.constell.services.capricorn.service.AccountService;
 import com.benayn.constell.services.capricorn.settings.config.CapricornAppConfiguration.CapricornConfigurer;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.hash.Hashing;
+import java.util.Arrays;
 import java.util.Map;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,10 +46,31 @@ public class AuthenticationController {
     }
 
     @GetMapping("login")
-    public String login(Model model) {
+    public String login(Model model, HttpServletRequest request, HttpServletResponse response) {
+        final String[] message = {""};
+        final String[] redirect = {MANAGE_BASE + "index"};
+
+        ofNullable(request.getCookies()).ifPresent(cookies -> {
+            Arrays.stream(cookies)
+                .filter(cookie -> "connect.redirect".equals(cookie.getName()))
+                .findFirst()
+                .ifPresent(cookie -> {
+                    Map<String, Object> info = decodesAsMap(cookie.getValue());
+                    message[0] = String.valueOf(info.get("message"));
+                    redirect[0] = String.valueOf(info.get("reference"));
+
+                    cookie.setValue(null);
+                    cookie.setMaxAge(0);
+                    cookie.setPath("/");
+                    response.addCookie(cookie);
+                })
+                ;
+        });
+
         model.addAttribute("info", encodes(ImmutableMap.of(
             "authorization", "/user/authorization",
-            "redirect", MANAGE_BASE + "index"
+            "redirect", redirect[0],
+            "message", message[0]
         )));
 
         return "/manage/login";
