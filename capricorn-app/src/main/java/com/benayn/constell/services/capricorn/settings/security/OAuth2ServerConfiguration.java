@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 @Configuration
 public class OAuth2ServerConfiguration {
@@ -27,10 +28,12 @@ public class OAuth2ServerConfiguration {
     protected static class ResourceServerConfiguration extends ResourceServerConfigurerAdapter {
 
         private TokenStore tokenStore;
+        private LogoutHandler constellationLogoutHandler;
 
         @Autowired
-        public ResourceServerConfiguration(TokenStore tokenStore) {
+        public ResourceServerConfiguration(TokenStore tokenStore, LogoutHandler constellationLogoutHandler) {
             this.tokenStore = tokenStore;
+            this.constellationLogoutHandler = constellationLogoutHandler;
         }
 
         @Override
@@ -75,6 +78,11 @@ public class OAuth2ServerConfiguration {
                 .authorizeRequests()
                 .antMatchers(BASE_API + "/**", "/manage/**")
                 .authenticated()
+                .and()
+                .logout()
+                .logoutUrl("/user/logout")
+                .addLogoutHandler(constellationLogoutHandler)
+                .logoutSuccessUrl("/").deleteCookies("connect.credentials", "JSESSIONID")
                 ;
             // @formatter:on
         }

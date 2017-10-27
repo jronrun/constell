@@ -8,6 +8,7 @@ import com.benayn.constell.service.server.component.ViewObjectResolverBean;
 import com.benayn.constell.service.server.dialect.StarsDialect;
 import com.benayn.constell.service.server.filter.CookieCredentialsFilter;
 import com.benayn.constell.service.server.service.BenaynServiceInfo;
+import com.benayn.constell.services.capricorn.settings.security.ConstellationLogoutHandler;
 import com.google.common.collect.Lists;
 import java.util.List;
 import lombok.Data;
@@ -19,6 +20,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -70,6 +72,11 @@ public class CapricornAppConfiguration {
         return new StarsDialect();
     }
 
+    @Bean
+    public LogoutHandler constellationLogoutHandler() {
+        return new ConstellationLogoutHandler();
+    }
+
     @Configuration
     public class CapricornWebMvcConfigurer implements WebMvcConfigurer {
 
@@ -88,11 +95,9 @@ public class CapricornAppConfiguration {
         @Override
         public void addResourceHandlers(ResourceHandlerRegistry registry) {
             capricornConfigurer.getResources()
-                .forEach(resource -> {
-                        registry
-                            .addResourceHandler(resource.getHandler())
-                            .addResourceLocations(resource.getLocation());
-                    }
+                .forEach(resource -> registry
+                    .addResourceHandler(resource.getHandler())
+                    .addResourceLocations(resource.getLocation())
                 );
         }
 

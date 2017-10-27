@@ -1,7 +1,6 @@
 package com.benayn.constell.services.capricorn.service.bean;
 
 import com.benayn.constell.service.server.menu.AuthorityMenuBread;
-import com.benayn.constell.services.capricorn.config.Authorities;
 import com.benayn.constell.services.capricorn.repository.PermissionRepository;
 import com.benayn.constell.services.capricorn.repository.RoleRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
@@ -9,7 +8,6 @@ import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.repository.model.RoleDetails;
 import com.benayn.constell.services.capricorn.service.AuthorityService;
 import com.google.common.collect.Lists;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,9 +50,7 @@ public class AuthorityServiceBean implements AuthorityService {
 
     @Override
     public List<Role> getRolesByAccountId(Long accountId) {
-        List<Role> roles = roleRepository.getByAccountId(accountId);
-        roles.add(getAnonymousRole());
-        return roles;
+        return roleRepository.getByAccountId(accountId);
     }
 
     @Override
@@ -83,23 +79,12 @@ public class AuthorityServiceBean implements AuthorityService {
     private <T> RoleDetails getRoleDetailsBy(T param, boolean isFindByCode) {
         Role role = isFindByCode
             ? roleRepository.getByCode((String) param)
-            : roleRepository.selectById((Long) param);;
+            : roleRepository.selectById((Long) param);
         if (null == role) {
             return RoleDetails.EMPTY;
         }
 
         List<Permission> permissions = permissionRepository.getByRoleId(role.getId());
         return new RoleDetails(role, permissions);
-    }
-
-    private static Role getAnonymousRole() {
-        Date now = new Date();
-        Role anonymous = new Role();
-        anonymous.setId(-1L);
-        anonymous.setCode(Authorities.ROLE_ANONYMOUS);
-        anonymous.setLabel("ROLE ANONYMOUS");
-        anonymous.setCreateTime(now);
-        anonymous.setLastModifyTime(now);
-        return anonymous;
     }
 }
