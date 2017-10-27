@@ -15,7 +15,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -31,7 +30,7 @@ public class CookieCredentialsFilter implements Filter {
         throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) req;
-        HttpServletResponse response = (HttpServletResponse) res;
+        //HttpServletResponse response = (HttpServletResponse) res;
         MutableHttpServletRequest mutableRequest = new MutableHttpServletRequest(request);
 
         ofNullable(request.getCookies()).ifPresent(cookies -> {
@@ -43,9 +42,8 @@ public class CookieCredentialsFilter implements Filter {
                     Pair<String, String> token =
                         decodes(cookie.getValue(), new TypeReference<Pair<String, String>>(){});
 
-                    ofNullable(token).ifPresent(tkn -> {
-                        mutableRequest.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + tkn.getKey());
-                    });
+                    ofNullable(token).ifPresent(tkn ->
+                        mutableRequest.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + tkn.getKey()));
 
                 });
         });

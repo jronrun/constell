@@ -35,9 +35,7 @@ public class ConstellationLogoutHandler implements LogoutHandler {
                 Pair<String, String> token =
                     decodes(cookie.getValue(), new TypeReference<Pair<String, String>>(){});
 
-                ofNullable(token).ifPresent(tkn -> {
-                    consumerTokenServices.revokeToken(tkn.getKey());
-                });
+                ofNullable(token).ifPresent(tkn -> consumerTokenServices.revokeToken(tkn.getKey()));
 
                 /* delete cookie
                     cookie.setValue(null);
