@@ -1,11 +1,10 @@
 package com.benayn.constell.services.capricorn.settings.security;
 
 import static com.benayn.constell.service.util.LZString.decodes;
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Optional.ofNullable;
 
-import com.google.common.base.CharMatcher;
+import com.alibaba.fastjson.TypeReference;
+import com.benayn.constell.service.common.Pair;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,10 +32,19 @@ public class ConstellationLogoutHandler implements LogoutHandler {
             .filter(cookie -> "connect.credentials".equals(cookie.getName()))
             .findFirst()
             .ifPresent(cookie -> {
-                String value = CharMatcher.is('"').trimFrom(nullToEmpty(decodes(cookie.getValue())));
-                if (!isNullOrEmpty(value)) {
-                    consumerTokenServices.revokeToken(value);
-                }
+                Pair<String, String> token =
+                    decodes(cookie.getValue(), new TypeReference<Pair<String, String>>(){});
+
+                ofNullable(token).ifPresent(tkn -> {
+                    consumerTokenServices.revokeToken(tkn.getKey());
+                });
+
+                /* delete cookie
+                    cookie.setValue(null);
+                    cookie.setMaxAge(0);
+                    cookie.setPath("/");
+                    response.addCookie(cookie);
+                 */
             }));
 
     }

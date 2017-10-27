@@ -9,6 +9,7 @@ import static com.benayn.constell.services.capricorn.settings.constant.Capricorn
 import static java.util.Optional.ofNullable;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+import com.benayn.constell.service.common.Pair;
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.respond.Message;
 import com.benayn.constell.services.capricorn.repository.model.UserToken;
@@ -84,12 +85,15 @@ public class AuthenticationController {
 
         UserToken token = accountService.authorization(configurer.getClientId(), configurer.getClientSecret(), username, password);
 
-        Cookie cookie = new Cookie("connect.credentials", encodes(token.getAccessToken()));
+        String puppetToken = Hashing.sha256().hashLong(System.currentTimeMillis()).toString();
+        Cookie cookie = new Cookie("connect.credentials", encodes(Pair.of(
+            token.getAccessToken(), puppetToken //token.getRefreshToken()
+        )));
         cookie.setPath("/");
         cookie.setMaxAge(12 * 60 * 60);
         response.addCookie(cookie);
 
-        return success(ImmutableMap.of("token", Hashing.sha256().hashLong(System.currentTimeMillis()).toString()));
+        return success(ImmutableMap.of("token", puppetToken));
     }
 
     /*

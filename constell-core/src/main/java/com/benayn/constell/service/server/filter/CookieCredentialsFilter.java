@@ -1,11 +1,10 @@
 package com.benayn.constell.service.server.filter;
 
 import static com.benayn.constell.service.util.LZString.decodes;
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Optional.ofNullable;
 
-import com.google.common.base.CharMatcher;
+import com.alibaba.fastjson.TypeReference;
+import com.benayn.constell.service.common.Pair;
 import com.google.common.net.HttpHeaders;
 import java.io.IOException;
 import java.util.Arrays;
@@ -40,17 +39,14 @@ public class CookieCredentialsFilter implements Filter {
                 .filter(cookie -> "connect.credentials".equals(cookie.getName()))
                 .findFirst()
                 .ifPresent(cookie -> {
-                    String value = CharMatcher.is('"').trimFrom(nullToEmpty(decodes(cookie.getValue())));
-                    if (!isNullOrEmpty(value)) {
-                        mutableRequest.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + value);
+                    //String value = CharMatcher.is('"').trimFrom(nullToEmpty(decodes(cookie.getValue())));
+                    Pair<String, String> token =
+                        decodes(cookie.getValue(), new TypeReference<Pair<String, String>>(){});
 
-                        /* delete cookie
-                            cookie.setValue(null);
-                            cookie.setMaxAge(0);
-                            cookie.setPath("/");
-                            response.addCookie(cookie);
-                         */
-                    }
+                    ofNullable(token).ifPresent(tkn -> {
+                        mutableRequest.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + tkn.getKey());
+                    });
+
                 });
         });
 
