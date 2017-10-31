@@ -4,9 +4,7 @@ import static com.benayn.constell.service.common.BaseConstants.DEFAULT_PAGE_SIZE
 
 import com.benayn.constell.service.util.Likes;
 import com.benayn.constell.service.util.Likes.Side;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import java.util.List;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
@@ -51,7 +49,6 @@ public abstract class Renderable {
 
     private int pageNo;
     private int pageSize = DEFAULT_PAGE_SIZE;
-    private List<String> likeFields;
 
     public String like(String target) {
         return Likes.get(target);
@@ -61,14 +58,16 @@ public abstract class Renderable {
         return Likes.get(target, side);
     }
 
-    public boolean isLike(String fieldName) {
-        return checkFields().contains(fieldName);
-    }
-
     public void addFieldFragmentValue(String fieldName, String fragmentValue) {
         fieldFragmentValue.put(fieldName, fragmentValue);
     }
 
+    /*
+    public boolean isLike(String fieldName) {
+        return checkFields().contains(fieldName);
+    }
+
+    private List<String> likeFields;
     private List<String> checkFields() {
         if (null != likeFields) {
             return likeFields;
@@ -84,6 +83,7 @@ public abstract class Renderable {
 
         return likeFields;
     }
+     */
 
 
 }
