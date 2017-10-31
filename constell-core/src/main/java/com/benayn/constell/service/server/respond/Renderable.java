@@ -31,7 +31,7 @@ import lombok.ToString;
 public abstract class Renderable {
 
     /**
-     * List touch item ID
+     * Touch item ID
      */
     private Long touchId;
 
