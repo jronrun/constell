@@ -816,6 +816,10 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         return Lists.newArrayList(optionsClass.getInterfaces()).contains(OptionValue.class);
     }
 
+    private boolean hasTouchViewObjectValue(Class<? extends Renderable> targetClazz) {
+        return Renderable.class != targetClazz && Renderable.class.isAssignableFrom(targetClazz);
+    }
+
     private void setFieldValue(Field field, Object valueObj, Object aValue, String dateStyle) {
         try {
             field.setAccessible(true);

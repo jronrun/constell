@@ -35,6 +35,11 @@ public @interface Actionable {
     String uniqueField() default "id";
 
     /**
+     * Define Touch Relations
+     */
+    DefineTouch[] relations() default {};
+
+    /**
      * Define Action By Fragment,
      * if set then above set {@link Actionable#edit()} and {@link Actionable#delete()} will be ignore
      */

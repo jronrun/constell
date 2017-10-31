@@ -22,6 +22,8 @@ import lombok.ToString;
  * @see Editable
  * @see Creatable
  * @see Updatable
+ * @see DefineTouch
+ * @see Touchable
  */
 @Getter
 @Setter
@@ -29,7 +31,12 @@ import lombok.ToString;
 public abstract class Renderable {
 
     /**
-     * Field fragment value map
+     * List touch item ID
+     */
+    private Long touchId;
+
+    /**
+     * List row field fragment value map
      */
     private Map<String, String> fieldFragmentValue = Maps.newHashMap();
 
