@@ -10,6 +10,9 @@ public class PageInfo {
      */
     private String title;
     private String pageId;
+    private String searchId;
+    private String contentId;
+    private String editId;
     private String index;
     private String list;
     private String retrieve;

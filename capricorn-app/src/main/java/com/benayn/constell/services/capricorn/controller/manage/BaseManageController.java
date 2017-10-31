@@ -31,7 +31,7 @@ public abstract class BaseManageController<T extends Renderable> {
         PageInfo pageInfo = viewObjectResolver.getPageInfo(voClass, MANAGE_BASE);
         model.addAttribute("title", pageInfo.getTitle());
         model.addAttribute("page", encodes(pageInfo));
-        model.addAttribute("pageId", pageInfo.getPageId());
+        model.addAttribute("pageInfo", pageInfo);
         model.addAttribute(DEFINED_SEARCH_KEY, viewObjectResolver.getDefinedSearch(voClass, null));
         return PAGE_INDEX;
     }
@@ -43,8 +43,11 @@ public abstract class BaseManageController<T extends Renderable> {
     }
 
     String genericEdit(Model model, Object value) {
+        PageInfo pageInfo = viewObjectResolver.getPageInfo(voClass, MANAGE_BASE);
+
         // 1 create, 2 edit
         model.addAttribute("actionType", null == value ? 1 : 2);
+        model.addAttribute("editId", pageInfo.getEditId());
         model.addAttribute(DEFINED_EDIT_KEY, viewObjectResolver.getDefinedEdit(voClass, value));
         return PAGE_EDIT;
     }

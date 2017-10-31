@@ -8,7 +8,7 @@
 <body>
 <div layout:fragment="content">
 
-    <div class="ui equal width left aligned padded grid stackable" th:attr="data-page-info=${page}" th:id="${pageId}">
+    <div class="ui equal width left aligned padded grid stackable" th:attr="data-page-info=${page}" th:id="${pageInfo.pageId}">
         <div class="row">
             <div class="column">
                 <div class="ui segments">
@@ -17,7 +17,7 @@
                             Module Title
                         </h4>
                     </div>
-                    <form class="ui form segment form8" th:with="groupnum=3" id="form-search">
+                    <form class="ui form segment form8" th:with="groupnum=3" th:id="${pageInfo.searchId}">
                         <!--/*/ <th:block th:each="groupEl: ${searchEls}"> /*/-->
                         <div class="three fields">
                             <!--/*/ <th:block th:each="el: ${searchEls}"> /*/-->
@@ -59,7 +59,7 @@
         </div>
     </div>
 
-    <div id="edit-content"></div>
+    <div th:id="${pageInfo.contentId}"></div>
 
 </div>
 </body>

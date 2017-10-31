@@ -876,6 +876,9 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     private static final String UPDATE_FORMAT = "%s%s";
     private static final String DELETE_FORMAT = "%s%s/{0}";
     private static final String PAGE_ID_FORMAT = "%s_%s";
+    private static final String SEARCH_ID_FORMAT = "%s_search_%s";
+    private static final String CONTENT_ID_FORMAT = "%s_content_%s";
+    private static final String EDIT_ID_FORMAT = "%s_edit_item";
 
     @Override
     public <T extends Renderable> PageInfo getPageInfo(Class<T> viewObjectType, String manageBaseUrl) {
@@ -884,7 +887,12 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         moduleName = moduleName.substring(0, moduleName.length() - 2);
 
         pageInfo.setTitle(getMessage(format(TITLE_FORMAT, moduleName), null));
-        pageInfo.setPageId(format(PAGE_ID_FORMAT, moduleName, System.currentTimeMillis()));
+
+        long suffixId = System.currentTimeMillis();
+        pageInfo.setPageId(format(PAGE_ID_FORMAT, moduleName, suffixId));
+        pageInfo.setSearchId(format(SEARCH_ID_FORMAT, moduleName, suffixId));
+        pageInfo.setContentId(format(CONTENT_ID_FORMAT, moduleName, suffixId));
+        pageInfo.setEditId(format(EDIT_ID_FORMAT, moduleName));
 
         pageInfo.setIndex(format(INDEX_FORMAT, manageBaseUrl, moduleName));
         pageInfo.setList(format(LIST_FORMAT, manageBaseUrl, moduleName));

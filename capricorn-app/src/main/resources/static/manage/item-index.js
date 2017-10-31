@@ -10,11 +10,14 @@ var index = {};
         });
     }
 
-    var pageInfo = null, formId = '#edit-form', editId = '#edit-content', core = {
+    var pageInfo = null, formId = null, editId = null, searchId = null, core = {
 
         index: {
             init: function () {
                 pageInfo = JSON.parse(mgr.us($$('[data-page-info]').data('pageInfo'))) || {};
+                formId = '#' + pageInfo.editId;
+                editId = '#' + pageInfo.contentId;
+                searchId = '#' + pageInfo.searchId;
             }
         },
 
@@ -28,7 +31,7 @@ var index = {};
 
                     core.list.query($.extend({
                         pageNo: pn
-                    }, getFormData('#form-search')), function () {
+                    }, getFormData(searchId)), function () {
                         mgr.unloading(el);
                     });
                 });
@@ -53,7 +56,7 @@ var index = {};
 
                 $.get(pageInfo.list, param, function (data) {
                     $$('[data-replaceable=1]').remove();
-                    $$('#form-search').append(data);
+                    $$(searchId).append(data);
                     callback && callback();
                 });
             }
