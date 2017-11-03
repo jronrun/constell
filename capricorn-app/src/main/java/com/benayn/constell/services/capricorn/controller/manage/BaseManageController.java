@@ -36,12 +36,12 @@ public abstract class BaseManageController<T extends Renderable> {
 
     String genericIndex(Model model, Boolean touchable) {
         boolean isTouchable = null != touchable && touchable;
-        PageInfo pageInfo = viewObjectResolver.getPageInfo(voClass, MANAGE_BASE);
+        PageInfo pageInfo = getViewObjectResolver().getPageInfo(voClass, MANAGE_BASE);
 
         model.addAttribute("title", pageInfo.getTitle());
         model.addAttribute("page", encodes(pageInfo));
         model.addAttribute("pageInfo", pageInfo);
-        model.addAttribute(DEFINED_SEARCH_KEY, viewObjectResolver.getDefinedSearch(voClass, null));
+        model.addAttribute(DEFINED_SEARCH_KEY, getViewObjectResolver().getDefinedSearch(voClass, null));
 
         return isTouchable ? PAGE_TOUCH : PAGE_INDEX;
     }
@@ -57,26 +57,26 @@ public abstract class BaseManageController<T extends Renderable> {
         }
 
         model.addAttribute("listInfo", encodes(page.cloneButResource()));
-        model.addAttribute(DEFINED_PAGE_KEY, viewObjectResolver.getDefinedPage(voClass, page, MANAGE_BASE, renderable));
+        model.addAttribute(DEFINED_PAGE_KEY, getViewObjectResolver().getDefinedPage(voClass, page, MANAGE_BASE, renderable));
         return TouchType.CARD.toString().equalsIgnoreCase(listType) ? PAGE_TOUCH_LIST : PAGE_LIST;
     }
 
     String genericEdit(Model model, Object value) {
-        PageInfo pageInfo = viewObjectResolver.getPageInfo(voClass, MANAGE_BASE);
+        PageInfo pageInfo = getViewObjectResolver().getPageInfo(voClass, MANAGE_BASE);
 
         // 1 create, 2 edit
         model.addAttribute("actionType", null == value ? 1 : 2);
         model.addAttribute("editId", pageInfo.getEditId());
-        model.addAttribute(DEFINED_EDIT_KEY, viewObjectResolver.getDefinedEdit(voClass, value));
+        model.addAttribute(DEFINED_EDIT_KEY, getViewObjectResolver().getDefinedEdit(voClass, value));
         return PAGE_EDIT;
     }
 
     String getMessage(String code, String defaultMessage, Object... args) {
-        return viewObjectResolver.getMessage(code, defaultMessage, args);
+        return getViewObjectResolver().getMessage(code, defaultMessage, args);
     }
 
     String getMessage(String code, String defaultMessage, Locale locale, Object... args) {
-        return viewObjectResolver.getMessage(code, defaultMessage, locale, args);
+        return getViewObjectResolver().getMessage(code, defaultMessage, locale, args);
     }
 
     @Autowired
