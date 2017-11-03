@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -38,13 +39,13 @@ public class PermissionController extends BaseManageController<PermissionVo> {
     @MenuCapability(value = Menus.PERMISSION_MANAGE, parent = Menus.AUTHORIZATION)
 //    @PreAuthorize(Authorities.PERMISSION_INDEX)
     @GetMapping("permission/index")
-    public String index(Model model) {
-        return genericIndex(model);
+    public String index(Model model, @RequestHeader("touchable") Boolean touchable) {
+        return genericIndex(model, touchable);
     }
 
 //    @PreAuthorize(Authorities.PERMISSION_INDEX)
     @GetMapping("permissions")
-    public String permissions(Model model, PermissionVo condition) {    //@RequestHeader("touch") String touch
+    public String permissions(Model model, PermissionVo condition) {
         return genericList(model, permissionService.selectPageBy(condition), condition);
     }
 

@@ -8,6 +8,8 @@ import static com.benayn.constell.services.capricorn.settings.constant.Capricorn
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.PAGE_EDIT;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.PAGE_INDEX;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.PAGE_LIST;
+import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.PAGE_TOUCH;
+import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.PAGE_TOUCH_LIST;
 
 import com.benayn.constell.service.server.component.ViewObjectResolver;
 import com.benayn.constell.service.server.repository.Page;
@@ -29,12 +31,19 @@ public abstract class BaseManageController<T extends Renderable> {
     private final Class<T> voClass = ((Class<T>) new TypeToken<T>(getClass()) {}.getRawType());
 
     String genericIndex(Model model) {
+        return genericIndex(model, null);
+    }
+
+    String genericIndex(Model model, Boolean touchable) {
+        boolean isTouchable = null != touchable && touchable;
         PageInfo pageInfo = viewObjectResolver.getPageInfo(voClass, MANAGE_BASE);
+
         model.addAttribute("title", pageInfo.getTitle());
         model.addAttribute("page", encodes(pageInfo));
         model.addAttribute("pageInfo", pageInfo);
         model.addAttribute(DEFINED_SEARCH_KEY, viewObjectResolver.getDefinedSearch(voClass, null));
-        return PAGE_INDEX;
+
+        return isTouchable ? PAGE_TOUCH : PAGE_INDEX;
     }
 
     String genericList(Model model, Page<?> page) {
@@ -47,10 +56,9 @@ public abstract class BaseManageController<T extends Renderable> {
             listType = renderable.getTouchListType().toString();
         }
 
-        model.addAttribute("listType", listType);
         model.addAttribute("listInfo", encodes(page.cloneButResource()));
         model.addAttribute(DEFINED_PAGE_KEY, viewObjectResolver.getDefinedPage(voClass, page, MANAGE_BASE, renderable));
-        return PAGE_LIST;
+        return TouchType.CARD.toString().equalsIgnoreCase(listType) ? PAGE_TOUCH_LIST : PAGE_LIST;
     }
 
     String genericEdit(Model model, Object value) {
