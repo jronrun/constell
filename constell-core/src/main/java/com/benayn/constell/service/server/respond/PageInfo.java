@@ -6,9 +6,13 @@ import lombok.Data;
 public class PageInfo {
 
     /**
-     * render.%s.module.title
+     * render.%s.module.title, placeholder is {@link PageInfo#module}
      */
     private String title;
+    /**
+     * generator with given sub class simple name of {@link Renderable} and format to lowercase and trim last 'Vo'
+     */
+    private String module;
     private String pageId;
     private String searchId;
     private String contentId;

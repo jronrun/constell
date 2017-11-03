@@ -9,6 +9,7 @@ import com.benayn.constell.services.capricorn.repository.domain.Permission;
 import com.benayn.constell.services.capricorn.repository.domain.PermissionExample;
 import com.benayn.constell.services.capricorn.repository.domain.RolePermission;
 import com.benayn.constell.services.capricorn.repository.domain.RolePermissionExample;
+import com.benayn.constell.services.capricorn.repository.domain.RolePermissionExample.Criteria;
 import com.benayn.constell.services.capricorn.repository.mapper.PermissionMapper;
 import com.benayn.constell.services.capricorn.repository.mapper.RolePermissionMapper;
 import java.util.List;
@@ -25,22 +26,7 @@ public class PermissionRepositoryBean
     @Override
     @Cacheable(sync = true)
     public List<Permission> getByRoleId(Long roleId) {
-        RolePermissionMapper rolePermissionMapper = getMapper(RolePermissionMapper.class);
-
-        RolePermissionExample rolePermissionExample = new RolePermissionExample();
-        rolePermissionExample.createCriteria().andRoleIdEqualTo(roleId);
-        List<RolePermission> rolePermissions = rolePermissionMapper.selectByExample(rolePermissionExample);
-
-        List<Long> permissionIds = ofNullable(rolePermissions).orElse(newArrayList())
-            .stream()
-            .map(RolePermission::getPermissionId)
-            .collect(Collectors.toList());
-            ;
-
-        if (permissionIds.isEmpty()) {
-            return EMPTY_ITEMS;
-        }
-
+        List<Long> permissionIds = getOwnerIdsBy(roleId, null, null, null);
         PermissionExample example = new PermissionExample();
         example.createCriteria().andIdIn(permissionIds);
 
@@ -53,5 +39,29 @@ public class PermissionRepositoryBean
         example.createCriteria().andCodeEqualTo(code);
 
         return selectOne(example);
+    }
+
+    @Override
+    public List<Long> getOwnerIdsBy(Long roleId, List<Long> permissionIds, Integer pageNo, Integer pageSize) {
+        RolePermissionMapper rolePermissionMapper = getMapper(RolePermissionMapper.class);
+
+        RolePermissionExample rolePermissionExample = new RolePermissionExample();
+        Criteria criteria = rolePermissionExample.createCriteria().andRoleIdEqualTo(roleId);
+
+        if (null != permissionIds && permissionIds.size() > 0) {
+            criteria.andPermissionIdIn(permissionIds);
+        }
+
+        if (null != pageNo && null != pageSize) {
+            addPageFeature(rolePermissionExample, pageNo, pageSize);
+        }
+
+        List<RolePermission> rolePermissions = rolePermissionMapper.selectByExample(rolePermissionExample);
+
+        return ofNullable(rolePermissions).orElse(newArrayList())
+            .stream()
+            .map(RolePermission::getPermissionId)
+            .collect(Collectors.toList())
+        ;
     }
 }

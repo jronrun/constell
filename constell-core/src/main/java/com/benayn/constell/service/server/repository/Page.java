@@ -87,6 +87,9 @@ public final class Page<R> {
     @Setter
     private Map<String, Object> extra = Maps.newHashMap();
 
+    @Setter
+    private List<Long> touchOwnerIds;
+
     public void addExtra(String key, Object value) {
         extra.put(key, value);
     }

@@ -10,17 +10,20 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.format;
+import static java.util.Optional.ofNullable;
 
 import com.benayn.constell.service.common.Pair;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.respond.Actionable;
 import com.benayn.constell.service.server.respond.Creatable;
 import com.benayn.constell.service.server.respond.DefineElement;
+import com.benayn.constell.service.server.respond.DefineTouch;
 import com.benayn.constell.service.server.respond.DefineType;
 import com.benayn.constell.service.server.respond.DefinedAction;
 import com.benayn.constell.service.server.respond.DefinedEditElement;
 import com.benayn.constell.service.server.respond.DefinedElement;
 import com.benayn.constell.service.server.respond.DefinedOption;
+import com.benayn.constell.service.server.respond.DefinedTouch;
 import com.benayn.constell.service.server.respond.Editable;
 import com.benayn.constell.service.server.respond.HtmlTag;
 import com.benayn.constell.service.server.respond.InputType;
@@ -29,6 +32,7 @@ import com.benayn.constell.service.server.respond.OptionValue;
 import com.benayn.constell.service.server.respond.PageInfo;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
+import com.benayn.constell.service.server.respond.TouchType;
 import com.benayn.constell.service.server.respond.Updatable;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
@@ -38,6 +42,7 @@ import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.List;
@@ -105,7 +110,8 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Page<Renderable> getDefinedPage(Class<? extends Renderable> viewObjectType, Page<?> page) {
+    public Page<Renderable> getDefinedPage(Class<? extends Renderable> viewObjectType, Page<?> page,
+        String manageBaseUrl, Renderable renderable) {
         List<?> items = page.getResource();
         checkNotNull(items, "page resource cannot be null");
 
@@ -115,12 +121,20 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         List<Field> defineFields = getFields(viewObjectType);
         Page<Renderable> newPage = page.cloneButResource();
 
-        DefinedAction definedAction = getDefinedAction(viewObjectType);
+        DefinedAction definedAction = getDefinedAction(viewObjectType, manageBaseUrl);
         newPage.addExtra("definedAction", definedAction);
 
         // label value <column, <value, label>>
         Map<String, Map<Object, String>> labelValue = Maps.newHashMap();
         List<String> toggleWidget = Lists.newArrayList();
+
+        if (null != renderable && renderable.hasTouch()) {
+            String touchColumn = "touch";
+            newPage.addColumn(touchColumn);
+            String titleFragment = isNullOrEmpty(renderable.getTouchListTitleFragment())
+                ? "touch_column_title" : renderable.getTouchListTitleFragment();
+            newPage.addTitle(touchColumn, getFragmentValue(renderable, titleFragment));
+        }
 
         defineFields.forEach(field -> {
             String column = field.getName();
@@ -184,17 +198,28 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
         List<Field> finalItemFields = itemFields;
         items.forEach(item -> {
-            Renderable render = asRenderable(viewObjectType, defineFields, item, finalItemFields, definedAction);
-            if (null != render) {
-                renders.add(render);
-            }
+            ofNullable(asRenderable(viewObjectType, defineFields, item, finalItemFields, definedAction))
+                .ifPresent(render -> {
+                    if (null != renderable && renderable.hasTouch()) {
+                        setTouchListValue(render, item);
+                    }
+
+                    renders.add(render);
+                }
+            );
         });
 
         newPage.setResource(renders);
         return newPage;
     }
 
-    private DefinedAction getDefinedAction(Class<? extends Renderable> viewObjectType) {
+    private void setTouchListValue(Renderable render, Object item) {
+        String cellFragment = isNullOrEmpty(render.getTouchListCellFragment())
+            ? "touch_column_cell" : render.getTouchListCellFragment();
+        render.setTouchListValue(getFragmentValue(item, cellFragment));
+    }
+
+    private DefinedAction getDefinedAction(Class<? extends Renderable> viewObjectType, String manageBaseUrl) {
         DefinedAction definedAction = new DefinedAction();
         Actionable actionable = viewObjectType.getAnnotation(Actionable.class);
         if (null != actionable) {
@@ -222,11 +247,54 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 String createFragmentValue = getFragmentValue(viewObjectType, actionable.createFragment());
                 definedAction.setCreateFragmentValue(createFragmentValue);
             }
+
+            // DefineTouch
+            List<DefinedTouch> definedTouches = Lists.newArrayList();
+            DefineTouch relation = viewObjectType.getAnnotation(DefineTouch.class);
+            if (null != relation) {
+                ofNullable(asDefinedTouch(relation, viewObjectType, manageBaseUrl)).ifPresent(definedTouches::add);
+            }
+
+            DefineTouch[] relations = actionable.relations();
+            if (relations.length > 0) {
+                Arrays.stream(relations).forEach(aRelation
+                    -> ofNullable(asDefinedTouch(aRelation, viewObjectType, manageBaseUrl)).ifPresent(definedTouches::add));
+            }
+
+            definedAction.setHasTouch(definedTouches.size() > 0);
+            definedAction.setTouches(definedTouches);
         } else {
             definedAction.setUniqueField("id");
         }
 
         return definedAction;
+    }
+
+    private DefinedTouch asDefinedTouch(DefineTouch defineTouch,
+        Class<? extends Renderable> viewObjectType, String manageBaseUrl) {
+        String name = defineTouch.name();
+        String actionField = defineTouch.actionField();
+        boolean hasActionField = !isNullOrEmpty(actionField);
+        checkArgument(!isNullOrEmpty(name) || hasActionField,
+            "DefineTouch must define one of name or action on type %s",
+            viewObjectType.getSimpleName());
+
+        TouchType type = defineTouch.type();
+        Class<? extends Renderable> touchViewType = defineTouch.view();
+
+        DefinedTouch definedTouch = new DefinedTouch();
+        definedTouch.setName(name);
+        definedTouch.setActionField(actionField);
+        definedTouch.setHasActionField(hasActionField);
+        definedTouch.setTouchType(type);
+        definedTouch.setTitleFragment(defineTouch.titleFragment());
+        definedTouch.setCellFragment(defineTouch.cellFragment());
+
+        PageInfo touchViewPageInfo = getPageInfo(touchViewType, manageBaseUrl);
+        definedTouch.setTouchHref(touchViewPageInfo.getList());
+        definedTouch.setModule(touchViewPageInfo.getModule());
+
+        return definedTouch;
     }
 
     private Renderable asRenderable(Class<? extends Renderable> viewObjectType,
@@ -890,6 +958,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
         long suffixId = System.currentTimeMillis();
         pageInfo.setPageId(format(PAGE_ID_FORMAT, moduleName, suffixId));
+        pageInfo.setModule(moduleName);
         pageInfo.setSearchId(format(SEARCH_ID_FORMAT, moduleName, suffixId));
         pageInfo.setContentId(format(CONTENT_ID_FORMAT, moduleName, suffixId));
         pageInfo.setEditId(format(EDIT_ID_FORMAT, moduleName));

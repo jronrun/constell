@@ -1,5 +1,6 @@
 package com.benayn.constell.service.server.respond;
 
+import java.util.List;
 import lombok.Data;
 
 @Data
@@ -17,5 +18,8 @@ public class DefinedAction {
     private boolean hasCreate;
     private boolean hasCreateFragment;
     private String createFragmentValue;
+
+    private boolean hasTouch;
+    private List<DefinedTouch> touches;
 
 }

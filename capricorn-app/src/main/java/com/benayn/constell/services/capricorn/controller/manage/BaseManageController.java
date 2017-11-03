@@ -13,6 +13,7 @@ import com.benayn.constell.service.server.component.ViewObjectResolver;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.respond.PageInfo;
 import com.benayn.constell.service.server.respond.Renderable;
+import com.benayn.constell.service.server.respond.TouchType;
 import com.google.common.reflect.TypeToken;
 import java.util.Locale;
 import lombok.Getter;
@@ -37,8 +38,18 @@ public abstract class BaseManageController<T extends Renderable> {
     }
 
     String genericList(Model model, Page<?> page) {
+        return genericList(model, page, null);
+    }
+
+    String genericList(Model model, Page<?> page, Renderable renderable) {
+        String listType = TouchType.TABLE.toString();
+        if (null != renderable && null != renderable.getTouchListType()) {
+            listType = renderable.getTouchListType().toString();
+        }
+
+        model.addAttribute("listType", listType);
         model.addAttribute("listInfo", encodes(page.cloneButResource()));
-        model.addAttribute(DEFINED_PAGE_KEY, viewObjectResolver.getDefinedPage(voClass, page));
+        model.addAttribute(DEFINED_PAGE_KEY, viewObjectResolver.getDefinedPage(voClass, page, MANAGE_BASE, renderable));
         return PAGE_LIST;
     }
 
@@ -53,7 +64,7 @@ public abstract class BaseManageController<T extends Renderable> {
     }
 
     String getMessage(String code) {
-        return getMessage(code, null);
+        return getMessage(code, code);
     }
 
     String getMessage(String code, String defaultMessage, Object... args) {

@@ -14,7 +14,8 @@ public interface ViewObjectResolver {
 
     DefinedEditElement getDefinedEdit(Class<? extends Renderable> viewObjectType, Object value);
 
-    Page<Renderable> getDefinedPage(Class<? extends Renderable> viewObjectType, Page<?> page);
+    Page<Renderable> getDefinedPage(Class<? extends Renderable> viewObjectType, Page<?> page,
+        String manageBaseUrl, Renderable renderable);
 
     String getMessage(String code, String defaultMessage, Object... args);
     String getMessage(String code, String defaultMessage, Locale locale, Object... args);

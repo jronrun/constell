@@ -44,8 +44,8 @@ public class PermissionController extends BaseManageController<PermissionVo> {
 
 //    @PreAuthorize(Authorities.PERMISSION_INDEX)
     @GetMapping("permissions")
-    public String permissions(Model model, PermissionVo condition) {
-        return genericList(model, permissionService.selectPageBy(condition));
+    public String permissions(Model model, PermissionVo condition) {    //@RequestHeader("touch") String touch
+        return genericList(model, permissionService.selectPageBy(condition), condition);
     }
 
 //    @PreAuthorize(Authorities.PERMISSION_RETRIEVE)

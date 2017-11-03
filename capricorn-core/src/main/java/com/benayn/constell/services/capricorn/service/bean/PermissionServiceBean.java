@@ -18,6 +18,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,7 +51,26 @@ public class PermissionServiceBean implements PermissionService {
             criteria.andLabelLike(condition.like(condition.getLabel()));
         }
 
-        return permissionRepository.selectPageBy(example, condition.getPageNo(), condition.getPageSize());
+        if (condition.hasTouchOwner()) {
+            List<Long> itemIds = permissionRepository
+                .getOwnerIdsBy(condition.getTouchId(), null, condition.getPageNo(), condition.getPageSize());
+            criteria.andIdIn(itemIds);
+        }
+
+        Page<Permission> page = permissionRepository.selectPageBy(example, condition.getPageNo(), condition.getPageSize());
+
+        if (condition.hasTouch()) {
+            List<Long> checkItemIds = page.getResource().stream()
+                .map(Permission::getId)
+                .collect(Collectors.toList())
+                ;
+
+            List<Long> ownerIds = permissionRepository
+                .getOwnerIdsBy(condition.getTouchId(), checkItemIds, null, null);
+            page.setTouchOwnerIds(ownerIds);
+        }
+
+        return page;
     }
 
     @Override

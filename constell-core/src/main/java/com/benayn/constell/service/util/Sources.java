@@ -38,6 +38,11 @@ public final class Sources {
         return properties;
     }
 
+    public static String asString(String resourceName) throws IOException {
+        URL url = Resources.getResource(resourceName);
+        return Resources.toString(url, Charsets.UTF_8);
+    }
+
     public static String asString(Class<?> contextClass, String resourceName) throws IOException {
         /*
             StringBuilder builder = new StringBuilder();

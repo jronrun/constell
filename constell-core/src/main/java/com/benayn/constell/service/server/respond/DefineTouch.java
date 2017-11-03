@@ -40,4 +40,16 @@ public @interface DefineTouch {
      */
     Class<? extends Renderable> view();
 
+    /**
+     * Touch column title define by given fragment.
+     * if need toggle all cell value just add data-touch-toggle-all="0" to the element, eg: <a data-touch-toggle-all="0">test</a>
+     */
+    String titleFragment() default "";
+
+    /**
+     * Touch column cell value define by given fragment.
+     * toggleable just add data-touch-toggle="0" to the element
+     */
+    String cellFragment() default "";
+
 }

@@ -143,8 +143,12 @@ public abstract class GenericRepository<T, E, M> implements Repository<T, E> {
         return namespace + "." + sqlId.getStatement();
     }
 
-    private void addPageFeature(E example, int page, int size) {
-        pageFeature.add(example, page, size, "id", Sorting.DESCENDING);
+    protected void addPageFeature(Object example, int page, int size) {
+        addPageFeature(example, page, size, "id", Sorting.DESCENDING);
+    }
+
+    protected void addPageFeature(Object example, int page, int size, String defaultOrderBy, Sorting defaultSortBy) {
+        pageFeature.add(example, page, size, defaultOrderBy, defaultSortBy);
     }
 
     @Autowired

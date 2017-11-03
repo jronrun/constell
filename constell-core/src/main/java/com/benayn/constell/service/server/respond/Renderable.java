@@ -1,6 +1,7 @@
 package com.benayn.constell.service.server.respond;
 
 import static com.benayn.constell.service.common.BaseConstants.DEFAULT_PAGE_SIZE;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 import com.benayn.constell.service.util.Likes;
 import com.benayn.constell.service.util.Likes.Side;
@@ -32,6 +33,16 @@ public abstract class Renderable {
      * Touch item ID
      */
     private Long touchId;
+    private String touchModule;
+    /**
+     * Query only owner to touchId if true, or all the touch target items if false
+     */
+    private boolean touchOwner;
+
+    private TouchType touchListType;
+    private String touchListValue;
+    private String touchListTitleFragment;
+    private String touchListCellFragment;
 
     /**
      * List row field fragment value map
@@ -49,6 +60,14 @@ public abstract class Renderable {
 
     private int pageNo;
     private int pageSize = DEFAULT_PAGE_SIZE;
+
+    public boolean hasTouch() {
+        return null != getTouchId() && !isNullOrEmpty(getTouchModule());
+    }
+
+    public boolean hasTouchOwner() {
+        return hasTouch() && isTouchOwner();
+    }
 
     public String like(String target) {
         return Likes.get(target);
