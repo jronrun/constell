@@ -33,6 +33,7 @@ import com.benayn.constell.service.server.respond.PageInfo;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
 import com.benayn.constell.service.server.respond.TouchType;
+import com.benayn.constell.service.server.respond.Touchable;
 import com.benayn.constell.service.server.respond.Updatable;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
@@ -128,7 +129,8 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         Map<String, Map<Object, String>> labelValue = Maps.newHashMap();
         List<String> toggleWidget = Lists.newArrayList();
 
-        if (null != renderable && renderable.hasTouch()) {
+        boolean hasTouch = null != renderable && renderable.hasTouch();
+        if (hasTouch) {
             String touchColumn = "touch";
             newPage.addColumn(touchColumn);
             String titleFragment = isNullOrEmpty(renderable.getTouchListTitleFragment())
@@ -141,9 +143,22 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             DefineElement defineElement = field.getAnnotation(DefineElement.class);
             boolean hasDefineElement = null != defineElement;
 
+            Touchable touchable = field.getAnnotation(Touchable.class);
+            boolean isTouchable = hasTouch && null != touchable;
+
             Listable listable = field.getAnnotation(Listable.class);
-            if (null != listable) {
-                String title = listable.value();
+            boolean isListable = !hasTouch && null != listable;
+
+            if (isTouchable || isListable) {
+                String title = null;
+                if (isTouchable) {
+                    title = touchable.value();
+                }
+
+                if (isListable) {
+                    title = listable.value();
+                }
+
                 if (isNullOrEmpty(title) && hasDefineElement) {
                     title = defineElement.value();
                 }
@@ -153,11 +168,19 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                     isDefinedUniqueField[0] = true;
                 }
 
-                checkArgument(!isNullOrEmpty(title), "undefined listable column title %s.%s",
+                checkArgument(!isNullOrEmpty(title), "undefined %s column title %s.%s",
+                    hasTouch ? "touchable" : "listable",
                     viewObjectType.getSimpleName(), column);
 
                 //options
-                Class<? extends Enum> optionsClass = listable.options();
+                Class<? extends Enum> optionsClass = null;
+                if (isTouchable) {
+                    optionsClass = touchable.options();
+                }
+
+                if (isListable) {
+                    optionsClass = listable.options();
+                }
 
                 if (!hasOptionsValue(optionsClass) && hasDefineElement) {
                     optionsClass = defineElement.options();
@@ -174,9 +197,11 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                     labelValue.put(column, columnLabelValue);
                 }
 
-                //toggle widget
-                if (listable.toggleWidget()) {
-                    toggleWidget.add(column);
+                if (isListable) {
+                    //toggle widget
+                    if (listable.toggleWidget()) {
+                        toggleWidget.add(column);
+                    }
                 }
 
                 newPage.addColumn(column);
@@ -198,9 +223,9 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
         List<Field> finalItemFields = itemFields;
         items.forEach(item -> {
-            ofNullable(asRenderable(viewObjectType, defineFields, item, finalItemFields, definedAction))
+            ofNullable(asRenderable(viewObjectType, defineFields, item, finalItemFields, definedAction, hasTouch))
                 .ifPresent(render -> {
-                    if (null != renderable && renderable.hasTouch()) {
+                    if (hasTouch) {
                         setTouchListValue(render, item);
                     }
 
@@ -299,21 +324,33 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
     private Renderable asRenderable(Class<? extends Renderable> viewObjectType,
         List<Field> defineFields, Object value, List<Field> valueFields,
-        DefinedAction definedAction) {
+        DefinedAction definedAction, boolean hasTouch) {
         try {
             Renderable render = viewObjectType.newInstance();
             defineFields.forEach(field -> {
                 DefineElement defineElement = field.getAnnotation(DefineElement.class);
                 boolean hasDefineElement = null != defineElement;
 
+                Touchable touchable = field.getAnnotation(Touchable.class);
+                boolean isTouchable = hasTouch && null != touchable;
+
                 Listable listable = field.getAnnotation(Listable.class);
-                if (null != listable) {
+                boolean isListable = !hasTouch && null != listable;
+
+                if (isTouchable || isListable) {
                     String fieldName = field.getName();
                     Object aValue;
 
                     //value fragment
-                    String fragment;
-                    fragment = listable.fragment();
+                    String fragment = null;
+                    if (isTouchable) {
+                        fragment = touchable.fragment();
+                    }
+
+                    if (isListable) {
+                        fragment = listable.fragment();
+                    }
+
                     if (isNullOrEmpty(fragment) && hasDefineElement) {
                         fragment = defineElement.fragment();
                     }
@@ -325,7 +362,15 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                     } else {
                         aValue = getFieldValueByName(value, valueFields, fieldName, null, field);
 
-                        String dateStyle = listable.dateStyle();
+                        String dateStyle = null;
+                        if (isTouchable) {
+                            dateStyle = touchable.dateStyle();
+                        }
+
+                        if (isListable) {
+                            dateStyle = listable.dateStyle();
+                        }
+
                         if (isNullOrEmpty(dateStyle) && hasDefineElement) {
                             dateStyle = defineElement.dateStyle();
                         }
