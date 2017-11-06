@@ -306,6 +306,8 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
         TouchType type = defineTouch.type();
         Class<? extends Renderable> touchViewType = defineTouch.view();
+        checkArgument(hasTouchViewObjectValue(touchViewType),
+            "DefineTouch view must be a sub class of Renderable");
 
         DefinedTouch definedTouch = new DefinedTouch();
         definedTouch.setName(name);
