@@ -20,9 +20,11 @@ public class DefinedAction {
     private boolean hasCreateFragment;
     private String createFragmentValue;
 
+    //default touch, show in action column
     private boolean hasTouch;
     private List<DefinedTouch> touches;
-    private boolean hasTouchField;
-    private Map<String, DefinedTouch> touchFields;
+    //filed touch, attach to given filed
+    private boolean hasFieldTouch;
+    private Map<String, DefinedTouch> fieldTouches;
 
 }

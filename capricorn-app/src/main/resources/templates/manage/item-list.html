@@ -23,7 +23,7 @@
         <td th:each="column: ${pageEl.columns}"
             th:with="defByFragment=${#maps.containsKey(item.fieldFragmentValue, column)},
                 isToggleWidget=${#lists.contains(toggleWidget, column)},
-                isTouchField=${defact.hasTouchField && #maps.containsKey(defact.touchFields, column)},
+                isTouchField=${defact.hasFieldTouch && #maps.containsKey(defact.fieldTouches, column)},
                 aValue=${#maps.containsKey(labelValue, column) ? labelValue.get(column).get(item[column]) : item[column]}">
 
             <th:block th:if="${!defByFragment && defact.hasEditField}">
@@ -50,7 +50,7 @@
                         <label></label>
                     </div>
                 </th:block>
-                <th:block th:if="${!isToggleWidget && isTouchField}" th:with="aTouch=${defact.touchFields.get(column)}">
+                <th:block th:if="${!isToggleWidget && isTouchField}" th:with="aTouch=${defact.fieldTouches.get(column)}">
                     <a class="ui blue basic" style="cursor: pointer;" th:text="${aValue}"
                        th:attr="data-touch-action=${#star.encodes(aTouch)},data-touch-id=${item[defact.uniqueField]}">Touch</a>
                 </th:block>

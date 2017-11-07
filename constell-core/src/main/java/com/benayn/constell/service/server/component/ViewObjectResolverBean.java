@@ -304,8 +304,8 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
             definedAction.setHasTouch(defaultTouches.size() > 0);
             definedAction.setTouches(defaultTouches);
-            definedAction.setHasTouchField(fieldTouches.size() > 0);
-            definedAction.setTouchFields(fieldTouches);
+            definedAction.setHasFieldTouch(fieldTouches.size() > 0);
+            definedAction.setFieldTouches(fieldTouches);
         } else {
             definedAction.setUniqueField("id");
         }
