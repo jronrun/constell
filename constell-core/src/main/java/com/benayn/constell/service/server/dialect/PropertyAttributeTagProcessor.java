@@ -18,7 +18,7 @@ public class PropertyAttributeTagProcessor extends AbstractAttributeTagProcessor
     private static final String ATTR_NAME = "attributes";
     private static final int PRECEDENCE = 12000;
 
-    public PropertyAttributeTagProcessor(final String dialectPrefix) {
+    PropertyAttributeTagProcessor(final String dialectPrefix) {
         super(
             TemplateMode.HTML,              // This processor will apply only to HTML mode
             dialectPrefix,                  // Prefix to be applied to name for matching
@@ -60,8 +60,6 @@ public class PropertyAttributeTagProcessor extends AbstractAttributeTagProcessor
             return;
         }
 
-        attributes.forEach(attr -> {
-            structureHandler.setAttribute(attr.getKey(), attr.getValue());
-        });
+        attributes.forEach(attr -> structureHandler.setAttribute(attr.getKey(), attr.getValue()));
     }
 }
