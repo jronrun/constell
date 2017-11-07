@@ -6,6 +6,7 @@ import static com.benayn.constell.service.server.respond.DefineType.UPDATABLE;
 import static com.benayn.constell.service.server.respond.HtmlTag.INPUT;
 import static com.benayn.constell.service.server.respond.HtmlTag.TEXTAREA;
 import static com.benayn.constell.service.server.respond.HtmlTag.UNDEFINED;
+import static com.benayn.constell.service.util.LZString.encodes;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -328,6 +329,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             "DefineTouch view must be a sub class of Renderable");
 
         DefinedTouch definedTouch = new DefinedTouch();
+        definedTouch.setId(encodes(touchViewType.getSimpleName()));
         definedTouch.setName(getMessage(name, name));
         definedTouch.setActionField(actionField);
         definedTouch.setHasActionField(hasActionField);

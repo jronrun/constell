@@ -204,6 +204,20 @@ var index = {};
             }
         },
 
+        touch: {
+          init: function () {
+              liveClk('[data-touch-action]', function (el) {
+                  var touchId = parseInt($(el).data('touchId')),
+                      defineTouch=JSON.parse(mgr.us($('#touch-' + $(el).data('touchAction')).data('defineTouch')));
+
+
+
+                  //touchable
+                  alert(JSON.stringify(defineTouch));
+              });
+          }  
+        },
+
         component: {
             init: function () {
                 $('[data-com-dropdown]').dropdown();
@@ -214,6 +228,7 @@ var index = {};
             core.index.init();
             core.list.init();
             core.edit.init();
+            core.touch.init();
             core.component.init();
         }
     };

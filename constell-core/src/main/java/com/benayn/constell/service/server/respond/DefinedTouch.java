@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class DefinedTouch {
 
+    private String id;
     private String module;
     private String name;
     private TouchType touchType;

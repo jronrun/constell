@@ -11,6 +11,13 @@
           th:attr="data-replaceable=1" th:utext="${defact.createFragmentValue}">
 </th:block>
 
+<th:block th:if="${defact.hasTouch}">
+    <div style="display: none;" th:each="touch: ${defact.touches}" th:id="'touch-' + ${touch.id}" th:attr="data-define-touch=${#star.encodes(touch)}"></div>
+</th:block>
+<th:block th:if="${defact.hasFieldTouch}">
+    <div style="display: none;" th:each="fieldTouch: ${defact.fieldTouches}" th:id="'touch-' + ${fieldTouch.value.id}" th:attr="data-define-touch=${#star.encodes(fieldTouch.value)}"></div>
+</th:block>
+
 <table class="ui celled table" data-replaceable="1">
     <thead>
     <tr>
@@ -52,7 +59,7 @@
                 </th:block>
                 <th:block th:if="${!isToggleWidget && isTouchField}" th:with="aTouch=${defact.fieldTouches.get(column)}">
                     <a class="ui blue basic" style="cursor: pointer;" th:text="${aValue}"
-                       th:attr="data-touch-action=${#star.encodes(aTouch)},data-touch-id=${item[defact.uniqueField]}">Touch</a>
+                       th:attr="data-touch-action=${aTouch.id},data-touch-id=${item[defact.uniqueField]}">Touch</a>
                 </th:block>
                 <th:block th:if="${!isToggleWidget && !isTouchField}" th:text="${aValue}">
                 </th:block>
@@ -70,7 +77,7 @@
         <td th:if="${defact.hasAction && !defact.hasActionFragment}">
 
             <th:block th:if="${defact.hasTouch}">
-                <div th:each="touch: ${defact.touches}" th:attr="data-touch-action=${#star.encodes(touch)},data-touch-id=${item[defact.uniqueField]}"
+                <div th:each="touch: ${defact.touches}" th:attr="data-touch-action=${touch.id},data-touch-id=${item[defact.uniqueField]}"
                      class="mini ui green basic animated fade button" tabindex="0">
                     <div class="visible content" th:text="${touch.name}">Touch</div>
                     <div class="hidden content">
