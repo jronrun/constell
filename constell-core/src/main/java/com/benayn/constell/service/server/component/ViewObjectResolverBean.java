@@ -51,6 +51,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -286,8 +287,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                     -> ofNullable(asDefinedTouch(aRelation, viewObjectType, manageBaseUrl)).ifPresent(definedTouches::add));
             }
 
+            Map<String, DefinedTouch> touchFields = definedTouches.stream()
+                .filter(definedTouch -> !isNullOrEmpty(definedTouch.getActionField()))
+                .collect(Collectors.toMap(DefinedTouch::getActionField, Function.identity()));
+
             definedAction.setHasTouch(definedTouches.size() > 0);
             definedAction.setTouches(definedTouches);
+            definedAction.setHasTouchField(touchFields.size() > 0);
+            definedAction.setTouchFields(touchFields);
         } else {
             definedAction.setUniqueField("id");
         }
@@ -310,7 +317,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             "DefineTouch view must be a sub class of Renderable");
 
         DefinedTouch definedTouch = new DefinedTouch();
-        definedTouch.setName(name);
+        definedTouch.setName(getMessage(name, name));
         definedTouch.setActionField(actionField);
         definedTouch.setHasActionField(hasActionField);
         definedTouch.setTouchType(type);

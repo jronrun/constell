@@ -39,7 +39,7 @@ public class PermissionController extends BaseManageController<PermissionVo> {
     @MenuCapability(value = Menus.PERMISSION_MANAGE, parent = Menus.AUTHORIZATION)
 //    @PreAuthorize(Authorities.PERMISSION_INDEX)
     @GetMapping("permission/index")
-    public String index(Model model, @RequestHeader("touchable") Boolean touchable) {
+    public String index(Model model, @RequestHeader(value = "touchable", required = false) Boolean touchable) {
         return genericIndex(model, touchable);
     }
 

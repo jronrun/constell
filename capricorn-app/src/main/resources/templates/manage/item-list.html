@@ -23,6 +23,7 @@
         <td th:each="column: ${pageEl.columns}"
             th:with="defByFragment=${#maps.containsKey(item.fieldFragmentValue, column)},
                 isToggleWidget=${#lists.contains(toggleWidget, column)},
+                isTouchField=${defact.hasTouchField && #maps.containsKey(defact.touchFields, column)},
                 aValue=${#maps.containsKey(labelValue, column) ? labelValue.get(column).get(item[column]) : item[column]}">
 
             <th:block th:if="${!defByFragment && defact.hasEditField}">
@@ -49,7 +50,11 @@
                         <label></label>
                     </div>
                 </th:block>
-                <th:block th:unless="${isToggleWidget}" th:text="${aValue}">
+                <th:block th:if="${!isToggleWidget && isTouchField}" th:with="aTouch=${defact.touchFields.get(column)}">
+                    <a class="ui blue basic" style="cursor: pointer;" th:text="${aValue}"
+                       th:attr="data-touch-action=${#star.encodes(aTouch)}">Touch</a>
+                </th:block>
+                <th:block th:if="${!isToggleWidget && !isTouchField}" th:text="${aValue}">
                 </th:block>
             </th:block>
 
@@ -63,6 +68,16 @@
             Fragment
         </td>
         <td th:if="${defact.hasAction && !defact.hasActionFragment}">
+
+            <th:block th:if="${defact.hasTouch}">
+                <div th:each="touch: ${defact.touches}" th:attr="data-touch-action=${#star.encodes(touch)}"
+                     class="mini ui green basic animated fade button" tabindex="0">
+                    <div class="visible content" th:text="${touch.name}">Touch</div>
+                    <div class="hidden content">
+                        <i class="lightning green icon"></i>
+                    </div>
+                </div>
+            </th:block>
 
             <div th:if="${defact.hasEdit}" th:attr="data-edit-id=${item[defact.uniqueField]}"
                  class="mini ui green basic animated fade button" tabindex="0">

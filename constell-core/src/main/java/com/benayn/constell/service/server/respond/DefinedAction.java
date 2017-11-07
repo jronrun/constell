@@ -1,6 +1,7 @@
 package com.benayn.constell.service.server.respond;
 
 import java.util.List;
+import java.util.Map;
 import lombok.Data;
 
 @Data
@@ -21,5 +22,7 @@ public class DefinedAction {
 
     private boolean hasTouch;
     private List<DefinedTouch> touches;
+    private boolean hasTouchField;
+    private Map<String, DefinedTouch> touchFields;
 
 }
