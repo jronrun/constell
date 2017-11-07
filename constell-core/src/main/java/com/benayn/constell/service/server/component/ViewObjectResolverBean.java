@@ -51,7 +51,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -287,14 +286,26 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                     -> ofNullable(asDefinedTouch(aRelation, viewObjectType, manageBaseUrl)).ifPresent(definedTouches::add));
             }
 
+            List<DefinedTouch> defaultTouches = Lists.newArrayList();
+            Map<String, DefinedTouch> fieldTouches = Maps.newHashMap();
+            definedTouches.forEach(definedTouch -> {
+                if (isNullOrEmpty(definedTouch.getActionField())) {
+                    defaultTouches.add(definedTouch);
+                } else {
+                    fieldTouches.put(definedTouch.getActionField(), definedTouch);
+                }
+            });
+
+            /*
             Map<String, DefinedTouch> touchFields = definedTouches.stream()
                 .filter(definedTouch -> !isNullOrEmpty(definedTouch.getActionField()))
                 .collect(Collectors.toMap(DefinedTouch::getActionField, Function.identity()));
+             */
 
-            definedAction.setHasTouch(definedTouches.size() > 0);
-            definedAction.setTouches(definedTouches);
-            definedAction.setHasTouchField(touchFields.size() > 0);
-            definedAction.setTouchFields(touchFields);
+            definedAction.setHasTouch(defaultTouches.size() > 0);
+            definedAction.setTouches(defaultTouches);
+            definedAction.setHasTouchField(fieldTouches.size() > 0);
+            definedAction.setTouchFields(fieldTouches);
         } else {
             definedAction.setUniqueField("id");
         }

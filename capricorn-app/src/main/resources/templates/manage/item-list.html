@@ -52,7 +52,7 @@
                 </th:block>
                 <th:block th:if="${!isToggleWidget && isTouchField}" th:with="aTouch=${defact.touchFields.get(column)}">
                     <a class="ui blue basic" style="cursor: pointer;" th:text="${aValue}"
-                       th:attr="data-touch-action=${#star.encodes(aTouch)}">Touch</a>
+                       th:attr="data-touch-action=${#star.encodes(aTouch)},data-touch-id=${item[defact.uniqueField]}">Touch</a>
                 </th:block>
                 <th:block th:if="${!isToggleWidget && !isTouchField}" th:text="${aValue}">
                 </th:block>
@@ -70,7 +70,7 @@
         <td th:if="${defact.hasAction && !defact.hasActionFragment}">
 
             <th:block th:if="${defact.hasTouch}">
-                <div th:each="touch: ${defact.touches}" th:attr="data-touch-action=${#star.encodes(touch)}"
+                <div th:each="touch: ${defact.touches}" th:attr="data-touch-action=${#star.encodes(touch)},data-touch-id=${item[defact.uniqueField]}"
                      class="mini ui green basic animated fade button" tabindex="0">
                     <div class="visible content" th:text="${touch.name}">Touch</div>
                     <div class="hidden content">
