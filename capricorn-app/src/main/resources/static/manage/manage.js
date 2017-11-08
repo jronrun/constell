@@ -64,33 +64,36 @@ var mgr = {};
 
     var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-    function request(action, data, options) {
+    function request(action, data, options, headers) {
         options = options || {};
+        headers = $.extend({
+            'Content-Type': 'application/json'
+        }, options.headers || {}, headers || {});
+
         return $.ajax($.extend({
             type: 'GET',
             async: true,
             url: action,
-            data: data || {},
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }, options));
+            data: data || {}
+        }, options, {
+            headers: headers
+        }));
     }
 
     $.each(['post', 'put', 'delete', 'get'], function (i, method) {
-        register[method] = function (action, data, options) {
+        register[method] = function (action, data, options, headers) {
             return request(action, data, $.extend(options || {}, {
                 type: method
-            }));
+            }), headers);
         }
     });
 
-    function jsonp(action, data, options) {
+    function jsonp(action, data, options, headers) {
         return request(action, data, $.extend(options || {}, {
             type: 'GET',
             async: false,
             dataType: 'jsonp'
-        }));
+        }), headers);
     }
 
     function script(action, callback) {
@@ -385,8 +388,8 @@ var mgr = {};
             var resp = (xhr.responseJSON || {});
             return resp.message || resp.result || xhr.responseText || (defaultMessage || 'request fail');
         },
-        request: function (action, data, options) {
-            return request(action, data, options);
+        request: function (action, data, options, headers) {
+            return request(action, data, options, headers);
         },
         jsonp: function (action, data, options) {
             return jsonp(action, data, options);
