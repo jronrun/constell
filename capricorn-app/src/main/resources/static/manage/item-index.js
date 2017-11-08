@@ -10,7 +10,7 @@ var index = {};
         });
     }
 
-    var pageInfo = null, formId = null, editId = null, searchId = null, core = {
+    var pageInfo = null, formId = null, editId = null, searchId = null, touchContentId = null, core = {
 
         index: {
             init: function () {
@@ -18,6 +18,7 @@ var index = {};
                 formId = '#' + pageInfo.editId;
                 editId = '#' + pageInfo.contentId;
                 searchId = '#' + pageInfo.searchId;
+                touchContentId = '#' + pageInfo.touchContentId;
             }
         },
 
@@ -205,17 +206,21 @@ var index = {};
         },
 
         touch: {
-          init: function () {
-              liveClk('[data-touch-action]', function (el) {
-                  var touchId = parseInt($(el).data('touchId')),
-                      defineTouch=JSON.parse(mgr.us($('#touch-' + $(el).data('touchAction')).data('defineTouch')));
+            init: function () {
+                liveClk('[data-touch-action]', function (el) {
+                    var defineTouch = JSON.parse(mgr.us($('#touch-' + $(el).data('touchAction')).data('defineTouch')));
+                    defineTouch.touchId = parseInt($(el).data('touchId'));
+                    core.touch.touch(defineTouch);
+                });
+            },
 
-
-
-                  //touchable
-                  alert(JSON.stringify(defineTouch));
-              });
-          }  
+            touch: function (defineTouch) {
+                mgr.get(defineTouch.touchHref, {}, {}, {
+                    touchable: true
+                }).done(function (data) {
+                    alert(data);
+                });
+            }
         },
 
         component: {

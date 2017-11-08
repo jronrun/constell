@@ -1013,6 +1013,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     private static final String PAGE_ID_FORMAT = "%s_%s";
     private static final String SEARCH_ID_FORMAT = "%s_search_%s";
     private static final String CONTENT_ID_FORMAT = "%s_content_%s";
+    private static final String TOUCH_CONTENT_ID_FORMAT = "%s_touch_content_%s";
     private static final String EDIT_ID_FORMAT = "%s_edit_item";
 
     @Override
@@ -1029,6 +1030,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         pageInfo.setSearchId(format(SEARCH_ID_FORMAT, moduleName, suffixId));
         pageInfo.setContentId(format(CONTENT_ID_FORMAT, moduleName, suffixId));
         pageInfo.setEditId(format(EDIT_ID_FORMAT, moduleName));
+        pageInfo.setTouchContentId(format(TOUCH_CONTENT_ID_FORMAT, moduleName, suffixId));
 
         pageInfo.setIndex(format(INDEX_FORMAT, manageBaseUrl, moduleName));
         pageInfo.setList(format(LIST_FORMAT, manageBaseUrl, moduleName));

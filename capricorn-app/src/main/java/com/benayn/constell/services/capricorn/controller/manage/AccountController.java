@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -39,8 +40,8 @@ public class AccountController extends BaseManageController<AccountVo> {
     @MenuCapability(value = Menus.ACCOUNT_MANAGE, parent = Menus.AUTHORIZATION)
 //    @PreAuthorize(Authorities.ACCOUNT_INDEX)
     @GetMapping("account/index")
-    public String index(Model model) {
-        return genericIndex(model);
+    public String index(Model model, @RequestHeader(value = "touchable", required = false) Boolean touchable) {
+        return genericIndex(model, touchable);
     }
 
     //    @PreAuthorize(Authorities.ACCOUNT_INDEX)
