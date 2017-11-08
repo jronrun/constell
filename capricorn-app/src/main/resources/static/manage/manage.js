@@ -307,19 +307,7 @@ var mgr = {};
         });
     }
 
-    function modal(options, events, callback) {
-        if ((options = options || {}).remote) {
-            request(options.remote).done(function (resp) {
-                options.content = resp;
-                var aModal = doModal(options, events);
-                callback && callback(aModal);
-            });
-        } else {
-            return doModal(options, events);
-        }
-    }
-
-    function doModal(options, events) {
+    function modal(options, events) {
         var sized = { 0: '', 1: 'mini', 2: 'tiny', 3: 'small', 4: 'large', 5: 'fullscreen' },
             modalOptions = $.extend({
                 /*
