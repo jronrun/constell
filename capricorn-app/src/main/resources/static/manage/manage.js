@@ -307,6 +307,102 @@ var mgr = {};
         });
     }
 
+    function modal(options, events, callback) {
+        if ((options = options || {}).remote) {
+            request(options.remote).done(function (resp) {
+                options.content = resp;
+                var aModal = doModal(options, events);
+                callback && callback(aModal);
+            });
+        } else {
+            return doModal(options, events);
+        }
+    }
+
+    function doModal(options, events) {
+        var sized = { 0: '', 1: 'mini', 2: 'tiny', 3: 'small', 4: 'large', 5: 'fullscreen' },
+            modalOptions = $.extend({
+                /*
+                https://semantic-ui.com/modules/modal.html#/settings
+                detachable: true,
+                autofocus: false,
+                observeChanges: false,
+                allowMultiple: false,
+                offset: 0,
+                context: 'body',
+                transition: 'scale',
+                duration: 400,
+                queue: false
+                 */
+                closable: false,
+                keyboardShortcuts: false
+            }, (options = options || {}).modal || {});
+
+        options = $.extend({
+            id: 'modal-' + mgr.uniqueId(),
+            closeIcon: false,
+            once: true,         //destroy on hidden if true
+            size: 0,
+            remote: '',         //content load by remote url
+            header: '',
+            content: ''
+        }, options);
+
+        delete options.modal;
+        options.size = sized[options.size];
+
+        var modalId = (/^#/.test(options.id) ? '' : '#') + options.id, target = null;
+        if (!$(modalId).length) {
+            $('body').append(tmpl($('#modal_tmpl').html(), options));
+
+            events = $.extend({onShow: null, onVisible: null, onHide: null, onHidden: null, onApprove: null, onDeny: null}, events || {});
+            modalOptions = $.extend({
+                onShow: function () {
+                    events.onShow && events.onShow();
+                },
+                onVisible: function () {
+                    events.onVisible && events.onVisible();
+                },
+                onHide: function () {
+                    events.onHide && events.onHide();
+                },
+                onHidden: function () {
+                    if (options.once) {
+                        $(modalId).remove();
+                    }
+                    events.onHidden && events.onHidden();
+                },
+                onApprove: function () {
+                    events.onApprove && events.onApprove();
+                },
+                onDeny: function () {
+                    events.onDeny && events.onDeny();
+                }
+            }, modalOptions);
+
+            target = $(modalId).modal(modalOptions);
+        }
+
+        var result = { elId: modalId, target: target, settings: modalOptions };
+        $.each(['show', 'hide', 'toggle', 'refresh', 'show dimmer', 'hide dimmer', 'hide others', 'hide all', 'is active'],
+            function (i, method) {
+                result[$.camelCase(method.replace(' ', '-'))] = function () {
+                    return $(result.target).modal(method);
+                }
+            }
+        );
+
+        result.attach = function (selector, action) {
+            $(result.target).modal('attach events', selector, action);
+        };
+        result.destroy = function () {
+            result.hide();
+            $(result.target).remove();
+        };
+
+        return result;
+    }
+
     var core = {
 
         menu: {
@@ -406,6 +502,9 @@ var mgr = {};
         },
         unloading: function (selector, clazz) {
             unloading(selector);
+        },
+        modal: function (options, events, callback) {
+            return modal(options, events, callback);
         },
         header: function (name, value) {
             addHeader(name, value);
