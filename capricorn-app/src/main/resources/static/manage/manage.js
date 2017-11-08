@@ -379,6 +379,7 @@ var mgr = {};
         }
     };
 
+    var theUniqueID = 0;
     $.extend(register, {
         pjax: pjax,
         getURI: getURI,
@@ -390,6 +391,9 @@ var mgr = {};
         },
         request: function (action, data, options, headers) {
             return request(action, data, options, headers);
+        },
+        uniqueId: function(prefix) {
+            return (prefix || '') + (++theUniqueID);
         },
         jsonp: function (action, data, options) {
             return jsonp(action, data, options);
