@@ -218,7 +218,7 @@ var index = {};
                 mgr.get(defineTouch.touchHref, {}, {}, {
                     touchable: true
                 }).done(function (data) {
-                    $(touchContentId).html(data);
+                    $(touchContentId).empty().html(data);
                     mgr.modal({
                         close: true,
                         content: $(touchContentId).html()
