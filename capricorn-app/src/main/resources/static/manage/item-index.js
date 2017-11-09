@@ -218,7 +218,11 @@ var index = {};
                 mgr.get(defineTouch.touchHref, {}, {}, {
                     touchable: true
                 }).done(function (data) {
-                    alert(data);
+                    $(touchContentId).html(data);
+                    mgr.modal({
+                        close: true,
+                        content: $(touchContentId).html()
+                    }).show();
                 });
             }
         },

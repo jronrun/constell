@@ -227,14 +227,22 @@
 
     <script type="text/html" id="modal_tmpl">
         <div id="<%= id %>" class="ui <%= size %> modal">
-            <% if (closeIcon) { %> <i class="close icon"></i> <% } %>
+            <% if (close) { %> <i class="close icon"></i> <% } %>
             <% if (header.length > 0) { %>
                 <div class="header"> <%= header %> </div>
             <% } %>
             <div class="content" id="<%= id + '-content' %>"> <%= content %> </div>
+            <% if (buttons.length > 0) { %>
             <div class="actions">
-                <div class="ui button">Cancel</div>
+                <% $.each(buttons, function(idx, btn) { %>
+                    <% if (btn.html && btn.html.length > 0) { %>
+                        <%= btn.html %>
+                    <% } else { %>
+                        <div class="ui button <%= btn.clazz %>" id="<%= btn.id %>"><%= btn.text %></div>
+                    <% } %>
+                <% }); %>
             </div>
+            <% } %>
         </div>
     </script>
 

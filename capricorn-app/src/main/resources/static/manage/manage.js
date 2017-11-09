@@ -328,19 +328,38 @@ var mgr = {};
 
         options = $.extend({
             id: 'modal-' + mgr.uniqueId(),
-            closeIcon: false,
+            close: false,
             once: true,         //destroy on hidden if true
             size: 0,
             remote: '',         //content load by remote url
             header: '',
-            content: ''
+            content: '',
+            buttons: [
+                /*
+                {
+                    text: '',
+                    clazz: '',
+                    onClick: function(){}
+                },
+                {
+                    html: ''
+                }
+                 */
+            ]
         }, options);
 
         delete options.modal;
         options.size = sized[options.size];
 
-        var modalId = (/^#/.test(options.id) ? '' : '#') + options.id, target = null;
-        if (!$(modalId).length) {
+        var modalId = (/^#/.test(options.id) ? '' : '#') + options.id, target = null, noneExists = false;
+        if (noneExists = !$(modalId).length) {
+            //attach button id
+            $.each(options.buttons || [], function (idx, btn) {
+                if (btn.text && btn.text.length > 0) {
+                    btn.id = 'modal-btn-' + mgr.uniqueId();
+                }
+            });
+
             $('body').append(tmpl($('#modal_tmpl').html(), options));
 
             events = $.extend({onShow: null, onVisible: null, onHide: null, onHidden: null, onApprove: null, onDeny: null}, events || {});
@@ -387,6 +406,17 @@ var mgr = {};
             result.hide();
             $(result.target).remove();
         };
+
+        if (noneExists) {
+            //attach button event
+            $.each(options.buttons || [], function (idx, btn) {
+                if (btn.id && $.isFunction(btn.onClick)) {
+                    $((/^#/.test(btn.id) ? '' : '#') + btn.id).click(function () {
+                        btn.onClick({button: btn, modal: result});
+                    });
+                }
+            });
+        }
 
         return result;
     }
