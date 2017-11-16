@@ -45,7 +45,7 @@ public class RoleController extends BaseManageController<RoleVo> {
 //    @PreAuthorize(Authorities.ROLE_INDEX)
     @GetMapping("roles")
     public String roles(Model model, RoleVo condition) {
-        return genericList(model, roleService.selectPageBy(condition));
+        return genericList(model, roleService.selectPageBy(condition), condition);
     }
 
 //    @PreAuthorize(Authorities.ROLE_RETRIEVE)

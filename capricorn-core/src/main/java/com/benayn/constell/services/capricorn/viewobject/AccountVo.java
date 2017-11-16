@@ -9,10 +9,12 @@ import com.benayn.constell.service.enums.Gender;
 import com.benayn.constell.service.server.respond.Actionable;
 import com.benayn.constell.service.server.respond.Creatable;
 import com.benayn.constell.service.server.respond.DefineElement;
+import com.benayn.constell.service.server.respond.DefineTouch;
 import com.benayn.constell.service.server.respond.Editable;
 import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
+import com.benayn.constell.service.server.respond.Touchable;
 import com.benayn.constell.service.server.respond.Updatable;
 import com.benayn.constell.services.capricorn.enums.AccountStatus;
 import javax.validation.constraints.NotNull;
@@ -25,11 +27,13 @@ import org.hibernate.validator.constraints.Email;
 @Setter
 @ToString
 @Actionable(editField = "username")
+@DefineTouch(name = "render.role.touch.role", view = RoleVo.class)
 public class AccountVo extends Renderable {
 
     @DefineElement("render.common.id")
     @Searchable
     @Listable
+    @Touchable
     @Editable(hidden = true)
     private Long id;
 
@@ -37,6 +41,7 @@ public class AccountVo extends Renderable {
     @DefineElement("render.account.username")
     @Searchable(like = true)
     @Listable
+    @Touchable
     @Editable
     private String username;
 
@@ -45,6 +50,7 @@ public class AccountVo extends Renderable {
     @DefineElement("render.account.email")
     @Searchable(like = true)
     @Listable
+    @Touchable
     @Updatable(readonly = true, disabled = true)
     @Creatable
     private String email;
@@ -60,35 +66,42 @@ public class AccountVo extends Renderable {
     @NotNull
     @DefineElement(value = "render.account.gender", options = Gender.class)
     @Listable(fragment = "account_list_gender")
+    @Touchable(fragment = "account_list_gender")
     @Editable(type = RADIO)
     private Short gender;
 
     @DefineElement("render.account.enabled")
     @Listable(toggleWidget = true)
+    @Touchable(toggleWidget = true)
     @Editable(tag = TOGGLE)
     private boolean enabled;
 
     @DefineElement("render.account.credentials.expired")
     @Listable(toggleWidget = true)
+    @Touchable(toggleWidget = true)
     @Editable(tag = TOGGLE)
     private boolean credentialsExpired;
 
     @DefineElement("render.account.expired")
     @Listable(toggleWidget = true)
+    @Touchable(toggleWidget = true)
     @Editable(tag = TOGGLE)
     private boolean expired;
 
     @DefineElement("render.account.locked")
     @Listable(toggleWidget = true)
+    @Touchable(toggleWidget = true)
     @Editable(tag = TOGGLE)
     private boolean locked;
 
     @DefineElement(value = "render.account.status", options = AccountStatus.class, tag = SELECT)
     @Searchable
     @Listable
+    @Touchable
     private Short status;
 
     @Listable("render.common.createTime")
+    @Touchable("render.common.createTime")
     private String createTime;
 
 }

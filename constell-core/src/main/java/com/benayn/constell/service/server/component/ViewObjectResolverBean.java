@@ -10,6 +10,7 @@ import static com.benayn.constell.service.util.LZString.encodes;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 
@@ -37,7 +38,6 @@ import com.benayn.constell.service.server.respond.Touchable;
 import com.benayn.constell.service.server.respond.Updatable;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -78,7 +78,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     @SuppressWarnings("WeakerAccess")
     @Cacheable(value = "defined_pages", sync = true, key = "#viewObjectType.simpleName")
     public List<Field> getFields(Class<?> viewObjectType) {
-        return Lists.newArrayList(viewObjectType.getDeclaredFields());
+        return newArrayList(viewObjectType.getDeclaredFields());
     }
 
     @Override
@@ -117,7 +117,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         List<?> items = page.getResource();
         checkNotNull(items, "page resource cannot be null");
 
-        List<Renderable> renders = Lists.newArrayList();
+        List<Renderable> renders = newArrayList();
 
         final boolean[] isDefinedUniqueField = {false};
         List<Field> defineFields = getFields(viewObjectType);
@@ -128,7 +128,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
         // label value <column, <value, label>>
         Map<String, Map<Object, String>> labelValue = Maps.newHashMap();
-        List<String> toggleWidget = Lists.newArrayList();
+        List<String> toggleWidget = newArrayList();
 
         boolean hasTouch = null != renderable && renderable.hasTouch();
         if (hasTouch) {
@@ -198,11 +198,18 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                     labelValue.put(column, columnLabelValue);
                 }
 
+                boolean isToggleWidget = false;
+                if (isTouchable) {
+                    isToggleWidget = touchable.toggleWidget();
+                }
+
                 if (isListable) {
-                    //toggle widget
-                    if (listable.toggleWidget()) {
-                        toggleWidget.add(column);
-                    }
+                    isToggleWidget = listable.toggleWidget();
+                }
+
+                //toggle widget
+                if (isToggleWidget) {
+                    toggleWidget.add(column);
                 }
 
                 newPage.addColumn(column);
@@ -262,11 +269,15 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         String touchFragment = isNullOrEmpty(definedTouch.getTouchFragment())
             ? "touch_item_generic" : definedTouch.getTouchFragment();
 
+        List<String> columns = newArrayList(page.getColumns());
+        columns.remove("touchListValue");
         String value = getFragmentValue(item, touchFragment,
             (Context context) -> {
                 context.setVariable("touch", definedTouch);
-                context.setVariable("columns", page.getColumns());
+                context.setVariable("columns", columns);
                 context.setVariable("titles", page.getTitles());
+                context.setVariable("toggleWidget",
+                    ofNullable(page.getExtra().get("toggleWidget")).orElse(newArrayList()));
                 context.setVariable("labelValue", page.getExtra().get("labelValue"));
             });
 
@@ -280,7 +291,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         render.setTouchListValue(getFragmentValue(render, cellFragment, (Context context) -> {
                 context.setVariable("defact", definedAction);
                 context.setVariable("source", item);
-                context.setVariable("owners", ofNullable(page.getTouchOwnerIds()).orElse(Lists.newArrayList()));
+                context.setVariable("owners", ofNullable(page.getTouchOwnerIds()).orElse(newArrayList()));
             }));
     }
 
@@ -314,7 +325,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             }
 
             // DefineTouch
-            List<DefinedTouch> definedTouches = Lists.newArrayList();
+            List<DefinedTouch> definedTouches = newArrayList();
             DefineTouch relation = viewObjectType.getAnnotation(DefineTouch.class);
             if (null != relation) {
                 ofNullable(asDefinedTouch(relation, viewObjectType, manageBaseUrl)).ifPresent(definedTouches::add);
@@ -326,7 +337,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                     -> ofNullable(asDefinedTouch(aRelation, viewObjectType, manageBaseUrl)).ifPresent(definedTouches::add));
             }
 
-            List<DefinedTouch> defaultTouches = Lists.newArrayList();
+            List<DefinedTouch> defaultTouches = newArrayList();
             Map<String, DefinedTouch> fieldTouches = Maps.newHashMap();
             definedTouches.forEach(definedTouch -> {
                 if (isNullOrEmpty(definedTouch.getActionField())) {
@@ -477,7 +488,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
     private List<DefinedElement> getDefinedElements(DefineType defineType,
         Class<? extends Renderable> viewObjectType, Object value) {
-        List<DefinedElement> elements = Lists.newArrayList();
+        List<DefinedElement> elements = newArrayList();
         List<Field> valueFields = null;
         if (null != value) {
             valueFields = getFields(value.getClass());
@@ -883,7 +894,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 attributes = defineElement.attributes();
             }
 
-            List<Pair<String, String>> elementAttributes = Lists.newArrayList();
+            List<Pair<String, String>> elementAttributes = newArrayList();
             if (attributes.length > 0) {
                 for (String attribute : attributes) {
                     List<String> attr = Splitter.on("=").splitToList(attribute);
@@ -987,7 +998,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     }
 
     private boolean hasOptionsValue(Class<? extends Enum> optionsClass) {
-        return Lists.newArrayList(optionsClass.getInterfaces()).contains(OptionValue.class);
+        return newArrayList(optionsClass.getInterfaces()).contains(OptionValue.class);
     }
 
     private boolean hasTouchViewObjectValue(Class<? extends Renderable> targetClazz) {

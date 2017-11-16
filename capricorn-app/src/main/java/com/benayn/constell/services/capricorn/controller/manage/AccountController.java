@@ -47,7 +47,7 @@ public class AccountController extends BaseManageController<AccountVo> {
     //    @PreAuthorize(Authorities.ACCOUNT_INDEX)
     @GetMapping("accounts")
     public String accounts(Model model, AccountVo condition) {
-        return genericList(model, accountService.selectPageBy(condition));
+        return genericList(model, accountService.selectPageBy(condition), condition);
     }
 
     //    @PreAuthorize(Authorities.ACCOUNT_RETRIEVE)
