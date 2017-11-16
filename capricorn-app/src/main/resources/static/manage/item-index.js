@@ -3,14 +3,21 @@
 var index = {};
 (function ($, root, register) {
 
+    var handles = {};
     function liveClk(selector, callback, event) {
-        $('body').on(event || 'click', selector, function (evt) {
-            var el = evt.currentTarget;
-            callback && callback(el, evt);
-        });
+        event = event || 'click';
+        var handleId = selector + '-' + event;
+        if (!handles[handleId]) {
+            $('body').on(event, selector, function (evt) {
+                var el = evt.currentTarget;
+                callback && callback(el, evt);
+            });
+
+            handles[handleId] = true;
+        }
     }
 
-    var pageInfo = null, formId = null, editId = null, searchId = null, touchContentId = null, core = {
+    var pageInfo = null, formId = null, editId = null, searchId = null, core = {
 
         index: {
             init: function () {
@@ -18,7 +25,6 @@ var index = {};
                 formId = '#' + pageInfo.editId;
                 editId = '#' + pageInfo.contentId;
                 searchId = '#' + pageInfo.searchId;
-                touchContentId = '#' + pageInfo.touchContentId;
             }
         },
 
@@ -53,6 +59,18 @@ var index = {};
 
                 if (param.pageNo === listInfo.index) {
                     return;
+                }
+
+                if (core.touch.current) {
+                    var defined = core.touch.current.define;
+                    $.extend(param, {
+                        touchId: defined.touchId,
+                        touchModule: defined.module,
+                        touchOwner: true,
+                        touchListTitleFragment: defined.titleFragment,
+                        touchListCellFragment: defined.cellFragment,
+                        touchFromItemFragment: defined.touchFragment
+                    });
                 }
 
                 $.get(pageInfo.list, param, function (data) {
@@ -206,23 +224,115 @@ var index = {};
         },
 
         touch: {
+            column: '[data-touch-toggle-all]',
+            current: null,
             init: function () {
                 liveClk('[data-touch-action]', function (el) {
                     var defineTouch = JSON.parse(mgr.us($('#touch-' + $(el).data('touchAction')).data('defineTouch')));
                     defineTouch.touchId = parseInt($(el).data('touchId'));
                     core.touch.touch(defineTouch);
                 });
+
+                if (core.touch.current) {
+                    $(searchId).prepend(core.touch.current.show);
+                }
+            },
+
+            action: function () {
+                var touchOneSelector = '[data-touch-toggle]', touchAllSelector = core.touch.column,
+                    clazz = 'toggles', togglesActionClazz = 'actions', hasClazz = function (aClazz) {
+                    return mgr.hasLoading(touchAllSelector, aClazz || clazz);
+                };
+
+                $(touchOneSelector).checkbox({
+                    beforeChecked: function () {
+                        return hasClazz(togglesActionClazz) ? true : (!hasClazz());
+                    },
+                    beforeUnchecked: function () {
+                        return hasClazz(togglesActionClazz) ? true : (!hasClazz());
+                    },
+                    onChecked: function () {
+                        if (!hasClazz()) {
+                            core.touch.buildRelation([$(this).data('value')]);
+                        }
+                    },
+                    onUnchecked: function () {
+                        if (!hasClazz()) {
+                            core.touch.buildRelation([$(this).data('value')], true);
+                        }
+                    }
+                });
+
+                $(touchAllSelector).checkbox({
+                    beforeChecked: function () {
+                        return !hasClazz();
+                    },
+                    beforeUnchecked: function () {
+                        return !hasClazz();
+                    },
+                    onChecked: function () {
+                        if (mgr.loading(touchAllSelector, clazz)) {
+                            mgr.loading(touchAllSelector, togglesActionClazz);
+                            var ids = core.touch.getRelationIds(true);
+                            $(touchOneSelector).checkbox('check');
+                            mgr.unloading(touchAllSelector, togglesActionClazz);
+                            core.touch.buildRelation(ids);
+                        }
+                    },
+                    onUnchecked: function () {
+                        if (mgr.loading(touchAllSelector, clazz)) {
+                            mgr.loading(touchAllSelector, togglesActionClazz);
+                            var ids = core.touch.getRelationIds();
+                            $(touchOneSelector).checkbox('uncheck');
+                            mgr.unloading(touchAllSelector, togglesActionClazz);
+                            core.touch.buildRelation(ids, true);
+                        }
+                    }
+                });
+
+            },
+
+            buildRelation: function (touchToIds, isUnBuild, successCall, failureCall) {
+                touchToIds = touchToIds || [];
+                if (touchToIds.length < 1) {
+                    return false;
+                }
+
+                var defineTouch = core.touch.current.define, touchId = defineTouch.touchId;
+                mgr.post(fmt(defineTouch.relationHref, defineTouch.module), {
+                    touchId: touchId,
+                    touchToIds: touchToIds,
+                    build: !isUnBuild
+                }).fail(function (xhr) {
+                    $.isFunction(failureCall) && failureCall(xhr);
+                    swal('Oops...', mgr.failMsg(xhr), 'warning');
+                }).done(function (resp) {
+                    $.isFunction(successCall) && successCall(resp);
+                });
+            },
+
+            getRelationIds: function (isUnchecked) {
+                var relationIds=[],
+                    selector = 'input[id^=touch-tgl-]' + (isUnchecked ? ':not(:checked)' : ':checked');
+
+                $.map($(selector), function (el) {
+                    relationIds.push($(el).data('value'));
+                });
+
+                return relationIds;
             },
 
             touch: function (defineTouch) {
-                mgr.get(defineTouch.touchHref, {}, {}, {
-                    touchable: true
-                }).done(function (data) {
-                    $(touchContentId).empty().html(data);
-                    mgr.modal({
-                        close: true,
-                        content: $(touchContentId).html()
-                    }).show();
+                var touchItem = $(fmt('#{0}-{1}', defineTouch.id, defineTouch.touchId)).html();
+
+                mgr.pjax(defineTouch.touchHref, {
+                    touchable: true,
+                    onEnd: function () {
+                        core.touch.current = {
+                            define: defineTouch,
+                            show: touchItem
+                        };
+                    }
                 });
             }
         },
@@ -258,16 +368,18 @@ var index = {};
     }
 
     $.extend(register, {
+        init: function () {
+          core.initialize();
+        },
+        touchReady: function () {
+            core.touch.action();
+        },
         reload: function () {
             core.list.query({pageNo: 0});
         },
         register: function (selector, handle, event) {
             return reg(selector, handle, event);
         }
-    });
-
-    $(function () {
-        core.initialize();
     });
 
 })(jQuery, window, index);

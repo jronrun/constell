@@ -33,7 +33,6 @@ import com.benayn.constell.service.server.respond.OptionValue;
 import com.benayn.constell.service.server.respond.PageInfo;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
-import com.benayn.constell.service.server.respond.TouchType;
 import com.benayn.constell.service.server.respond.Touchable;
 import com.benayn.constell.service.server.respond.Updatable;
 import com.google.common.base.Splitter;
@@ -52,6 +51,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -132,7 +132,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
         boolean hasTouch = null != renderable && renderable.hasTouch();
         if (hasTouch) {
-            String touchColumn = "touch";
+            String touchColumn = "touchListValue";
             newPage.addColumn(touchColumn);
             String titleFragment = isNullOrEmpty(renderable.getTouchListTitleFragment())
                 ? "touch_column_title" : renderable.getTouchListTitleFragment();
@@ -223,26 +223,65 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         }
 
         List<Field> finalItemFields = itemFields;
-        items.forEach(item -> {
+        items.forEach(item ->
             ofNullable(asRenderable(viewObjectType, defineFields, item, finalItemFields, definedAction, hasTouch))
-                .ifPresent(render -> {
-                    if (hasTouch) {
-                        setTouchListValue(render, item);
-                    }
-
-                    renders.add(render);
+            .ifPresent(render -> {
+                if (hasTouch) {
+                    setTouchListValue(render, item, definedAction, newPage);
                 }
-            );
-        });
+
+                setTouchesFromItemValue(render, item, definedAction, newPage);
+
+                renders.add(render);
+            }
+        ));
 
         newPage.setResource(renders);
         return newPage;
     }
 
-    private void setTouchListValue(Renderable render, Object item) {
+    private void setTouchesFromItemValue(Renderable render, Object item,
+        DefinedAction definedAction, Page<Renderable> page) {
+        Map<String, String> touchesItemValue = Maps.newHashMap();
+
+        if (definedAction.isHasTouch()) {
+            definedAction.getTouches().forEach(definedTouch
+                -> putTouchItemValue(touchesItemValue, definedTouch, render, page));
+        }
+
+        if (definedAction.isHasFieldTouch()) {
+            definedAction.getFieldTouches().forEach((key, definedTouch)
+                -> putTouchItemValue(touchesItemValue, definedTouch, render, page));
+        }
+
+        render.setTouchesItemValue(touchesItemValue);
+    }
+
+    private void putTouchItemValue(Map<String, String> touchesItemValue, DefinedTouch definedTouch,
+        Object item, Page<Renderable> page) {
+        String touchFragment = isNullOrEmpty(definedTouch.getTouchFragment())
+            ? "touch_item_generic" : definedTouch.getTouchFragment();
+
+        String value = getFragmentValue(item, touchFragment,
+            (Context context) -> {
+                context.setVariable("touch", definedTouch);
+                context.setVariable("columns", page.getColumns());
+                context.setVariable("titles", page.getTitles());
+                context.setVariable("labelValue", page.getExtra().get("labelValue"));
+            });
+
+        touchesItemValue.put(definedTouch.getId(), value);
+    }
+
+    private void setTouchListValue(Renderable render, Object item, DefinedAction definedAction,
+        Page<Renderable> page) {
         String cellFragment = isNullOrEmpty(render.getTouchListCellFragment())
             ? "touch_column_cell" : render.getTouchListCellFragment();
-        render.setTouchListValue(getFragmentValue(item, cellFragment));
+        render.setTouchListValue(getFragmentValue(render, cellFragment, (Context context) -> {
+                context.setVariable("defact", definedAction);
+                context.setVariable("source", item);
+                context.setVariable("owners", ofNullable(page.getTouchOwnerIds()).orElse(Lists.newArrayList()));
+            }));
     }
 
     private DefinedAction getDefinedAction(Class<? extends Renderable> viewObjectType, String manageBaseUrl) {
@@ -323,7 +362,6 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             "DefineTouch must define one of name or action on type %s",
             viewObjectType.getSimpleName());
 
-        TouchType type = defineTouch.type();
         Class<? extends Renderable> touchViewType = defineTouch.view();
         checkArgument(hasTouchViewObjectValue(touchViewType),
             "DefineTouch view must be a sub class of Renderable");
@@ -333,12 +371,13 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         definedTouch.setName(getMessage(name, name));
         definedTouch.setActionField(actionField);
         definedTouch.setHasActionField(hasActionField);
-        definedTouch.setTouchType(type);
         definedTouch.setTitleFragment(defineTouch.titleFragment());
         definedTouch.setCellFragment(defineTouch.cellFragment());
+        definedTouch.setTouchFragment(defineTouch.touchFragment());
 
         PageInfo touchViewPageInfo = getPageInfo(touchViewType, manageBaseUrl);
         definedTouch.setTouchHref(touchViewPageInfo.getIndex());
+        definedTouch.setRelationHref(touchViewPageInfo.getRelation());
         definedTouch.setModule(touchViewPageInfo.getModule());
 
         return definedTouch;
@@ -997,14 +1036,23 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     }
 
     private String getFragmentValue(Object value, String fragment) {
+        return getFragmentValue(value, fragment, null);
+    }
+
+    private String getFragmentValue(Object value, String fragment, Consumer<Context> consumer) {
         Context context = new Context(LocaleContextHolder.getLocale());
         context.setVariable("item", value);
+
+        if (null != consumer) {
+            consumer.accept(context);
+        }
 
         return fragmentTemplateEngine.process(fragment, context);
     }
 
     private static final String TITLE_FORMAT = "render.%s.module.title";
     private static final String INDEX_FORMAT = "%s%s/index";
+    private static final String RELATION_FORMAT = "%s%s/relation/{0}";
     private static final String LIST_FORMAT = "%s%ss";
     private static final String RETRIEVE_FORMAT = "%s%s/{0}";
     private static final String CREATE_FORMAT = "%s%s";
@@ -1013,7 +1061,6 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     private static final String PAGE_ID_FORMAT = "%s_%s";
     private static final String SEARCH_ID_FORMAT = "%s_search_%s";
     private static final String CONTENT_ID_FORMAT = "%s_content_%s";
-    private static final String TOUCH_CONTENT_ID_FORMAT = "%s_touch_content_%s";
     private static final String EDIT_ID_FORMAT = "%s_edit_item";
 
     @Override
@@ -1030,9 +1077,9 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         pageInfo.setSearchId(format(SEARCH_ID_FORMAT, moduleName, suffixId));
         pageInfo.setContentId(format(CONTENT_ID_FORMAT, moduleName, suffixId));
         pageInfo.setEditId(format(EDIT_ID_FORMAT, moduleName));
-        pageInfo.setTouchContentId(format(TOUCH_CONTENT_ID_FORMAT, moduleName, suffixId));
 
         pageInfo.setIndex(format(INDEX_FORMAT, manageBaseUrl, moduleName));
+        pageInfo.setRelation(format(RELATION_FORMAT, manageBaseUrl, moduleName));
         pageInfo.setList(format(LIST_FORMAT, manageBaseUrl, moduleName));
         pageInfo.setRetrieve(format(RETRIEVE_FORMAT, manageBaseUrl, moduleName));
         pageInfo.setCreate(format(CREATE_FORMAT, manageBaseUrl, moduleName));

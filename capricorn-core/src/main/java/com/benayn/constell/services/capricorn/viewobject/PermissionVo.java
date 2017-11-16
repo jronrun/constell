@@ -25,6 +25,7 @@ public class PermissionVo extends Renderable {
     @DefineElement("render.common.id")
     @Listable
     @Editable(hidden = true)
+    @Touchable
     private Long id;
 
     @NotNull
@@ -46,7 +47,7 @@ public class PermissionVo extends Renderable {
     private String label;
 
     @Listable("render.common.createTime")
-    @Touchable
+    @Touchable("render.common.createTime")
     private String createTime;
 
 }

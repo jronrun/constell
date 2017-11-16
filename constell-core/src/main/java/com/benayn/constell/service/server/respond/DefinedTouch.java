@@ -8,13 +8,14 @@ public class DefinedTouch {
     private String id;
     private String module;
     private String name;
-    private TouchType touchType;
     private String touchHref;
+    private String relationHref;
 
     private boolean hasActionField;
     private String actionField;
 
     private String titleFragment;
     private String cellFragment;
+    private String touchFragment;
 
 }

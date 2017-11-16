@@ -16,9 +16,9 @@ public class PageInfo {
     private String pageId;
     private String searchId;
     private String contentId;
-    private String touchContentId;
     private String editId;
     private String index;
+    private String relation;
     private String list;
     private String retrieve;
     private String create;

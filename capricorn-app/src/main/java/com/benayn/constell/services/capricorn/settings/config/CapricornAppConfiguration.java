@@ -8,6 +8,7 @@ import com.benayn.constell.service.server.component.ViewObjectResolverBean;
 import com.benayn.constell.service.server.dialect.StarsDialect;
 import com.benayn.constell.service.server.filter.CookieCredentialsFilter;
 import com.benayn.constell.service.server.service.BenaynServiceInfo;
+import com.benayn.constell.services.capricorn.settings.interceptor.PJAXInterceptor;
 import com.benayn.constell.services.capricorn.settings.security.ConstellationLogoutHandler;
 import com.google.common.collect.Lists;
 import java.util.List;
@@ -89,6 +90,7 @@ public class CapricornAppConfiguration {
 
         @Override
         public void addInterceptors(InterceptorRegistry registry) {
+            registry.addInterceptor(new PJAXInterceptor());
             registry.addInterceptor(localeChangeInterceptor());
         }
 

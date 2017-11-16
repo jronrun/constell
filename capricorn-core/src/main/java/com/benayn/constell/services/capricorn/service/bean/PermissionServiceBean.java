@@ -16,6 +16,7 @@ import com.benayn.constell.services.capricorn.viewobject.PermissionVo;
 import com.google.common.base.Ascii;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -54,6 +55,9 @@ public class PermissionServiceBean implements PermissionService {
         if (condition.hasTouchOwner()) {
             List<Long> itemIds = permissionRepository
                 .getOwnerIdsBy(condition.getTouchId(), null, condition.getPageNo(), condition.getPageSize());
+            if (itemIds.size() < 1) {
+                itemIds.add(-1L);
+            }
             criteria.andIdIn(itemIds);
         }
 
@@ -67,11 +71,15 @@ public class PermissionServiceBean implements PermissionService {
 
             List<Long> ownerIds = permissionRepository
                 .getOwnerIdsBy(condition.getTouchId(), checkItemIds, null, null);
-            page.setTouchOwnerIds(ownerIds);
+            page.setAsTouchOwnerIds(ownerIds);
         }
 
         return page;
     }
+
+    private static final List<String> EXCLUDE_AUTHORITIES = Lists.newArrayList(
+        Authorities.ROLE_CAPRICORN, Authorities.ROLE_ANONYMOUS, Authorities.ROLE_MANAGE
+    );
 
     @Override
     public boolean saveFromAuthorities() {
@@ -79,7 +87,7 @@ public class PermissionServiceBean implements PermissionService {
             .stream(Authorities.class.getDeclaredFields())
             .forEach(field -> {
                 String code = field.getName();
-                if (null == permissionRepository.getByCode(code)) {
+                if (!EXCLUDE_AUTHORITIES.contains(code) && null == permissionRepository.getByCode(code)) {
                     Date now = new Date();
                     Permission permission = new Permission();
                     permission.setCode(code);

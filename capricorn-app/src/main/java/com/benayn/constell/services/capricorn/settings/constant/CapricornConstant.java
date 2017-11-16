@@ -11,8 +11,6 @@ public class CapricornConstant {
 
     public static final String PAGE_INDEX = "manage/item-index";
     public static final String PAGE_LIST = "manage/item-list";
-    public static final String PAGE_TOUCH = "manage/item-touch";
-    public static final String PAGE_TOUCH_LIST = "manage/item-touch-list";
     public static final String PAGE_EDIT = "manage/item-edit";
 
     public static final String DEFINED_SEARCH_KEY = "searchEls";

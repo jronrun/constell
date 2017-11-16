@@ -1,0 +1,18 @@
+<div xmlns:th="http://www.thymeleaf.org" class="ui link card green">
+    <div class="content">
+        <div th:each="column: ${columns}" th:unless="${column eq 'createTime' or column eq 'id'}"
+             th:with="aValue=${#maps.containsKey(labelValue, column) ? labelValue.get(column).get(item[column]) : item[column]}"
+             class="description">
+            <span class="meta" th:text="${titles.get(column)}">label</span>&nbsp;&nbsp; <span th:text="${aValue}">value</span>
+        </div>
+    </div>
+    <div class="extra content">
+        <span th:if="${#lists.contains(columns, 'createTime')}" class="right floated" th:text="${item.createTime}">
+            Create Time
+        </span>
+        <span th:if="${#lists.contains(columns, 'id')}">
+            <i class="edit green icon"></i>
+            <span th:text="${item.id}">ID</span>
+        </span>
+    </div>
+</div>

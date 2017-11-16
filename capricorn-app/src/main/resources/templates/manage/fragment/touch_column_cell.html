@@ -1,0 +1,6 @@
+<div xmlns:th="http://www.thymeleaf.org" class="ui toggle checkbox"
+     th:with="idValue=${item[defact.uniqueField]},uniqueValue=${#strings.toString(idValue)}"
+     th:attr="data-touch-toggle=${idValue}">
+    <input type="checkbox" th:id="'touch-tgl-' + ${idValue}" th:attr="data-value=${idValue}" th:checked="${#lists.contains(owners, uniqueValue)}"/>
+    <label></label>
+</div>

@@ -1,9 +1,12 @@
 package com.benayn.constell.service.server.repository;
 
+import static java.util.Optional.ofNullable;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -88,7 +91,12 @@ public final class Page<R> {
     private Map<String, Object> extra = Maps.newHashMap();
 
     @Setter
-    private List<Long> touchOwnerIds;
+    private List<String> touchOwnerIds;
+
+    public void setAsTouchOwnerIds(List<Long> theIds) {
+        ofNullable(theIds).ifPresent(longs ->
+            setTouchOwnerIds(longs.stream().map(Object::toString).collect(Collectors.toList())));
+    }
 
     public void addExtra(String key, Object value) {
         extra.put(key, value);
@@ -125,6 +133,10 @@ public final class Page<R> {
         np.navEnd = navEnd;
         np.navCount = navCount;
         np.navPages = navPages;
+        np.titles = titles;
+        np.columns = columns;
+        np.extra = extra;
+        np.touchOwnerIds = touchOwnerIds;
 
         return np;
     }

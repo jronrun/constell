@@ -29,13 +29,6 @@ public @interface DefineTouch {
     String actionField() default "";
 
     /**
-     * Define touch items show style,
-     * item show as card if {@link DefineTouch#type()} is {@link TouchType#CARD}, recommend if item not too much.
-     * item show as table if {@link DefineTouch#type()} is {@link TouchType#TABLE},
-     */
-    TouchType type() default TouchType.CARD;
-
-    /**
      * Define Forward Touch View Object
      */
     Class<? extends Renderable> view();
@@ -51,5 +44,10 @@ public @interface DefineTouch {
      * toggleable just add data-touch-toggle="0" to the element
      */
     String cellFragment() default "";
+
+    /**
+     * Touch item fragment. show in touch relation list
+     */
+    String touchFragment() default "";
 
 }

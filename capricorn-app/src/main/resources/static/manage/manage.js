@@ -119,8 +119,23 @@ var mgr = {};
         return location.href.replace(location.origin, '');
     }
 
-    var pageable = '.containerli.pageable', pjax = function (url, container) {
-        $.pjax({url: url, container: container || pageable});
+    var onEndCalls = {};
+    var pageable = '.containerli.pageable', pjax = function (url, headerParams, container) {
+        var callId = 'call-' + mgr.uniqueId();
+        headerParams = headerParams || {};
+        if (headerParams.onEnd && $.isFunction(headerParams.onEnd)) {
+            onEndCalls[callId] = headerParams.onEnd;
+            delete headerParams.onEnd;
+        }
+
+        $.pjax({
+            url: url,
+            container: container || pageable,
+            target: $.extend(headerParams, {
+                callId: callId,
+                directly_params: true
+            })
+        });
     };
 
     pjax.reload = function (container) {
@@ -141,12 +156,21 @@ var mgr = {};
      * <a data-pjax data-query="{{selector}}" data-queries="{{encode json data}}" href="{{href}}"> {{text}} </a>
      */
     $(document).on('pjax:beforeSend', function (event, xhr, options) {
-        var target = event.relatedTarget, ds = target ? (target.dataset || {}) : {};
+        var target = event.relatedTarget;
+
+        var innerHeaders = {};
+        if (target.directly_params) {
+            delete target.directly_params;
+            $.extend(innerHeaders, target || {})
+        } else {
+            var ds = target ? (target.dataset || {}) : {};
+
+        }
 
         var origin = location.origin;
         xhr.setRequestHeader('Referer-Source', location.href.replace(origin, ''));
 
-        $.each(headers, function (name, value) {
+        $.each($.extend({}, innerHeaders, headers), function (name, value) {
             xhr.setRequestHeader(name, value);
         });
 
@@ -154,7 +178,10 @@ var mgr = {};
     });
 
     $(document).on('pjax:end', function (event) {
-
+        var target = event.relatedTarget || {};
+        if (target.callId) {
+            onEndCalls[target.callId] && onEndCalls[target.callId](event);
+        }
     });
 
     function getFormData(selector, isGetEmptyField) {
@@ -170,7 +197,7 @@ var mgr = {};
             }
         });
 
-        $.map($('input[type="checkbox"]:checked'), function (el) {
+        $.map($(selector + ' input[type="checkbox"]:checked'), function (el) {
             indexed[$(el).attr('name')] = 'true';
         });
 
@@ -245,6 +272,10 @@ var mgr = {};
 
     function unloading(selector, clazz) {
         $(selector).removeClass(clazz || load);
+    }
+
+    function hasLoading(selector, clazz) {
+        return $(selector).hasClass(clazz || load);
     }
 
     function scrollable(selector, options) {
@@ -519,7 +550,10 @@ var mgr = {};
             return loading(selector, clazz);
         },
         unloading: function (selector, clazz) {
-            unloading(selector);
+            unloading(selector, clazz);
+        },
+        hasLoading: function (selector, clazz) {
+            return hasLoading(selector, clazz);
         },
         modal: function (options, events, callback) {
             return modal(options, events, callback);

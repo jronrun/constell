@@ -28,6 +28,7 @@ public class RoleVo extends Renderable {
     @DefineElement("render.common.id")
     @Listable
     @Editable(hidden = true)
+    @Touchable
     private Long id;
 
     @NotNull
@@ -48,7 +49,8 @@ public class RoleVo extends Renderable {
     @Touchable
     private String label;
 
-    @Listable("render.common.createTime")
+    @DefineElement("render.common.createTime")
+    @Listable
     @Touchable
     private String createTime;
 

@@ -34,15 +34,18 @@ public abstract class Renderable {
      */
     private Long touchId;
     private String touchModule;
+    private String touchListTitleFragment;
+    private String touchListCellFragment;
+    private String touchFromItemFragment;
+
     /**
      * Query only owner to touchId if true, or all the touch target items if false
      */
     private boolean touchOwner;
 
-    private TouchType touchListType;
+    // <touchId, touchItemFragmentValue>
+    private Map<String, String> touchesItemValue;
     private String touchListValue;
-    private String touchListTitleFragment;
-    private String touchListCellFragment;
 
     /**
      * List row field fragment value map

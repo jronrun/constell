@@ -1,6 +1,6 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{manage/layout}">
+      layout:decorate="~{ manage/layout }">
 <head>
     <title>Home</title>
     <script type="text/javascript" th:src="@{/module/item-index.js}"></script>
@@ -60,8 +60,10 @@
     </div>
 
     <div th:id="${pageInfo.contentId}"></div>
-    <div style="display: none;" th:id="${pageInfo.touchContentId}"></div>
 
+    <script th:inline="javascript">
+        $(function () { index.init(); });
+    </script>
 </div>
 </body>
 </html>

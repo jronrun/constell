@@ -21,52 +21,73 @@
 <table class="ui celled table" data-replaceable="1">
     <thead>
     <tr>
-        <th th:each="column: ${pageEl.columns}" th:text="${pageEl.titles.get(column)}">Header</th>
+        <th:block th:each="column: ${pageEl.columns}" th:with="isTouchColumn=${column eq 'touchListValue'}">
+            <th th:if="${isTouchColumn}" th:utext="${pageEl.titles.get(column)}">Toggle Header</th>
+            <th th:unless="${isTouchColumn}" th:text="${pageEl.titles.get(column)}">Header</th>
+        </th:block>
         <th th:if="${defact.hasAction}" th:text="#{render.action.title}">Action</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="item: ${pageEl.resource}">
+
+        <th:block th:if="${defact.hasTouch}">
+            <script th:each="touch: ${defact.touches}" type="text/html"
+                    th:id="${touch.id} + '-' + ${item[defact.uniqueField]}" th:utext="${item.touchesItemValue.get(touch.id)}">
+            </script>
+        </th:block>
+
+        <th:block th:if="${defact.hasFieldTouch}">
+            <script th:each="fieldTouch: ${defact.fieldTouches}" type="text/html"
+                    th:id="${fieldTouch.id} + '-' + ${item[defact.uniqueField]}" th:utext="${item.touchesItemValue.get(fieldTouch.value.id)}">
+            </script>
+        </th:block>
+
         <td th:each="column: ${pageEl.columns}"
             th:with="defByFragment=${#maps.containsKey(item.fieldFragmentValue, column)},
                 isToggleWidget=${#lists.contains(toggleWidget, column)},
+                isTouchColumn=${column eq 'touchListValue'},
                 isTouchField=${defact.hasFieldTouch && #maps.containsKey(defact.fieldTouches, column)},
                 aValue=${#maps.containsKey(labelValue, column) ? labelValue.get(column).get(item[column]) : item[column]}">
 
-            <th:block th:if="${!defByFragment && defact.hasEditField}">
-                <th:block th:if="${#strings.equals(column, defact.editField)}">
-                    <a class="ui blue basic" style="cursor: pointer;" th:text="${aValue}"
-                       th:attr="data-edit-id=${item[defact.uniqueField]}">Edit</a>
+            <th:block th:if="${isTouchColumn}" th:utext="${aValue}">
+            </th:block>
+            <th:block th:unless="${isTouchColumn}">
+                <th:block th:if="${!defByFragment && defact.hasEditField}">
+                    <th:block th:if="${#strings.equals(column, defact.editField)}">
+                        <a class="ui blue basic" style="cursor: pointer;" th:text="${aValue}"
+                           th:attr="data-edit-id=${item[defact.uniqueField]}">Edit</a>
+                    </th:block>
+                    <th:block th:if="${not #strings.equals(column, defact.editField)}">
+                        <th:block th:if="${isToggleWidget}">
+                            <div class="ui toggle checkbox">
+                                <input type="checkbox" th:checked="${#bools.isTrue(item[column])}" disabled="disabled"/>
+                                <label></label>
+                            </div>
+                        </th:block>
+                        <th:block th:unless="${isToggleWidget}" th:text="${aValue}">
+                        </th:block>
+                    </th:block>
                 </th:block>
-                <th:block th:if="${not #strings.equals(column, defact.editField)}">
+
+                <th:block th:if="${!defByFragment && !defact.hasEditField}">
                     <th:block th:if="${isToggleWidget}">
                         <div class="ui toggle checkbox">
                             <input type="checkbox" th:checked="${#bools.isTrue(item[column])}" disabled="disabled"/>
                             <label></label>
                         </div>
                     </th:block>
-                    <th:block th:unless="${isToggleWidget}" th:text="${aValue}">
+                    <th:block th:if="${!isToggleWidget && isTouchField}" th:with="aTouch=${defact.fieldTouches.get(column)}">
+                        <a class="ui blue basic" style="cursor: pointer;" th:text="${aValue}"
+                           th:attr="data-touch-action=${aTouch.id},data-touch-id=${item[defact.uniqueField]}">Touch</a>
+                    </th:block>
+                    <th:block th:if="${!isToggleWidget && !isTouchField}" th:text="${aValue}">
                     </th:block>
                 </th:block>
-            </th:block>
 
-            <th:block th:if="${!defByFragment && !defact.hasEditField}">
-                <th:block th:if="${isToggleWidget}">
-                    <div class="ui toggle checkbox">
-                        <input type="checkbox" th:checked="${#bools.isTrue(item[column])}" disabled="disabled"/>
-                        <label></label>
-                    </div>
+                <th:block th:if="${defByFragment}" th:utext="${item.fieldFragmentValue.get(column)}">
+                    TD Content C
                 </th:block>
-                <th:block th:if="${!isToggleWidget && isTouchField}" th:with="aTouch=${defact.fieldTouches.get(column)}">
-                    <a class="ui blue basic" style="cursor: pointer;" th:text="${aValue}"
-                       th:attr="data-touch-action=${aTouch.id},data-touch-id=${item[defact.uniqueField]}">Touch</a>
-                </th:block>
-                <th:block th:if="${!isToggleWidget && !isTouchField}" th:text="${aValue}">
-                </th:block>
-            </th:block>
-
-            <th:block th:if="${defByFragment}" th:utext="${item.fieldFragmentValue.get(column)}">
-                TD Content C
             </th:block>
 
         </td>
