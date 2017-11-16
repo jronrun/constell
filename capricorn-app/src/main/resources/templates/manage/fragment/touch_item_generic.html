@@ -1,26 +1,39 @@
-<div xmlns:th="http://www.thymeleaf.org" class="ui link card green">
+<div xmlns:th="http://www.thymeleaf.org" class="ui link card green" style="width:50%;">
     <div class="content">
-        <div th:each="column: ${columns}" th:unless="${column eq 'createTime' or column eq 'id'}"
-             th:with="aValue=${#maps.containsKey(labelValue, column) ? labelValue.get(column).get(item[column]) : item[column]},
-                defByFragment=${#maps.containsKey(item.fieldFragmentValue, column)},
-                isToggleWidget=${#lists.contains(toggleWidget, column)}" class="description" style="margin-bottom: 0.3em;">
-
-            <span class="meta" th:text="${titles.get(column)}">label</span>&nbsp;&nbsp;
-
-            <th:block th:if="${defByFragment}" th:utext="${item.fieldFragmentValue.get(column)}">
-            </th:block>
-            <th:block th:unless="${defByFragment}">
-                <th:block th:if="${isToggleWidget}">
-                    <div class="ui toggle checkbox">
-                        <input type="checkbox" th:checked="${#bools.isTrue(item[column])}" disabled="disabled"/>
-                        <label></label>
+        <div class="description">
+            <div class="ui two column doubling stackable grid container">
+                <div class="column">
+                    <div th:each="column: ${columns}" th:unless="${column eq 'createTime' or column eq 'id'}"
+                         class="meta" th:text="${titles.get(column)}" style="margin-bottom: 0.3em;">
+                        label
                     </div>
-                </th:block>
-                <th:block th:unless="${isToggleWidget}">
-                    <span th:text="${aValue}">value</span>
-                </th:block>
-            </th:block>
+                </div>
+                <div class="column">
+                    <th:block th:each="column: ${columns}" th:unless="${column eq 'createTime' or column eq 'id'}"
+                              th:with="aValue=${#maps.containsKey(labelValue, column) ? labelValue.get(column).get(item[column]) : item[column]},
+                    defByFragment=${#maps.containsKey(item.fieldFragmentValue, column)},
+                    isToggleWidget=${#lists.contains(toggleWidget, column)}">
 
+                        <div style="margin-bottom: 0.3em;">
+                            <th:block th:if="${defByFragment}" th:utext="${item.fieldFragmentValue.get(column)}">
+                            </th:block>
+                            <th:block th:unless="${defByFragment}">
+                                <th:block th:if="${isToggleWidget}">
+                                    <div class="ui toggle checkbox">
+                                        <input type="checkbox" th:checked="${#bools.isTrue(item[column])}"
+                                               disabled="disabled"/>
+                                        <label></label>
+                                    </div>
+                                </th:block>
+                                <th:block th:unless="${isToggleWidget}">
+                                    <span th:text="${aValue}">value</span>
+                                </th:block>
+                            </th:block>
+                        </div>
+
+                    </th:block>
+                </div>
+            </div>
         </div>
     </div>
     <div class="extra content">
