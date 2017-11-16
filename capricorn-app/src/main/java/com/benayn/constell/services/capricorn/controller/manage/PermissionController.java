@@ -7,6 +7,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.menu.MenuCapability;
 import com.benayn.constell.service.server.respond.Message;
+import com.benayn.constell.service.server.respond.TouchRelation;
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
 import com.benayn.constell.services.capricorn.service.PermissionService;
 import com.benayn.constell.services.capricorn.settings.constant.Menus;
@@ -41,6 +42,11 @@ public class PermissionController extends BaseManageController<PermissionVo> {
     @GetMapping("permission/index")
     public String index(Model model, @RequestHeader(value = "touchable", required = false) Boolean touchable) {
         return genericIndex(model, touchable);
+    }
+
+    @PostMapping(value = "permission/relation", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Message> relation(@Valid @RequestBody TouchRelation relation) throws ServiceException {
+        return success(null);
     }
 
 //    @PreAuthorize(Authorities.PERMISSION_INDEX)

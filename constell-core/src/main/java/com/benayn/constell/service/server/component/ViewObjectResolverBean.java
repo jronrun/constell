@@ -1052,7 +1052,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
     private static final String TITLE_FORMAT = "render.%s.module.title";
     private static final String INDEX_FORMAT = "%s%s/index";
-    private static final String RELATION_FORMAT = "%s%s/relation/{0}";
+    private static final String RELATION_FORMAT = "%s%s/relation";
     private static final String LIST_FORMAT = "%s%ss";
     private static final String RETRIEVE_FORMAT = "%s%s/{0}";
     private static final String CREATE_FORMAT = "%s%s";

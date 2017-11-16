@@ -276,7 +276,9 @@ var index = {};
                             var ids = core.touch.getRelationIds(true);
                             $(touchOneSelector).checkbox('check');
                             mgr.unloading(touchAllSelector, togglesActionClazz);
-                            core.touch.buildRelation(ids);
+                            core.touch.buildRelation(ids, false, function () {
+                                mgr.unloading(touchAllSelector, clazz)
+                            });
                         }
                     },
                     onUnchecked: function () {
@@ -285,26 +287,30 @@ var index = {};
                             var ids = core.touch.getRelationIds();
                             $(touchOneSelector).checkbox('uncheck');
                             mgr.unloading(touchAllSelector, togglesActionClazz);
-                            core.touch.buildRelation(ids, true);
+                            core.touch.buildRelation(ids, true, function () {
+                                mgr.unloading(touchAllSelector, clazz)
+                            });
                         }
                     }
                 });
 
             },
 
-            buildRelation: function (touchToIds, isUnBuild, successCall, failureCall) {
+            buildRelation: function (touchToIds, isUnBuild, successCall) {
                 touchToIds = touchToIds || [];
                 if (touchToIds.length < 1) {
+                    $.isFunction(successCall) && successCall(null);
                     return false;
                 }
 
-                var defineTouch = core.touch.current.define, touchId = defineTouch.touchId;
-                mgr.post(fmt(defineTouch.relationHref, defineTouch.module), {
+                var defineTouch = core.touch.current.define, touchId = defineTouch.touchId, data = {
                     touchId: touchId,
+                    module: defineTouch.module,
                     touchToIds: touchToIds,
                     build: !isUnBuild
-                }).fail(function (xhr) {
-                    $.isFunction(failureCall) && failureCall(xhr);
+                };
+
+                mgr.post(defineTouch.relationHref, JSON.stringify(data)).fail(function (xhr) {
                     swal('Oops...', mgr.failMsg(xhr), 'warning');
                 }).done(function (resp) {
                     $.isFunction(successCall) && successCall(resp);
