@@ -44,9 +44,16 @@ public class PermissionController extends BaseManageController<PermissionVo> {
         return genericIndex(model, touchable);
     }
 
+//        @PreAuthorize(Authorities.RELATION_CREATE_ROLE_PERMISSION)
     @PostMapping(value = "permission/relation", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Message> relation(@Valid @RequestBody TouchRelation relation) throws ServiceException {
-        return success(null);
+    public ResponseEntity<Message> createRelation(@Valid @RequestBody TouchRelation relation) throws ServiceException {
+        return success(permissionService.createRolePermission(relation));
+    }
+
+    //    @PreAuthorize(Authorities.RELATION_DELETE_ROLE_PERMISSION)
+    @DeleteMapping(value = "permission/relation", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Message> deleteRelation(@Valid @RequestBody TouchRelation relation) throws ServiceException {
+        return success(permissionService.deleteRolePermission(relation));
     }
 
 //    @PreAuthorize(Authorities.PERMISSION_INDEX)

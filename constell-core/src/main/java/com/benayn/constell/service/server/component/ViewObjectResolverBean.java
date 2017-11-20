@@ -113,7 +113,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     @SuppressWarnings("unchecked")
     @Override
     public Page<Renderable> getDefinedPage(Class<? extends Renderable> viewObjectType, Page<?> page,
-        String manageBaseUrl, Renderable renderable) {
+        String manageBaseUrl, Renderable touchRenderable) {
         List<?> items = page.getResource();
         checkNotNull(items, "page resource cannot be null");
 
@@ -130,13 +130,13 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         Map<String, Map<Object, String>> labelValue = Maps.newHashMap();
         List<String> toggleWidget = newArrayList();
 
-        boolean hasTouch = null != renderable && renderable.hasTouch();
+        boolean hasTouch = null != touchRenderable && touchRenderable.hasTouch();
         if (hasTouch) {
             String touchColumn = "touchListValue";
             newPage.addColumn(touchColumn);
-            String titleFragment = isNullOrEmpty(renderable.getTouchListTitleFragment())
-                ? "touch_column_title" : renderable.getTouchListTitleFragment();
-            newPage.addTitle(touchColumn, getFragmentValue(renderable, titleFragment));
+            String titleFragment = isNullOrEmpty(touchRenderable.getTouchListTitleFragment())
+                ? "touch_column_title" : touchRenderable.getTouchListTitleFragment();
+            newPage.addTitle(touchColumn, getFragmentValue(touchRenderable, titleFragment));
         }
 
         defineFields.forEach(field -> {
@@ -385,11 +385,20 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         definedTouch.setTitleFragment(defineTouch.titleFragment());
         definedTouch.setCellFragment(defineTouch.cellFragment());
         definedTouch.setTouchFragment(defineTouch.touchFragment());
+        definedTouch.setMaster(defineTouch.master());
 
         PageInfo touchViewPageInfo = getPageInfo(touchViewType, manageBaseUrl);
         definedTouch.setTouchHref(touchViewPageInfo.getIndex());
-        definedTouch.setRelationHref(touchViewPageInfo.getRelation());
         definedTouch.setModule(touchViewPageInfo.getModule());
+
+        String relationHref;
+        if (definedTouch.isMaster()) {
+            relationHref = touchViewPageInfo.getRelation();
+        } else {
+            relationHref = getPageInfo(viewObjectType, manageBaseUrl).getRelation();
+        }
+
+        definedTouch.setRelationHref(relationHref);
 
         return definedTouch;
     }

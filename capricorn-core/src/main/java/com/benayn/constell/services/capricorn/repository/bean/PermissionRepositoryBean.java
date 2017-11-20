@@ -12,6 +12,7 @@ import com.benayn.constell.services.capricorn.repository.domain.RolePermissionEx
 import com.benayn.constell.services.capricorn.repository.domain.RolePermissionExample.Criteria;
 import com.benayn.constell.services.capricorn.repository.mapper.PermissionMapper;
 import com.benayn.constell.services.capricorn.repository.mapper.RolePermissionMapper;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.cache.annotation.CacheConfig;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = "permissions")
 public class PermissionRepositoryBean
     extends GenericRepository<Permission, PermissionExample, PermissionMapper> implements PermissionRepository {
+
+    private RolePermissionMapper rolePermissionMapper;
 
     @Override
     @Cacheable(sync = true)
@@ -43,8 +46,6 @@ public class PermissionRepositoryBean
 
     @Override
     public List<Long> getOwnerIdsBy(Long roleId, List<Long> permissionIds, Integer pageNo, Integer pageSize) {
-        RolePermissionMapper rolePermissionMapper = getMapper(RolePermissionMapper.class);
-
         RolePermissionExample rolePermissionExample = new RolePermissionExample();
         Criteria criteria = rolePermissionExample.createCriteria().andRoleIdEqualTo(roleId);
 
@@ -63,5 +64,53 @@ public class PermissionRepositoryBean
             .map(RolePermission::getPermissionId)
             .collect(Collectors.toList())
         ;
+    }
+
+    @Override
+    public int saveRolePermission(List<Long> roleIds, List<Long> permissionIds) {
+        final int[] result = {0};
+
+        Date now = new Date();
+        roleIds.forEach(roleId -> permissionIds.forEach(permissionId -> {
+            RolePermissionExample example = new RolePermissionExample();
+            example.createCriteria()
+                .andRoleIdEqualTo(roleId)
+                .andPermissionIdEqualTo(permissionId)
+                ;
+
+            if (rolePermissionMapper.countByExample(example) < 1) {
+                RolePermission item = new RolePermission();
+                item.setRoleId(roleId);
+                item.setPermissionId(permissionId);
+                item.setCreateTime(now);
+                item.setLastModifyTime(now);
+                result[0] += rolePermissionMapper.insert(item);
+            }
+
+        }));
+
+        return result[0];
+    }
+
+    @Override
+    public int deleteRolePermission(List<Long> roleIds, List<Long> permissionIds) {
+        final int[] result = {0};
+
+        roleIds.forEach(roleId -> {
+            RolePermissionExample example = new RolePermissionExample();
+            example.createCriteria()
+                .andRoleIdEqualTo(roleId)
+                .andPermissionIdIn(permissionIds)
+            ;
+
+            result[0] += rolePermissionMapper.deleteByExample(example);
+        });
+
+        return result[0];
+    }
+
+    @Override
+    protected void setup() {
+        this.rolePermissionMapper = getMapper(RolePermissionMapper.class);
     }
 }

@@ -48,9 +48,9 @@ public abstract class BaseManageController<T extends Renderable> {
         return genericList(model, page, null);
     }
 
-    String genericList(Model model, Page<?> page, Renderable renderable) {
+    String genericList(Model model, Page<?> page, Renderable touchRenderable) {
         model.addAttribute("listInfo", encodes(page.cloneButResource()));
-        model.addAttribute(DEFINED_PAGE_KEY, getViewObjectResolver().getDefinedPage(voClass, page, MANAGE_BASE, renderable));
+        model.addAttribute(DEFINED_PAGE_KEY, getViewObjectResolver().getDefinedPage(voClass, page, MANAGE_BASE, touchRenderable));
         return PAGE_LIST;
     }
 

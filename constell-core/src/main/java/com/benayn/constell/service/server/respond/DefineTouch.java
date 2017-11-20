@@ -34,6 +34,11 @@ public @interface DefineTouch {
     Class<? extends Renderable> view();
 
     /**
+     * Maintain relation by {@link DefineTouch#view()} given class if true, or by annotation class if false
+     */
+    boolean master() default false;
+
+    /**
      * Touch column title define by given fragment.
      * if need toggle all cell value just add data-touch-toggle-all="0" to the element, eg: <a data-touch-toggle-all="0">test</a>
      */

@@ -1,11 +1,13 @@
 package com.benayn.constell.services.capricorn.service.bean;
 
+import static com.benayn.constell.service.util.Assets.checkNotNull;
 import static com.benayn.constell.service.util.Assets.checkRecordDeleted;
 import static com.benayn.constell.service.util.Assets.checkRecordNoneExist;
 import static com.benayn.constell.service.util.Assets.checkRecordSaved;
 
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.repository.Page;
+import com.benayn.constell.service.server.respond.TouchRelation;
 import com.benayn.constell.services.capricorn.repository.RoleRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.repository.domain.RoleExample;
@@ -50,6 +52,18 @@ public class RoleServiceBean implements RoleService {
     @Override
     public int deleteById(Long entityId) throws ServiceException {
         return checkRecordDeleted(roleRepository.deleteById(entityId));
+    }
+
+    @Override
+    public int createAccountRole(TouchRelation relation) throws ServiceException {
+        return roleRepository.saveAccountRole(
+            checkNotNull(relation).getSlaveNumberIds(), relation.getMasterNumberIds());
+    }
+
+    @Override
+    public int deleteAccountRole(TouchRelation relation) throws ServiceException {
+        return roleRepository.deleteAccountRole(
+            checkNotNull(relation).getSlaveNumberIds(), relation.getMasterNumberIds());
     }
 
     @Override

@@ -13,4 +13,7 @@ public interface PermissionRepository extends Repository<Permission, PermissionE
 
     List<Long> getOwnerIdsBy(Long roleId, List<Long> permissionIds, Integer pageNo, Integer pageSize);
 
+    int saveRolePermission(List<Long> roleIds, List<Long> permissionIds);
+
+    int deleteRolePermission(List<Long> roleIds, List<Long> permissionIds);
 }

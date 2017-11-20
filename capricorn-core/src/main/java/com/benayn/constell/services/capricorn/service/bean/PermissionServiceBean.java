@@ -1,11 +1,13 @@
 package com.benayn.constell.services.capricorn.service.bean;
 
+import static com.benayn.constell.service.util.Assets.checkNotNull;
 import static com.benayn.constell.service.util.Assets.checkRecordDeleted;
 import static com.benayn.constell.service.util.Assets.checkRecordNoneExist;
 import static com.benayn.constell.service.util.Assets.checkRecordSaved;
 
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.repository.Page;
+import com.benayn.constell.service.server.respond.TouchRelation;
 import com.benayn.constell.services.capricorn.config.Authorities;
 import com.benayn.constell.services.capricorn.repository.PermissionRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
@@ -107,6 +109,18 @@ public class PermissionServiceBean implements PermissionService {
             Splitter.on("_").splitToList(code).stream()
             .map(label -> Ascii.toUpperCase(label.charAt(0)) + Ascii.toLowerCase(label.substring(1)))
             .collect(Collectors.toList()));
+    }
+
+    @Override
+    public int createRolePermission(TouchRelation relation) throws ServiceException {
+        return permissionRepository.saveRolePermission(
+            checkNotNull(relation).getSlaveNumberIds(), relation.getMasterNumberIds());
+    }
+
+    @Override
+    public int deleteRolePermission(TouchRelation relation) throws ServiceException {
+        return permissionRepository.deleteRolePermission(
+            checkNotNull(relation).getSlaveNumberIds(), relation.getMasterNumberIds());
     }
 
     @Override

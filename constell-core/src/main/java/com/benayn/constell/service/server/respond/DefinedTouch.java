@@ -9,6 +9,7 @@ public class DefinedTouch {
     private String module;
     private String name;
     private String touchHref;
+    private boolean master;
     private String relationHref;
 
     private boolean hasActionField;

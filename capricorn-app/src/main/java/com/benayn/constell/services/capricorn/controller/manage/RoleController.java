@@ -7,6 +7,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.menu.MenuCapability;
 import com.benayn.constell.service.server.respond.Message;
+import com.benayn.constell.service.server.respond.TouchRelation;
 import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.service.RoleService;
 import com.benayn.constell.services.capricorn.settings.constant.Menus;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -38,8 +40,20 @@ public class RoleController extends BaseManageController<RoleVo> {
     @MenuCapability(value = Menus.ROLE_MANAGE, parent = Menus.AUTHORIZATION)
 //    @PreAuthorize(Authorities.ROLE_INDEX)
     @GetMapping("role/index")
-    public String index(Model model) {
-        return genericIndex(model);
+    public String index(Model model, @RequestHeader(value = "touchable", required = false) Boolean touchable) {
+        return genericIndex(model, touchable);
+    }
+
+    //    @PreAuthorize(Authorities.RELATION_CREATE_ACCOUNT_ROLE)
+    @PostMapping(value = "role/relation", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Message> createRelation(@Valid @RequestBody TouchRelation relation) throws ServiceException {
+        return success(roleService.createAccountRole(relation));
+    }
+
+    //    @PreAuthorize(Authorities.RELATION_DELETE_ACCOUNT_ROLE)
+    @DeleteMapping(value = "role/relation", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Message> deleteRelation(@Valid @RequestBody TouchRelation relation) throws ServiceException {
+        return success(roleService.deleteAccountRole(relation));
     }
 
 //    @PreAuthorize(Authorities.ROLE_INDEX)

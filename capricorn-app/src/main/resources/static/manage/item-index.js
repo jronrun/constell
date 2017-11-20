@@ -303,14 +303,15 @@ var index = {};
                     return false;
                 }
 
-                var defineTouch = core.touch.current.define, touchId = defineTouch.touchId, data = {
-                    touchId: touchId,
+                var defineTouch = core.touch.current.define, touchId = defineTouch.touchId,
+                    masterIds = defineTouch.master ? touchToIds : [touchId],
+                    slaveIds = defineTouch.master ? [touchId] : touchToIds, data = {
                     module: defineTouch.module,
-                    touchToIds: touchToIds,
-                    build: !isUnBuild
-                };
+                    masterIds: masterIds,
+                    slaveIds: slaveIds
+                }, method = isUnBuild ? 'delete' : 'post';
 
-                mgr.post(defineTouch.relationHref, JSON.stringify(data)).fail(function (xhr) {
+                mgr[method](defineTouch.relationHref, JSON.stringify(data)).fail(function (xhr) {
                     swal('Oops...', mgr.failMsg(xhr), 'warning');
                 }).done(function (resp) {
                     $.isFunction(successCall) && successCall(resp);

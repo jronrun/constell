@@ -11,6 +11,7 @@ import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.repository.domain.RoleExample;
 import com.benayn.constell.services.capricorn.repository.mapper.AccountRoleMapper;
 import com.benayn.constell.services.capricorn.repository.mapper.RoleMapper;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.cache.annotation.CacheConfig;
@@ -21,11 +22,11 @@ import org.springframework.stereotype.Repository;
 @CacheConfig(cacheNames = "roles")
 public class RoleRepositoryBean extends GenericRepository<Role, RoleExample, RoleMapper> implements RoleRepository {
 
+    private AccountRoleMapper accountRoleMapper;
+
     @Override
     @Cacheable(sync = true)
     public List<Role> getByAccountId(Long accountId) {
-        AccountRoleMapper accountRoleMapper = getMapper(AccountRoleMapper.class);
-
         AccountRoleExample accountRoleExample = new AccountRoleExample();
         accountRoleExample.createCriteria().andAccountIdEqualTo(accountId);
         List<AccountRole> accountRoles = accountRoleMapper.selectByExample(accountRoleExample);
@@ -53,5 +54,53 @@ public class RoleRepositoryBean extends GenericRepository<Role, RoleExample, Rol
         example.createCriteria().andCodeEqualTo(code);
 
         return selectOne(example);
+    }
+
+    @Override
+    protected void setup() {
+        this.accountRoleMapper = getMapper(AccountRoleMapper.class);
+    }
+
+    @Override
+    public int saveAccountRole(List<Long> accountIds, List<Long> roleIds) {
+        final int[] result = {0};
+
+        Date now = new Date();
+        accountIds.forEach(accountId -> roleIds.forEach(roleId -> {
+            AccountRoleExample example = new AccountRoleExample();
+            example.createCriteria()
+                .andAccountIdEqualTo(accountId)
+                .andRoleIdEqualTo(roleId)
+            ;
+
+            if (accountRoleMapper.countByExample(example) < 1) {
+                AccountRole item = new AccountRole();
+                item.setAccountId(accountId);
+                item.setRoleId(roleId);
+                item.setCreateTime(now);
+                item.setLastModifyTime(now);
+                result[0] += accountRoleMapper.insert(item);
+            }
+
+        }));
+
+        return result[0];
+    }
+
+    @Override
+    public int deleteAccountRole(List<Long> accountIds, List<Long> roleIds) {
+        final int[] result = {0};
+
+        accountIds.forEach(accountId -> {
+            AccountRoleExample example = new AccountRoleExample();
+            example.createCriteria()
+                .andRoleIdEqualTo(accountId)
+                .andRoleIdIn(roleIds)
+            ;
+
+            result[0] += accountRoleMapper.deleteByExample(example);
+        });
+
+        return result[0];
     }
 }

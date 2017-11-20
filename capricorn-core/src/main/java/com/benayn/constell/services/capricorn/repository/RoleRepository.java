@@ -10,4 +10,8 @@ public interface RoleRepository extends Repository<Role, RoleExample> {
     List<Role> getByAccountId(Long accountId);
 
     Role getByCode(String code);
+
+    int saveAccountRole(List<Long> accountIds, List<Long> roleIds);
+
+    int deleteAccountRole(List<Long> accountIds, List<Long> roleIds);
 }

@@ -22,9 +22,10 @@ import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public abstract class GenericRepository<T, E, M> implements Repository<T, E> {
+public abstract class GenericRepository<T, E, M> implements Repository<T, E>, InitializingBean {
 
     /**
      * Mapper TypeToken
@@ -149,6 +150,15 @@ public abstract class GenericRepository<T, E, M> implements Repository<T, E> {
 
     protected void addPageFeature(Object example, int page, int size, String defaultOrderBy, Sorting defaultSortBy) {
         pageFeature.add(example, page, size, defaultOrderBy, defaultSortBy);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        setup();
+    }
+
+    protected void setup() {
+
     }
 
     @Autowired
