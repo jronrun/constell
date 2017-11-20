@@ -81,7 +81,7 @@ public class RoleServiceBean implements RoleService {
 
         // create
         if (null == item.getId()) {
-            checkRecordNoneExist(null == savedRole, item.getCode());
+            checkRecordNoneExist(null == savedRole, item.getLabel());
 
             item.setCreateTime(now);
             result = roleRepository.insertAll(item);
@@ -89,7 +89,7 @@ public class RoleServiceBean implements RoleService {
         // update
         else {
             checkRecordNoneExist(null == savedRole
-                || savedRole.getId().longValue() == item.getId(), item.getCode());
+                || savedRole.getId().longValue() == item.getId(), item.getLabel());
             result = roleRepository.updateById(item);
         }
 
