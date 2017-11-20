@@ -62,11 +62,12 @@ var index = {};
                 }
 
                 if (core.touch.current) {
-                    var defined = core.touch.current.define;
+                    var defined = core.touch.current.define,
+                        isTouchOwner = $('[data-touch-show-all] input:checked').length < 1;
                     $.extend(param, {
                         touchId: defined.touchId,
                         touchModule: defined.module,
-                        touchOwner: true,
+                        touchOwner: isTouchOwner,
                         touchListTitleFragment: defined.titleFragment,
                         touchListCellFragment: defined.cellFragment,
                         touchFromItemFragment: defined.touchFragment
@@ -230,7 +231,16 @@ var index = {};
                 liveClk('[data-touch-action]', function (el) {
                     var defineTouch = JSON.parse(mgr.us($('#touch-' + $(el).data('touchAction')).data('defineTouch')));
                     defineTouch.touchId = parseInt($(el).data('touchId'));
-                    core.touch.touch(defineTouch);
+                    core.touch.touch(defineTouch, true);
+                });
+
+                liveClk('[data-touch-show-all]', function (el) {
+                    if (mgr.loading(el)) {
+                        core.list.query({pageNo: 0}, function () {
+                            mgr.unloading(el);
+                        });
+                    }
+
                 });
 
                 if (core.touch.current) {
@@ -329,11 +339,11 @@ var index = {};
                 return relationIds;
             },
 
-            touch: function (defineTouch) {
+            touch: function (defineTouch, isOwnerOnly) {
                 var touchItem = $(fmt('#{0}-{1}', defineTouch.id, defineTouch.touchId)).html();
 
                 mgr.pjax(defineTouch.touchHref, {
-                    touchable: true,
+                    touchable: !!isOwnerOnly,
                     onEnd: function () {
                         core.touch.current = {
                             define: defineTouch,

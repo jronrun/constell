@@ -36,6 +36,7 @@
             </div>
         </div>
     </div>
+
     <div class="extra content">
         <span th:if="${#lists.contains(columns, 'createTime')}" class="right floated" th:text="${item.createTime}">
             Create Time
@@ -45,4 +46,14 @@
             <span th:text="${item.id}">ID</span>
         </span>
     </div>
+
+    <div class="extra content">
+        <span class="right floated">
+            <div class="ui toggle checkbox" data-touch-show-all="0">
+                <input type="checkbox"/>
+                <label th:text="#{render.generic.toggle.all}">Show All</label>
+            </div>
+        </span>
+    </div>
+
 </div>
