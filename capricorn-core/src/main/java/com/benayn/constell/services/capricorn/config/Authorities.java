@@ -9,10 +9,10 @@ public class Authorities {
 
     /* manage start */
 
-    public static final String RELATION_CREATE_ACCOUNT_ROLE = "hasPermission(null, 'RELATION_CREATE_ACCOUNT_ROLE')";
-    public static final String RELATION_DELETE_ACCOUNT_ROLE = "hasPermission(null, 'RELATION_DELETE_ACCOUNT_ROLE')";
-    public static final String RELATION_CREATE_ROLE_PERMISSION = "hasPermission(null, 'RELATION_CREATE_ROLE_PERMISSION')";
-    public static final String RELATION_DELETE_ROLE_PERMISSION = "hasPermission(null, 'RELATION_DELETE_ROLE_PERMISSION')";
+    public static final String RELATION_ACCOUNT_ROLE_CREATE = "hasPermission(null, 'RELATION_ACCOUNT_ROLE_CREATE')";
+    public static final String RELATION_ACCOUNT_ROLE_DELETE = "hasPermission(null, 'RELATION_ACCOUNT_ROLE_DELETE')";
+    public static final String RELATION_ROLE_PERMISSION_CREATE = "hasPermission(null, 'RELATION_ROLE_PERMISSION_CREATE')";
+    public static final String RELATION_ROLE_PERMISSION_DELETE = "hasPermission(null, 'RELATION_ROLE_PERMISSION_DELETE')";
 
     public static final String ACCOUNT_INDEX = "hasPermission(null, 'ACCOUNT_INDEX')";
     public static final String ACCOUNT_CREATE = "hasPermission(null, 'ACCOUNT_CREATE')";
