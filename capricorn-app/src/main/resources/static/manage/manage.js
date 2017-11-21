@@ -278,6 +278,10 @@ var mgr = {};
         return $(selector).hasClass(clazz || load);
     }
 
+    function scrollRefresh(selector) {
+        $(selector || 'body').getNiceScroll().resize();
+    }
+
     function scrollable(selector, options) {
         $(selector || 'body').niceScroll($.extend({
             cursorcolor: 'grey',
@@ -530,6 +534,7 @@ var mgr = {};
         getURI: getURI,
         isMobile: isMobile,
         scrollable: scrollable,
+        scrollRefresh: scrollRefresh,
         failMsg: function (xhr, defaultMessage) {
             var resp = (xhr.responseJSON || {});
             return resp.message || resp.result || xhr.responseText || (defaultMessage || 'request fail');
@@ -601,6 +606,8 @@ $(function () {
                 );
                 break;
         }
+    }).ajaxComplete(function(/* event,request, settings */){
+        mgr.scrollRefresh();
     });
 
 });
