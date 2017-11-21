@@ -12,6 +12,7 @@ public class DefinedTouch {
     private String touchHref;
     private boolean master;
     private String relationHref;
+    private boolean switchable;
 
     private boolean hasActionField;
     private String actionField;

@@ -34,6 +34,7 @@ public abstract class Renderable {
      */
     private Long touchId;
     private String touchModule;
+    private boolean switchable;
     private String touchListTitleFragment;
     private String touchListCellFragment;
     private String touchFromItemFragment;

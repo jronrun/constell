@@ -1,9 +1,13 @@
 <html xmlns:th="http://www.thymeleaf.org">
-<div class="ui fitted slider checkbox" data-touch-toggle-all="0">
-    <input type="checkbox"/>
-    <label></label>
-</div>
-<script th:inline="javascript">
-    $(function () {index.touchReady();});
-</script>
+    <div th:if="${item.switchable}" class="ui fitted slider checkbox" data-touch-toggle-all="0">
+        <input type="checkbox"/>
+        <label></label>
+    </div>
+    <div th:unless="${item.switchable}" class="ui fitted slider checkbox">
+        <input type="checkbox" disabled="disabled">
+        <label></label>
+    </div>
+    <script th:inline="javascript">
+        $(function () { index.touchReady(); });
+    </script>
 </html>

@@ -386,6 +386,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         definedTouch.setCellFragment(defineTouch.cellFragment());
         definedTouch.setTouchFragment(defineTouch.touchFragment());
         definedTouch.setMaster(defineTouch.master());
+        definedTouch.setSwitchable(defineTouch.switchable());
 
         PageInfo touchViewPageInfo = getPageInfo(touchViewType, manageBaseUrl);
         definedTouch.setTouchHref(touchViewPageInfo.getIndex());

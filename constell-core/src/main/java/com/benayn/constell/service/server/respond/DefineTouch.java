@@ -45,6 +45,11 @@ public @interface DefineTouch {
     String titleFragment() default "";
 
     /**
+     * Batch create or delete relation, support by {@link DefineTouch#titleFragment()}
+     */
+    boolean switchable() default false;
+
+    /**
      * Touch column cell value define by given fragment.
      * toggleable just add data-touch-toggle="0" to the element
      */

@@ -68,6 +68,7 @@ var index = {};
                         touchId: defined.touchId,
                         touchModule: defined.module,
                         touchOwner: isTouchOwner,
+                        switchable: defined.switchable,
                         touchListTitleFragment: defined.titleFragment,
                         touchListCellFragment: defined.cellFragment,
                         touchFromItemFragment: defined.touchFragment

@@ -20,7 +20,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Actionable(delete = false, relations = {
-    @DefineTouch(name = "render.role.touch.permission", view = PermissionVo.class, master = true),
+    @DefineTouch(name = "render.role.touch.permission", view = PermissionVo.class, master = true, switchable = true),
     @DefineTouch(name = "render.role.touch.account", view = AccountVo.class)
 })
 public class RoleVo extends Renderable {
