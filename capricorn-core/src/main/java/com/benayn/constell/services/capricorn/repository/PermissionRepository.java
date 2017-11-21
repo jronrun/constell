@@ -11,7 +11,7 @@ public interface PermissionRepository extends Repository<Permission, PermissionE
 
     Permission getByCode(String code);
 
-    List<Long> getOwnerIdsBy(Long roleId, List<Long> permissionIds, Integer pageNo, Integer pageSize);
+    List<Long> getRoleOwnerIdsBy(Long roleId, List<Long> permissionIds, Integer pageNo, Integer pageSize);
 
     int saveRolePermission(List<Long> roleIds, List<Long> permissionIds);
 

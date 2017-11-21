@@ -31,6 +31,7 @@ import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
@@ -193,7 +194,43 @@ public class AccountServiceBean implements AccountService {
             criteria.andStatusEqualTo(condition.getStatus());
         }
 
-        return accountRepository.selectPageBy(example, condition.getPageNo(), condition.getPageSize());
+        if (condition.hasTouchOwner()) {
+            List<Long> itemIds = Lists.newArrayList();
+            switch (condition.getTouchModule()) {
+                case "role":
+                    itemIds = accountRepository
+                        .getRoleOwnerIdsBy(condition.getTouchId(), null, condition.getPageNo(), condition.getPageSize());
+                    break;
+            }
+
+            if (itemIds.size() < 1) {
+                itemIds.add(-1L);
+            }
+
+            criteria.andIdIn(itemIds);
+        }
+
+        Page<Account> page = accountRepository.selectPageBy(example, condition.getPageNo(), condition.getPageSize());
+
+        if (condition.hasTouch()) {
+            List<Long> checkItemIds = page.getResource().stream()
+                .map(Account::getId)
+                .collect(Collectors.toList())
+                ;
+
+            List<Long> ownerIds = Lists.newArrayList();
+
+            switch (condition.getTouchModule()) {
+                case "role":
+                    ownerIds = accountRepository
+                        .getRoleOwnerIdsBy(condition.getTouchId(), checkItemIds, null, null);
+                    break;
+            }
+
+            page.setAsTouchOwnerIds(ownerIds);
+        }
+
+        return page;
     }
 
     @Override

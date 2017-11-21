@@ -389,13 +389,15 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
         PageInfo touchViewPageInfo = getPageInfo(touchViewType, manageBaseUrl);
         definedTouch.setTouchHref(touchViewPageInfo.getIndex());
-        definedTouch.setModule(touchViewPageInfo.getModule());
+
+        PageInfo viewObjectTypePageInfo = getPageInfo(viewObjectType, manageBaseUrl);
+        definedTouch.setModule(viewObjectTypePageInfo.getModule());
 
         String relationHref;
         if (definedTouch.isMaster()) {
             relationHref = touchViewPageInfo.getRelation();
         } else {
-            relationHref = getPageInfo(viewObjectType, manageBaseUrl).getRelation();
+            relationHref = viewObjectTypePageInfo.getRelation();
         }
 
         definedTouch.setRelationHref(relationHref);

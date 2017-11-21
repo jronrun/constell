@@ -14,4 +14,8 @@ public interface RoleRepository extends Repository<Role, RoleExample> {
     int saveAccountRole(List<Long> accountIds, List<Long> roleIds);
 
     int deleteAccountRole(List<Long> accountIds, List<Long> roleIds);
+
+    List<Long> getAccountOwnerIdsBy(Long accountId, List<Long> roleIds, Integer pageNo, Integer pageSize);
+
+    List<Long> getPermissionOwnerIdsBy(Long permissionId, List<Long> roleIds, Integer pageNo, Integer pageSize);
 }

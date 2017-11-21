@@ -14,7 +14,10 @@ import com.benayn.constell.services.capricorn.repository.domain.RoleExample;
 import com.benayn.constell.services.capricorn.repository.domain.RoleExample.Criteria;
 import com.benayn.constell.services.capricorn.service.RoleService;
 import com.benayn.constell.services.capricorn.viewobject.RoleVo;
+import com.google.common.collect.Lists;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +49,51 @@ public class RoleServiceBean implements RoleService {
             criteria.andLabelLike(condition.like(condition.getLabel()));
         }
 
-        return roleRepository.selectPageBy(example, condition.getPageNo(), condition.getPageSize());
+        if (condition.hasTouchOwner()) {
+            List<Long> itemIds = Lists.newArrayList();
+            switch (condition.getTouchModule()) {
+                case "account":
+                    itemIds = roleRepository
+                        .getAccountOwnerIdsBy(condition.getTouchId(), null, condition.getPageNo(), condition.getPageSize());
+                    break;
+                case "permission":
+                    itemIds = roleRepository
+                        .getPermissionOwnerIdsBy(condition.getTouchId(), null, condition.getPageNo(), condition.getPageSize());
+                    break;
+            }
+
+            if (itemIds.size() < 1) {
+                itemIds.add(-1L);
+            }
+
+            criteria.andIdIn(itemIds);
+        }
+
+        Page<Role> page = roleRepository.selectPageBy(example, condition.getPageNo(), condition.getPageSize());
+
+        if (condition.hasTouch()) {
+            List<Long> checkItemIds = page.getResource().stream()
+                .map(Role::getId)
+                .collect(Collectors.toList())
+                ;
+
+            List<Long> ownerIds = Lists.newArrayList();
+
+            switch (condition.getTouchModule()) {
+                case "account":
+                    ownerIds = roleRepository
+                        .getAccountOwnerIdsBy(condition.getTouchId(), checkItemIds, null, null);
+                    break;
+                case "permission":
+                    ownerIds = roleRepository
+                        .getPermissionOwnerIdsBy(condition.getTouchId(), checkItemIds, null, null);
+                    break;
+            }
+
+            page.setAsTouchOwnerIds(ownerIds);
+        }
+
+        return page;
     }
 
     @Override

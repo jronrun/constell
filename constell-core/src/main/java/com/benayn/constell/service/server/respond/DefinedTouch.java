@@ -6,6 +6,7 @@ import lombok.Data;
 public class DefinedTouch {
 
     private String id;
+    // from module
     private String module;
     private String name;
     private String touchHref;

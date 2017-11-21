@@ -29,7 +29,7 @@ public class PermissionRepositoryBean
     @Override
     @Cacheable(sync = true)
     public List<Permission> getByRoleId(Long roleId) {
-        List<Long> permissionIds = getOwnerIdsBy(roleId, null, null, null);
+        List<Long> permissionIds = getRoleOwnerIdsBy(roleId, null, null, null);
         PermissionExample example = new PermissionExample();
         example.createCriteria().andIdIn(permissionIds);
 
@@ -45,7 +45,7 @@ public class PermissionRepositoryBean
     }
 
     @Override
-    public List<Long> getOwnerIdsBy(Long roleId, List<Long> permissionIds, Integer pageNo, Integer pageSize) {
+    public List<Long> getRoleOwnerIdsBy(Long roleId, List<Long> permissionIds, Integer pageNo, Integer pageSize) {
         RolePermissionExample rolePermissionExample = new RolePermissionExample();
         Criteria criteria = rolePermissionExample.createCriteria().andRoleIdEqualTo(roleId);
 

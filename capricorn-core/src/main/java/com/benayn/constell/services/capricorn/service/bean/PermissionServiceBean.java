@@ -56,7 +56,7 @@ public class PermissionServiceBean implements PermissionService {
 
         if (condition.hasTouchOwner()) {
             List<Long> itemIds = permissionRepository
-                .getOwnerIdsBy(condition.getTouchId(), null, condition.getPageNo(), condition.getPageSize());
+                .getRoleOwnerIdsBy(condition.getTouchId(), null, condition.getPageNo(), condition.getPageSize());
             if (itemIds.size() < 1) {
                 itemIds.add(-1L);
             }
@@ -72,7 +72,7 @@ public class PermissionServiceBean implements PermissionService {
                 ;
 
             List<Long> ownerIds = permissionRepository
-                .getOwnerIdsBy(condition.getTouchId(), checkItemIds, null, null);
+                .getRoleOwnerIdsBy(condition.getTouchId(), checkItemIds, null, null);
             page.setAsTouchOwnerIds(ownerIds);
         }
 
