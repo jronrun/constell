@@ -16,6 +16,7 @@ import com.benayn.constell.service.server.menu.AuthorityMenuBread;
 import com.benayn.constell.service.server.menu.MenuBread;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.services.capricorn.enums.AccountStatus;
+import com.benayn.constell.services.capricorn.enums.CacheName;
 import com.benayn.constell.services.capricorn.repository.AccountRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Account;
 import com.benayn.constell.services.capricorn.repository.domain.AccountExample;
@@ -39,6 +40,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -85,7 +87,6 @@ public class AccountServiceBean implements AccountService {
     }
 
     @Override
-    @Cacheable(value = "accounts", sync = true)
     public AccountDetails getAccountDetails(String email) {
         Account account = accountRepository.getByEmail(email);
         if (null == account) {
@@ -242,6 +243,7 @@ public class AccountServiceBean implements AccountService {
     }
 
     @Override
+    @CacheEvict(value = CacheName.ACCOUNTS, condition = "null != #entity && null != #entity.id", key = "#entity.email")
     public int save(AccountVo entity) throws ServiceException {
         Date now = new Date();
 

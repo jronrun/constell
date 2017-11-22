@@ -8,6 +8,7 @@ import static com.benayn.constell.service.util.Assets.checkRecordSaved;
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.respond.TouchRelation;
+import com.benayn.constell.services.capricorn.enums.CacheName;
 import com.benayn.constell.services.capricorn.repository.RoleRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.repository.domain.RoleExample;
@@ -19,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -97,23 +99,35 @@ public class RoleServiceBean implements RoleService {
     }
 
     @Override
+    @CacheEvict(value = {
+        CacheName.ROLES,
+        CacheName.MENUS,
+        CacheName.ACCOUNT_ROLES
+    }, allEntries = true)
     public int deleteById(Long entityId) throws ServiceException {
         return checkRecordDeleted(roleRepository.deleteById(entityId));
     }
 
     @Override
+    @CacheEvict(cacheNames = {CacheName.ACCOUNT_ROLES, CacheName.MENUS}, allEntries = true)
     public int createAccountRole(TouchRelation relation) throws ServiceException {
         return roleRepository.saveAccountRole(
             checkNotNull(relation).getSlaveNumberIds(), relation.getMasterNumberIds());
     }
 
     @Override
+    @CacheEvict(cacheNames = {CacheName.ACCOUNT_ROLES, CacheName.MENUS}, allEntries = true)
     public int deleteAccountRole(TouchRelation relation) throws ServiceException {
         return roleRepository.deleteAccountRole(
             checkNotNull(relation).getSlaveNumberIds(), relation.getMasterNumberIds());
     }
 
     @Override
+    @CacheEvict(value = {
+        CacheName.ROLES,
+        CacheName.MENUS,
+        CacheName.ACCOUNT_ROLES
+    }, condition = "null != #entity && null != #entity.id", allEntries = true)
     public int save(RoleVo entity) throws ServiceException {
         Date now = new Date();
 

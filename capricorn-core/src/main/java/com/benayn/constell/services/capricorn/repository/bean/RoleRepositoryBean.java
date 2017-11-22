@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Optional.ofNullable;
 
 import com.benayn.constell.service.server.repository.bean.GenericRepository;
+import com.benayn.constell.services.capricorn.enums.CacheName;
 import com.benayn.constell.services.capricorn.repository.RoleRepository;
 import com.benayn.constell.services.capricorn.repository.domain.AccountRole;
 import com.benayn.constell.services.capricorn.repository.domain.AccountRoleExample;
@@ -23,14 +24,14 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@CacheConfig(cacheNames = "roles")
+@CacheConfig(cacheNames = CacheName.ROLES)
 public class RoleRepositoryBean extends GenericRepository<Role, RoleExample, RoleMapper> implements RoleRepository {
 
     private AccountRoleMapper accountRoleMapper;
     private RolePermissionMapper rolePermissionMapper;
 
     @Override
-    @Cacheable(sync = true)
+    @Cacheable(value = CacheName.ACCOUNT_ROLES, sync = true)
     public List<Role> getByAccountId(Long accountId) {
         List<Long> roleIds = getAccountOwnerIdsBy(accountId, null, null, null);
 

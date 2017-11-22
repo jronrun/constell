@@ -4,6 +4,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Optional.ofNullable;
 
 import com.benayn.constell.service.server.repository.bean.GenericRepository;
+import com.benayn.constell.services.capricorn.enums.CacheName;
 import com.benayn.constell.services.capricorn.repository.PermissionRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
 import com.benayn.constell.services.capricorn.repository.domain.PermissionExample;
@@ -20,14 +21,14 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@CacheConfig(cacheNames = "permissions")
+@CacheConfig(cacheNames = CacheName.PERMISSIONS)
 public class PermissionRepositoryBean
     extends GenericRepository<Permission, PermissionExample, PermissionMapper> implements PermissionRepository {
 
     private RolePermissionMapper rolePermissionMapper;
 
     @Override
-    @Cacheable(sync = true)
+    @Cacheable(value = CacheName.ROLE_PERMISSIONS, sync = true)
     public List<Permission> getByRoleId(Long roleId) {
         List<Long> permissionIds = getRoleOwnerIdsBy(roleId, null, null, null);
         PermissionExample example = new PermissionExample();
@@ -37,6 +38,7 @@ public class PermissionRepositoryBean
     }
 
     @Override
+    @Cacheable(sync = true)
     public Permission getByCode(String code) {
         PermissionExample example = new PermissionExample();
         example.createCriteria().andCodeEqualTo(code);

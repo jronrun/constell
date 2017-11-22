@@ -3,6 +3,7 @@ package com.benayn.constell.services.capricorn.config;
 import static java.util.concurrent.TimeUnit.DAYS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+import com.benayn.constell.services.capricorn.enums.CacheName;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.Ticker;
 import java.util.Arrays;
@@ -28,10 +29,13 @@ public class CacheConfiguration {
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
     protected enum Caches {
 
-        ACCOUNT("accounts", 300, 50, SECONDS),
-        ROLE("roles", 300, 100, SECONDS),
-        PERMISSION("permissions", 300, 100, SECONDS),
-        USER_MENU("menus", 300, 50, SECONDS),
+        ACCOUNT(CacheName.ACCOUNTS, 300, 50, SECONDS),
+        ACCOUNT_ROLE(CacheName.ACCOUNT_ROLES, 300, 50, SECONDS),
+        ROLE(CacheName.ROLES, 300, 100, SECONDS),
+        ROLE_PERMISSION(CacheName.ROLE_PERMISSIONS, 300, 100, SECONDS),
+        PERMISSION(CacheName.PERMISSIONS, 300, 100, SECONDS),
+        USER_MENU(CacheName.MENUS, 300, 50, SECONDS),
+
         AUTHORITY_MENU("_menus", Integer.MAX_VALUE, 2, DAYS),
         VIEW_OBJECT("defined_pages", Integer.MAX_VALUE, 100, DAYS)
         ;

@@ -1,6 +1,7 @@
 package com.benayn.constell.services.capricorn.settings.security;
 
 
+import com.benayn.constell.services.capricorn.enums.AccountStatus;
 import com.benayn.constell.services.capricorn.repository.model.AccountDetails;
 import com.benayn.constell.services.capricorn.service.AccountService;
 import java.util.Collection;
@@ -37,6 +38,10 @@ public class ConstellationUserDetailsService implements UserDetailsService {
 
         if (account.getRoles() == null || account.getRoles().isEmpty()) {
             throw new UsernameNotFoundException("User not authorized.");
+        }
+
+        if (AccountStatus.DELETED.getValue().shortValue() == account.getStatus()) {
+            throw new UsernameNotFoundException("User deleted.");
         }
 
         Collection<GrantedAuthority> grantedAuthorities = account.getRoles()

@@ -9,6 +9,7 @@ import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.respond.TouchRelation;
 import com.benayn.constell.services.capricorn.config.Authorities;
+import com.benayn.constell.services.capricorn.enums.CacheName;
 import com.benayn.constell.services.capricorn.repository.PermissionRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
 import com.benayn.constell.services.capricorn.repository.domain.PermissionExample;
@@ -24,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -112,18 +114,26 @@ public class PermissionServiceBean implements PermissionService {
     }
 
     @Override
+    @CacheEvict(cacheNames = {CacheName.MENUS, CacheName.ACCOUNT_ROLES, CacheName.ROLE_PERMISSIONS}, allEntries = true)
     public int createRolePermission(TouchRelation relation) throws ServiceException {
         return permissionRepository.saveRolePermission(
             checkNotNull(relation).getSlaveNumberIds(), relation.getMasterNumberIds());
     }
 
     @Override
+    @CacheEvict(cacheNames = {CacheName.MENUS, CacheName.ACCOUNT_ROLES, CacheName.ROLE_PERMISSIONS}, allEntries = true)
     public int deleteRolePermission(TouchRelation relation) throws ServiceException {
         return permissionRepository.deleteRolePermission(
             checkNotNull(relation).getSlaveNumberIds(), relation.getMasterNumberIds());
     }
 
     @Override
+    @CacheEvict(value = {
+        CacheName.PERMISSIONS,
+        CacheName.MENUS,
+        CacheName.ACCOUNT_ROLES,
+        CacheName.ROLE_PERMISSIONS
+    }, condition = "null != #entity && null != #entity.id", allEntries = true)
     public int save(PermissionVo entity) throws ServiceException {
         Date now = new Date();
 
@@ -154,6 +164,12 @@ public class PermissionServiceBean implements PermissionService {
     }
 
     @Override
+    @CacheEvict(value = {
+        CacheName.PERMISSIONS,
+        CacheName.MENUS,
+        CacheName.ACCOUNT_ROLES,
+        CacheName.ROLE_PERMISSIONS
+    }, allEntries = true)
     public int deleteById(Long entityId) throws ServiceException {
         return checkRecordDeleted(permissionRepository.deleteById(entityId));
     }
