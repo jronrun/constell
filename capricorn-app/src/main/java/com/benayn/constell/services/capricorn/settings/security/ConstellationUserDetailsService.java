@@ -36,12 +36,12 @@ public class ConstellationUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("User " + username + " not found.");
         }
 
-        if (account.getRoles() == null || account.getRoles().isEmpty()) {
-            throw new UsernameNotFoundException("User not authorized.");
+        if (AccountStatus.DELETED.getValue().shortValue() == account.getStatus()) {
+            throw new UsernameNotFoundException("User " + username + " deleted.");
         }
 
-        if (AccountStatus.DELETED.getValue().shortValue() == account.getStatus()) {
-            throw new UsernameNotFoundException("User deleted.");
+        if (account.getRoles() == null || account.getRoles().isEmpty()) {
+            throw new UsernameNotFoundException("User not authorized.");
         }
 
         Collection<GrantedAuthority> grantedAuthorities = account.getRoles()
