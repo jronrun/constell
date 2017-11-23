@@ -32,6 +32,11 @@ public class PermissionRepositoryBean
     public List<Permission> getByRoleId(Long roleId) {
         List<Long> permissionIds = getRoleOwnerIdsBy(roleId, null, null, null);
         PermissionExample example = new PermissionExample();
+
+        if (permissionIds.isEmpty()) {
+            return EMPTY_ITEMS;
+        }
+
         example.createCriteria().andIdIn(permissionIds);
 
         return selectBy(example);

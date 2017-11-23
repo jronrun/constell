@@ -13,7 +13,9 @@ import com.alibaba.fastjson.JSON;
 import com.benayn.constell.service.enums.Gender;
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.menu.AuthorityMenuBread;
+import com.benayn.constell.service.server.menu.AuthorityMenuGroup;
 import com.benayn.constell.service.server.menu.MenuBread;
+import com.benayn.constell.service.server.menu.MenuGroup;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.services.capricorn.enums.AccountStatus;
 import com.benayn.constell.services.capricorn.enums.CacheName;
@@ -99,16 +101,22 @@ public class AccountServiceBean implements AccountService {
 
     @Override
     @Cacheable("menus")
-    public List<MenuBread> getUserMenus(Long accountId, boolean fetchUnauthorized) {
-        List<MenuBread> menus = Lists.newArrayList();
-        List<AuthorityMenuBread> authorityMenus = authorityService.getAuthorityMenus();
+    public List<MenuGroup> getUserMenus(Long accountId, boolean fetchUnauthorized) {
+        List<AuthorityMenuGroup> authorityMenuGroups = authorityService.getMenuGroup();
 
         List<Role> roles = authorityService.getRolesByAccountId(accountId);
         List<Permission> permissions = authorityService.getPermissionByAccountId(accountId);
 
-        authenticateMenu(menus, authorityMenus, roles, permissions, fetchUnauthorized);
+        authorityMenuGroups.forEach(authorityMenuGroup -> {
+            List<MenuBread> groupMenus = Lists.newArrayList();
+            authenticateMenu(groupMenus, authorityMenuGroup.getAuthorityMenus(), roles, permissions, fetchUnauthorized);
+            authorityMenuGroup.setMenus(groupMenus);
+        });
 
-        return menus;
+        return authorityMenuGroups.stream()
+            .map(AuthorityMenuGroup::asMenuGroup)
+            .collect(Collectors.toList())
+            ;
     }
 
     private void authenticateMenu(List<MenuBread> menus, List<AuthorityMenuBread> authorityMenus,
@@ -120,7 +128,7 @@ public class AccountServiceBean implements AccountService {
             if (null != authorityMenu.getRole()) {
                 if (roles.stream()
                     .anyMatch(role -> authorityMenu.getRole().equals(role.getCode()))) {
-                    asMenuitem(menus, authorityMenu, roles, permissions, fetchUnauthorized, true);
+                    asMenuBread(menus, authorityMenu, roles, permissions, fetchUnauthorized, true);
                     alreadyAdd = true;
                 }
             }
@@ -128,18 +136,18 @@ public class AccountServiceBean implements AccountService {
             else if (null != authorityMenu.getAuthority()) {
                 if (permissions.stream()
                     .anyMatch(permission -> authorityMenu.getAuthority().equals(permission.getCode()))) {
-                    asMenuitem(menus, authorityMenu, roles, permissions, fetchUnauthorized, true);
+                    asMenuBread(menus, authorityMenu, roles, permissions, fetchUnauthorized, true);
                     alreadyAdd = true;
                 }
             }
 
             if (!alreadyAdd && fetchUnauthorized) {
-                asMenuitem(menus, authorityMenu, roles, permissions, true, false);
+                asMenuBread(menus, authorityMenu, roles, permissions, true, false);
             }
         });
     }
 
-    private void asMenuitem(List<MenuBread> menus, AuthorityMenuBread authorityMenu,
+    private void asMenuBread(List<MenuBread> menus, AuthorityMenuBread authorityMenu,
         List<Role> roles, List<Permission> permissions, boolean fetchUnauthorized, boolean authorized) {
         MenuBread menu = authorityMenu.asMenu(authorized);
 

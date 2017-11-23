@@ -15,20 +15,37 @@ public @interface MenuCapability {
 
     /**
      * Menu Title
-     * @return
      */
     String value();
 
     /**
      * Parent Menu
-     * @return
      */
     String parent() default "";
 
     /**
      * Menu Order
-     * @return
      */
     int order() default 100;
+
+    /**
+     * Is New Menu
+     */
+    boolean fresh() default false;
+
+    /**
+     * Menu Icon
+     */
+    String icon() default "";
+
+    /**
+     * Menu Group, only effective for root menu ({@link MenuCapability#parent()} is empty)
+     */
+    String group() default "";
+
+    /**
+     * Menu Group Order
+     */
+    int groupOrder() default 10;
 
 }

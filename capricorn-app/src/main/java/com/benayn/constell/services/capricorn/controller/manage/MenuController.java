@@ -12,15 +12,27 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = MANAGE_BASE)
 public class MenuController {
 
-    @MenuCapability(Menus.AUTHORIZATION)
+    @MenuCapability(value = Menus.AUTHORIZATION, group = Menus.GROUP_CAPRICORN)
     @GetMapping(value = "menu/authorization")
     public void menuAuthorization() {
 
     }
 
-    @MenuCapability(Menus.SETTINGS)
+    @MenuCapability(value = Menus.SETTINGS, group = Menus.GROUP_CAPRICORN)
     @GetMapping(value = "menu/settings")
     public void menuSettings() {
+
+    }
+
+    @MenuCapability("Test Default")
+    @GetMapping(value = "menu/testdefault")
+    public void testDefault() {
+
+    }
+
+    @MenuCapability(value = "Test Help", group = Menus.GROUP_HELP)
+    @GetMapping(value = "menu/help")
+    public void testHelp() {
 
     }
 

@@ -1,19 +1,25 @@
 package com.benayn.constell.services.capricorn.settings.listener;
 
+import static com.google.common.base.Charsets.UTF_8;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 import com.benayn.constell.service.server.menu.AuthorityMenuBread;
+import com.benayn.constell.service.server.menu.AuthorityMenuGroup;
 import com.benayn.constell.service.server.menu.MenuCapability;
-import com.benayn.constell.services.capricorn.service.AuthorityService;
+import com.benayn.constell.service.server.menu.MenuGroup;
 import com.benayn.constell.services.capricorn.config.Authorities;
+import com.benayn.constell.services.capricorn.service.AuthorityService;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Ordering;
+import com.google.common.hash.Hashing;
 import com.google.common.primitives.Ints;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
@@ -60,18 +66,31 @@ public class ApplicationEventListener {
                 return;
             }
 
-            menus.add(new AuthorityMenuBread(getMenuTitle(menu.value()), action,
-                getMenuRole(value), getMenuAuthority(value), menu.parent(), menu.order()));
+            String menuTitle = getLocalText(menu.value());
+            AuthorityMenuBread authorityMenuBread = new AuthorityMenuBread();
+            authorityMenuBread.setTitle(menuTitle);
+            authorityMenuBread.setAction(action);
+            authorityMenuBread.setRole(getMenuRole(value));
+            authorityMenuBread.setAuthority(getMenuAuthority(value));
+            authorityMenuBread.setParent(getLocalText(menu.parent()));
+            authorityMenuBread.setOrder(menu.order());
+            authorityMenuBread.setFresh(menu.fresh());
+            authorityMenuBread.setIcon(menu.icon());
+            authorityMenuBread.setGroup(getLocalText(menu.group()));
+            authorityMenuBread.setGroupOrder(menu.groupOrder());
+            authorityMenuBread.setId(Hashing.crc32().hashString(menuTitle, UTF_8).toString());
+
+            menus.add(authorityMenuBread);
         });
 
-        authorityService.initializeAuthorityMenus(
-            ImmutableList.copyOf(authorityOrdering.sortedCopy(packageMenu(menus))));
+        authorityService.initializeMenuGroup(
+            ImmutableList.copyOf(menuGroupOrdering.sortedCopy(packageMenuGroup(menus))));
         log.info("Initialized authority menus successful");
     }
 
-    private String getMenuTitle(String menuValue) {
+    private String getLocalText(String value) {
         Locale locale = LocaleContextHolder.getLocale();
-        return messageSource.getMessage(menuValue, null, menuValue, locale);
+        return messageSource.getMessage(value, null, value, locale);
     }
 
     private String getMenuRole(HandlerMethod value) {
@@ -90,6 +109,30 @@ public class ApplicationEventListener {
             .findFirst()
             .orElse(null)
             ;
+    }
+
+    private List<AuthorityMenuGroup> packageMenuGroup(List<AuthorityMenuBread> menus) {
+        List<AuthorityMenuBread> packagedMenu = authorityOrdering.sortedCopy(packageMenu(menus));
+
+        Map<String, AuthorityMenuGroup> theGroup = Maps.newHashMap();
+        packagedMenu.forEach(menu -> {
+            String aGroup = isNullOrEmpty(menu.getGroup()) ? DEFAULT_GROUP : menu.getGroup();
+            if (DEFAULT_GROUP.equals(aGroup)) {
+                menu.setGroupOrder(5);
+            }
+
+            if (theGroup.containsKey(aGroup)) {
+                theGroup.get(aGroup).add(menu);
+            } else {
+                AuthorityMenuGroup menuGroup = new AuthorityMenuGroup();
+                menuGroup.setOrder(menu.getGroupOrder());
+                menuGroup.setTitle(menu.getGroup());
+                menuGroup.setAuthorityMenus(Lists.newArrayList(menu));
+                theGroup.put(aGroup, menuGroup);
+            }
+        });
+
+        return Lists.newArrayList(theGroup.values());
     }
 
     private List<AuthorityMenuBread> packageMenu(List<AuthorityMenuBread> menus) {
@@ -116,11 +159,19 @@ public class ApplicationEventListener {
         }
     }
 
+    private static final String DEFAULT_GROUP = "default";
     private static final List<String> authorities;
     private static final String authorityFormat = "'%s'";
     private static final Ordering<AuthorityMenuBread> authorityOrdering = new Ordering<AuthorityMenuBread>() {
         @Override
         public int compare(@Nullable AuthorityMenuBread left, @Nullable AuthorityMenuBread right) {
+            return Ints.compare(checkNotNull(left).getOrder(), checkNotNull(right).getOrder());
+        }
+    };
+
+    private static final Ordering<MenuGroup> menuGroupOrdering = new Ordering<MenuGroup>() {
+        @Override
+        public int compare(@Nullable MenuGroup left, @Nullable MenuGroup right) {
             return Ints.compare(checkNotNull(left).getOrder(), checkNotNull(right).getOrder());
         }
     };

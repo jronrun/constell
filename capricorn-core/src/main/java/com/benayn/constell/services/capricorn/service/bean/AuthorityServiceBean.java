@@ -1,6 +1,6 @@
 package com.benayn.constell.services.capricorn.service.bean;
 
-import com.benayn.constell.service.server.menu.AuthorityMenuBread;
+import com.benayn.constell.service.server.menu.AuthorityMenuGroup;
 import com.benayn.constell.services.capricorn.repository.PermissionRepository;
 import com.benayn.constell.services.capricorn.repository.RoleRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
@@ -38,13 +38,13 @@ public class AuthorityServiceBean implements AuthorityService {
 
     @Override
     @Cacheable(value = "_menus", key = "'_menus'", sync = true)
-    public List<AuthorityMenuBread> getAuthorityMenus() {
+    public List<AuthorityMenuGroup> getMenuGroup() {
         return Lists.newArrayList();
     }
 
     @Override
     @CachePut(value = "_menus", key = "'_menus'")
-    public List<AuthorityMenuBread> initializeAuthorityMenus(List<AuthorityMenuBread> authorityMenus) {
+    public List<AuthorityMenuGroup> initializeMenuGroup(List<AuthorityMenuGroup> authorityMenus) {
         return authorityMenus;
     }
 

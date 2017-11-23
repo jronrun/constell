@@ -15,15 +15,9 @@ public class AuthorityMenuBread extends MenuBread {
     private String authority;
     private String parent;
     private int order;
+    private String group;
+    private int groupOrder;
     private List<AuthorityMenuBread> child = Lists.newArrayList();
-
-    public AuthorityMenuBread(String title, String action, String role, String authority, String parent, int order) {
-        super(title, action);
-        this.role = role;
-        this.authority = authority;
-        this.parent = parent;
-        this.order = order;
-    }
 
     public MenuBread asMenu(boolean authorized) {
         MenuBread menu = new MenuBread();
@@ -31,6 +25,8 @@ public class AuthorityMenuBread extends MenuBread {
         menu.setTitle(getTitle());
         menu.setAction(getAction());
         menu.setAuthorized(authorized);
+        menu.setFresh(isFresh());
+        menu.setIcon(getIcon());
         return menu;
     }
 
@@ -46,6 +42,8 @@ public class AuthorityMenuBread extends MenuBread {
             .add("order", getOrder())
             .add("role", getRole())
             .add("authority", getAuthority())
+            .add("group", getGroup())
+            .add("groupOrder", getGroupOrder())
             .toString();
     }
 }

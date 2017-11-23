@@ -26,14 +26,12 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 public class ManageController {
 
     @GetMapping(value = "index")
-    public void index(Model model, Authentication authentication) {
-        //TODO rem
-        System.out.println(authentication);
+    public void index(Model model) {
         model.addAttribute("now", LocalDateTime.now());
     }
 
     @GetMapping(value = "side-menu")
-    public void sideMenu(Model model) {
+    public void sideMenu(Model model, Authentication authentication) {
     }
 
     @GetMapping(value = "side-menu-small")

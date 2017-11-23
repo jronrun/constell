@@ -2,6 +2,9 @@ package com.benayn.constell.services.capricorn.settings.constant;
 
 public class Menus {
 
+    public static final String GROUP_CAPRICORN = "menu.group.capricorn";
+    public static final String GROUP_HELP = "menu.group.help";
+
     public static final String SETTINGS = "menu.root.settings";
     public static final String AUTHORIZATION = "menu.root.authorization";
 

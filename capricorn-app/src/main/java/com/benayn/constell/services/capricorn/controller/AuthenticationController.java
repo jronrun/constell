@@ -8,10 +8,12 @@ import static com.benayn.constell.service.util.LZString.encodes;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.MANAGE_BASE;
 import static java.util.Optional.ofNullable;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import com.benayn.constell.service.common.Pair;
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.respond.Message;
+import com.benayn.constell.service.server.respond.Responds;
 import com.benayn.constell.services.capricorn.repository.model.UserToken;
 import com.benayn.constell.services.capricorn.service.AccountService;
 import com.benayn.constell.services.capricorn.settings.config.CapricornAppConfiguration.CapricornConfigurer;
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/user")
@@ -173,5 +176,10 @@ public class AuthenticationController {
         return new ResponseEntity<>(userService.getUserMenus(24L, false), HttpStatus.ACCEPTED);
     }
      */
+
+    @RequestMapping(value="/usermenu", method= GET)
+    public ResponseEntity<Message> usermenu(@RequestParam("accountId") Long accountId, @RequestParam("all") Boolean all){
+        return Responds.success(accountService.getUserMenus(accountId, all));
+    }
 
 }

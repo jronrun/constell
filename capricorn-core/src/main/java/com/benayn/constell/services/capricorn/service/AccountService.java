@@ -1,7 +1,7 @@
 package com.benayn.constell.services.capricorn.service;
 
 import com.benayn.constell.service.exception.ServiceException;
-import com.benayn.constell.service.server.menu.MenuBread;
+import com.benayn.constell.service.server.menu.MenuGroup;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.services.capricorn.repository.domain.Account;
 import com.benayn.constell.services.capricorn.repository.model.AccountDetails;
@@ -17,7 +17,7 @@ public interface AccountService {
 
     Account create(String email, String password, String name);
 
-    List<MenuBread> getUserMenus(Long accountId, boolean fetchUnauthorized);
+    List<MenuGroup> getUserMenus(Long accountId, boolean fetchUnauthorized);
 
     Account selectById(long entityId);
 

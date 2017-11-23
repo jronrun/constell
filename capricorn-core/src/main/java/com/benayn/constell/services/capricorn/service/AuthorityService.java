@@ -1,6 +1,6 @@
 package com.benayn.constell.services.capricorn.service;
 
-import com.benayn.constell.service.server.menu.AuthorityMenuBread;
+import com.benayn.constell.service.server.menu.AuthorityMenuGroup;
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
 import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.repository.model.RoleDetails;
@@ -18,7 +18,7 @@ public interface AuthorityService {
 
     RoleDetails getRoleDetailsByCode(String roleCode);
 
-    List<AuthorityMenuBread> getAuthorityMenus();
+    List<AuthorityMenuGroup> getMenuGroup();
 
-    List<AuthorityMenuBread> initializeAuthorityMenus(List<AuthorityMenuBread> authorityMenus);
+    List<AuthorityMenuGroup> initializeMenuGroup(List<AuthorityMenuGroup> authorityMenus);
 }
