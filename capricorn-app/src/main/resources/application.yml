@@ -15,6 +15,17 @@ capricorn:
   configurer:
     clientId: constellation-capricorn
     clientSecret: 9ddf1f40ddea06837257a7e2653a69d0
+    staticResourcePrefixes:
+    - /module/
+    - /components/
+    - /assets/
+    - /manages/
+    staticResourceSuffixes:
+    - .png
+    - .woff2
+    - .js
+    - .css
+
 
 server:
   port: 8011

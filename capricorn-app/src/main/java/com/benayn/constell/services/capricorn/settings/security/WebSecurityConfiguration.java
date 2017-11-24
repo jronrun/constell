@@ -67,6 +67,7 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
         JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         converter.setSigningKey(privateKey);
         converter.setVerifierKey(publicKey);
+        converter.setAccessTokenConverter(new ConstellationAccessTokenConverter(userDetailsService));
         return converter;
     }
 

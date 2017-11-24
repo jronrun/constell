@@ -12,6 +12,8 @@ import com.benayn.constell.services.capricorn.settings.interceptor.PJAXIntercept
 import com.benayn.constell.services.capricorn.settings.security.ConstellationLogoutHandler;
 import com.google.common.collect.Lists;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +56,16 @@ public class CapricornAppConfiguration {
         FilterRegistrationBean<CookieCredentialsFilter> credentialsFilter = new FilterRegistrationBean<>();
         credentialsFilter.setOrder(Ordered.HIGHEST_PRECEDENCE);
         credentialsFilter.addUrlPatterns("/*");
-        credentialsFilter.setFilter(new CookieCredentialsFilter());
+        credentialsFilter.setFilter(new CookieCredentialsFilter() {
+
+            @Override
+            protected boolean isIgnoreCredentials(HttpServletRequest request, HttpServletResponse response) {
+                String requestURI = request.getRequestURI();
+                return capricornConfigurer.getStaticResourcePrefixes().stream().anyMatch(requestURI::startsWith)
+                    || capricornConfigurer.getStaticResourceSuffixes().stream().anyMatch(requestURI::endsWith);
+            }
+        });
+
         return credentialsFilter;
     }
 
@@ -80,13 +91,6 @@ public class CapricornAppConfiguration {
 
     @Configuration
     public class CapricornWebMvcConfigurer implements WebMvcConfigurer {
-
-        private CapricornConfigurer capricornConfigurer;
-
-        @Autowired
-        public CapricornWebMvcConfigurer(CapricornConfigurer capricornConfigurer) {
-            this.capricornConfigurer = capricornConfigurer;
-        }
 
         @Override
         public void addInterceptors(InterceptorRegistry registry) {
@@ -125,6 +129,8 @@ public class CapricornAppConfiguration {
 
         private String clientId;
         private String clientSecret;
+        private List<String> staticResourcePrefixes = Lists.newArrayList();
+        private List<String> staticResourceSuffixes = Lists.newArrayList();
         private List<StaticResourcesConfigurer> resources = Lists.newArrayList();
 
         @Data
@@ -190,6 +196,13 @@ public class CapricornAppConfiguration {
         templateResolver.setCheckExistence(true);
         templateResolver.setCacheable(false);
         return templateResolver;
+    }
+
+    private CapricornConfigurer capricornConfigurer;
+
+    @Autowired
+    public void setCapricornConfigurer(CapricornConfigurer capricornConfigurer) {
+        this.capricornConfigurer = capricornConfigurer;
     }
 
 }

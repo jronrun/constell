@@ -5,10 +5,15 @@ import static com.benayn.constell.services.capricorn.settings.constant.Capricorn
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.util.StringUtils.parseLocaleString;
 
+import com.benayn.constell.service.server.menu.MenuGroup;
 import com.benayn.constell.service.server.respond.Message;
+import com.benayn.constell.service.server.security.ConstellationUserDetails;
+import com.benayn.constell.services.capricorn.service.AccountService;
 import java.time.LocalDateTime;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -25,6 +30,8 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 @RequestMapping(value = MANAGE_BASE)
 public class ManageController {
 
+    private AccountService accountService;
+
     @GetMapping(value = "index")
     public void index(Model model) {
         model.addAttribute("now", LocalDateTime.now());
@@ -32,6 +39,9 @@ public class ManageController {
 
     @GetMapping(value = "side-menu")
     public void sideMenu(Model model, Authentication authentication) {
+        ConstellationUserDetails user = (ConstellationUserDetails) authentication.getPrincipal();
+        List<MenuGroup> groups = accountService.getUserMenus(user.getId(), false);
+        model.addAttribute("groups", groups);
     }
 
     @GetMapping(value = "side-menu-small")
@@ -72,4 +82,8 @@ public class ManageController {
         return success(null);
     }
 
+    @Autowired
+    public void setAccountService(AccountService accountService) {
+        this.accountService = accountService;
+    }
 }

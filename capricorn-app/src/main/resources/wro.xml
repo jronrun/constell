@@ -10,11 +10,11 @@
 
     <group name="manage">
         <css>/components/semantic/dist/semantic.css</css>
-        <css>/manage/golgi/css/main.css</css>
+        <css>/manages/golgi/css/main.css</css>
         <css>/components/sweetalert2/dist/sweetalert2.css</css>
         <css>/components/PACE/themes/blue/pace-theme-minimal.css</css>
         <css>/logo.css</css>
-        <css>/manage/manage.css</css>
+        <css>/manages/manage.css</css>
 
         <js minimize="false">/components/jquery/dist/jquery.min.js</js>
         <js minimize="false">/components/jquery.nicescroll/dist/jquery.nicescroll.min.js</js>
@@ -25,19 +25,19 @@
         <!--<js minimize="false">/components/store.js/dist/store.modern.min.js</js>-->
         <js>/components/jquery-pjax/jquery.pjax.js</js>
         <!--<js minimize="false">/components/lodash/dist/lodash.min.js</js>-->
-        <js>/manage/manage.js</js>
+        <js>/manages/manage.js</js>
     </group>
 
     <group name="index">
-        <js>/manage/index.js</js>
+        <js>/manages/index.js</js>
     </group>
 
     <group name="item-index">
-        <js>/manage/item-index.js</js>
+        <js>/manages/item-index.js</js>
     </group>
 
     <group name="login">
-        <js>/manage/login.js</js>
+        <js>/manages/login.js</js>
     </group>
 
     <!-- Capricorn Manage End -->

@@ -15,10 +15,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class CookieCredentialsFilter implements Filter {
+public abstract class CookieCredentialsFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -30,7 +31,13 @@ public class CookieCredentialsFilter implements Filter {
         throws IOException, ServletException {
 
         HttpServletRequest request = (HttpServletRequest) req;
-        //HttpServletResponse response = (HttpServletResponse) res;
+        HttpServletResponse response = (HttpServletResponse) res;
+
+        if (isIgnoreCredentials(request, response)) {
+            chain.doFilter(req, res);
+            return;
+        }
+
         MutableHttpServletRequest mutableRequest = new MutableHttpServletRequest(request);
 
         ofNullable(request.getCookies()).ifPresent(cookies -> {
@@ -50,6 +57,8 @@ public class CookieCredentialsFilter implements Filter {
 
         chain.doFilter(mutableRequest, res);
     }
+
+    protected abstract boolean isIgnoreCredentials(HttpServletRequest request, HttpServletResponse response);
 
     @Override
     public void destroy() {

@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -50,10 +49,10 @@ public class ConstellationUserDetailsService implements UserDetailsService {
             .collect(Collectors.toList())
             ;
 
-        return new User(account.getEmail(),
+        return new ConstellationUser(account.getEmail(),
             account.getPassword(), account.isEnabled(),
             !account.isExpired(), !account.isCredentialsExpired(),
-            !account.isLocked(), grantedAuthorities);
+            !account.isLocked(), grantedAuthorities, account);
     }
 
 }
