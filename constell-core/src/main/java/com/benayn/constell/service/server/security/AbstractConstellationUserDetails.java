@@ -1,14 +1,12 @@
 package com.benayn.constell.service.server.security;
 
 import java.util.Collection;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public abstract class AbstractConstellationUserDetails implements ConstellationUserDetails {
 
-    @Getter
     private UserDetails delegate;
 
     public AbstractConstellationUserDetails(String username, String password, boolean enabled,
@@ -53,8 +51,7 @@ public abstract class AbstractConstellationUserDetails implements ConstellationU
         return getDelegate().isEnabled();
     }
 
-    @Override
-    public String getName() {
-        return getNickname();
+    private UserDetails getDelegate() {
+        return delegate;
     }
 }
