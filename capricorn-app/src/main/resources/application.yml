@@ -20,6 +20,7 @@ capricorn:
     - /components/
     - /assets/
     - /manages/
+    - /tmpl/
     staticResourceSuffixes:
     - .png
     - .woff2
