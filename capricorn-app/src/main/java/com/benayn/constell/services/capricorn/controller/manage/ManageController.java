@@ -39,18 +39,7 @@ public class ManageController {
 
     @GetMapping(value = "side-menu")
     public void sideMenu(Model model, Authentication authentication) {
-        ConstellationUserDetails user = (ConstellationUserDetails) authentication.getPrincipal();
-
-        //TODO rem
-        List<MenuGroup> groups = accountService.getUserMenus(user.getId(), true);
-//        List<MenuGroup> groups = accountService.getUserMenus(user.getId(), false);
-        model.addAttribute("groups", groups);
-
-        String firstGroupTitle = "";
-        if (groups.size() > 0) {
-            firstGroupTitle = groups.get(0).getTitle();
-        }
-        model.addAttribute("firstGroupTitle", firstGroupTitle);
+        addMenuData(model, authentication);
     }
 
     @GetMapping(value = "side-menu-small")
@@ -66,7 +55,8 @@ public class ManageController {
     }
 
     @GetMapping(value = "thin-menu")
-    public void thinMenu(Model model) {
+    public void thinMenu(Model model, Authentication authentication) {
+        addMenuData(model, authentication);
     }
 
     @GetMapping(value = "footer")
@@ -94,5 +84,21 @@ public class ManageController {
     @Autowired
     public void setAccountService(AccountService accountService) {
         this.accountService = accountService;
+    }
+
+    private void addMenuData(Model model, Authentication authentication) {
+        ConstellationUserDetails user = (ConstellationUserDetails) authentication.getPrincipal();
+
+        //TODO rem
+        List<MenuGroup> groups = accountService.getUserMenus(user.getId(), true);
+//        List<MenuGroup> groups = accountService.getUserMenus(user.getId(), false);
+        model.addAttribute("groups", groups);
+
+        String firstGroupTitle = "";
+        if (groups.size() > 0) {
+            firstGroupTitle = groups.get(0).getTitle();
+        }
+
+        model.addAttribute("firstGroupTitle", firstGroupTitle);
     }
 }
