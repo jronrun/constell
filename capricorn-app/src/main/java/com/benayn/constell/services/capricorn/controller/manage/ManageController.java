@@ -40,8 +40,17 @@ public class ManageController {
     @GetMapping(value = "side-menu")
     public void sideMenu(Model model, Authentication authentication) {
         ConstellationUserDetails user = (ConstellationUserDetails) authentication.getPrincipal();
-        List<MenuGroup> groups = accountService.getUserMenus(user.getId(), false);
+
+        //TODO rem
+        List<MenuGroup> groups = accountService.getUserMenus(user.getId(), true);
+//        List<MenuGroup> groups = accountService.getUserMenus(user.getId(), false);
         model.addAttribute("groups", groups);
+
+        String firstGroupTitle = "";
+        if (groups.size() > 0) {
+            firstGroupTitle = groups.get(0).getTitle();
+        }
+        model.addAttribute("firstGroupTitle", firstGroupTitle);
     }
 
     @GetMapping(value = "side-menu-small")

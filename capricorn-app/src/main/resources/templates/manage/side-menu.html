@@ -1,43 +1,50 @@
-<div class="ui visible left vertical sidebar menu no-border sidemenu">
+<div xmlns:th="http://www.thymeleaf.org" class="ui visible left vertical sidebar menu no-border sidemenu">
 
     <a href="dashboard-v1.html" class="ui medium image borderless">
         <!--<img src="golgi/img/bg/3.png" />-->
     </a>
 
     <a class="item">
-        <b>Main</b>
+        <b th:text="${firstGroupTitle}">Main</b>
     </a>
 
     <div class="ui accordion">
 
-        <div class="title">
-            <i class="dropdown icon"></i>
-            Dashboard  <a class="ui mini red label">New</a>
-        </div>
-        <div class="content">
-            <a class="item" href="dashboard.html">
-                Dashboard <i class="dashboard icon"></i>
-            </a>
+        <th:block th:each="group: ${groups}">
+            <th:block th:unless="${groupStat.first}">
+                <a class="item">
+                    <b th:text="${group.title}">Main</b>
+                </a>
+            </th:block>
 
-        </div>
-        <div class="title">
-            <i class="dropdown icon"></i>
-            Apps
-        </div>
-        <div class="content">
-            <a class="item" href="inbox.html">
-                Inbox
-            </a>
-        </div>
-        <div class="title">
-            <i class="dropdown icon"></i>
-            Layouts
-        </div>
-        <div class="content">
-            <a class="item" href="sidebar.html">
-                Sidebar
-            </a>
-        </div>
+            <th:block th:each="menu: ${group.menus}" th:with="hasChildren=${not #lists.isEmpty(menu.children)}">
+                <th:block th:if="${hasChildren}">
+                    <div class="title">
+                        <i class="dropdown icon"></i>
+                        <th:block th:text="${menu.title}">Dashboard</th:block>
+                        <a th:if="${menu.fresh}" class="ui mini red label">New</a>
+                    </div>
+
+                    <div class="content">
+                        <a class="item" th:each="bread: ${menu.children}" th:href="${bread.action}" data-pjax>
+                            <th:block th:text="${bread.title}">Dashboard</th:block>
+                            <th:block th:if="${not #strings.isEmpty(bread.icon)}">
+                                <i class="dashboard icon" th:class="${bread.icon} + ' icon'"></i>
+                            </th:block>
+                        </a>
+                    </div>
+                </th:block>
+                <th:block th:unless="${hasChildren}">
+                    <a class="item" th:href="${menu.action}" data-pjax>
+                        <th:block th:if="${not #strings.isEmpty(menu.icon)}">
+                            <i class="dashboard icon" th:class="${menu.icon} + ' icon'"></i>
+                        </th:block>
+                        <th:block th:text="${menu.title}">Documentation</th:block>
+                    </a>
+                </th:block>
+            </th:block>
+
+        </th:block>
 
         <!--
         <a class="item">

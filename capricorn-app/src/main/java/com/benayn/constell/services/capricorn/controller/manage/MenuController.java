@@ -24,12 +24,6 @@ public class MenuController {
 
     }
 
-    @MenuCapability("Test Default")
-    @GetMapping(value = "menu/testdefault")
-    public void testDefault() {
-
-    }
-
     @MenuCapability(value = "Test Help", group = Menus.GROUP_HELP)
     @GetMapping(value = "menu/help")
     public void testHelp() {
