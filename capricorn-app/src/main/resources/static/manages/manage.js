@@ -156,7 +156,11 @@ var mgr = {};
      * <a data-pjax data-query="{{selector}}" data-queries="{{encode json data}}" href="{{href}}"> {{text}} </a>
      */
     $(document).on('pjax:beforeSend', function (event, xhr, options) {
-        var target = event.relatedTarget;
+        var target = event.relatedTarget, type = $(target).data('pjax');
+
+        if ('menu' === type) {
+            index && index.touchClear();
+        }
 
         var innerHeaders = {};
         if (target.directly_params) {
@@ -215,8 +219,24 @@ var mgr = {};
         return lz.decompressFromEncodedURIComponent(target);
     }
 
-    $.extend(root, {
+    var handles = {};
+    function liveClk(selector, callback, event) {
+        event = event || 'click';
+        var handleId = selector + '-' + event;
+        if (!handles[handleId]) {
+            $('body').on(event, selector, function (evt) {
+                var el = evt.currentTarget;
+                callback && callback(el, evt);
+            });
 
+            handles[handleId] = true;
+        }
+    }
+
+    $.extend(root, {
+        liveClk: function (selector, callback, event) {
+            return liveClk(selector, callback, event);
+        },
         $$: function (selector) {
             return $(pageable + ' ' + selector);
         },

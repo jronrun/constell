@@ -3,20 +3,6 @@
 var index = {};
 (function ($, root, register) {
 
-    var handles = {};
-    function liveClk(selector, callback, event) {
-        event = event || 'click';
-        var handleId = selector + '-' + event;
-        if (!handles[handleId]) {
-            $('body').on(event, selector, function (evt) {
-                var el = evt.currentTarget;
-                callback && callback(el, evt);
-            });
-
-            handles[handleId] = true;
-        }
-    }
-
     var pageInfo = null, formId = null, editId = null, searchId = null, core = {
 
         index: {
@@ -249,6 +235,10 @@ var index = {};
                 }
             },
 
+            clear: function () {
+                core.touch.current = null;
+            },
+
             action: function () {
                 var touchOneSelector = '[data-touch-toggle]', touchAllSelector = core.touch.column,
                     clazz = 'toggles', togglesActionClazz = 'actions', hasClazz = function (aClazz) {
@@ -388,6 +378,9 @@ var index = {};
     $.extend(register, {
         init: function () {
           core.initialize();
+        },
+        touchClear: function () {
+            core.touch.clear();
         },
         touchReady: function () {
             core.touch.action();

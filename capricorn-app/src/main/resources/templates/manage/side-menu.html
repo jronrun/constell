@@ -26,7 +26,7 @@
                     </div>
 
                     <div class="content">
-                        <a class="item" th:each="bread: ${menu.children}" th:href="${bread.action}" data-pjax>
+                        <a class="item" th:each="bread: ${menu.children}" th:href="${bread.action}" data-pjax="menu">
                             <th:block th:text="${bread.title}">Dashboard</th:block>
                             <th:block th:if="${not #strings.isEmpty(bread.icon)}">
                                 <i class="dashboard icon" th:class="${bread.icon} + ' icon'"></i>
@@ -35,7 +35,7 @@
                     </div>
                 </th:block>
                 <th:block th:unless="${hasChildren}">
-                    <a class="item" th:href="${menu.action}" data-pjax>
+                    <a class="item" th:href="${menu.action}" data-pjax="menu">
                         <th:block th:if="${not #strings.isEmpty(menu.icon)}">
                             <i class="dashboard icon" th:class="${menu.icon} + ' icon'"></i>
                         </th:block>

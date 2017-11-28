@@ -19,13 +19,13 @@
                     <th:block th:if="${hasChildren}">
                         <a class="item" th:each="bread: ${menu.children}"
                            th:attr="data-root-id=${menu.id}"
-                           th:href="${bread.action}" th:text="${bread.title}" data-pjax>
+                           th:href="${bread.action}" th:text="${bread.title}" data-pjax="menu">
                             Inbox
                         </a>
                     </th:block>
                     <th:block th:unless="${hasChildren}">
                         <a class="item" th:href="${menu.action}"
-                           th:attr="data-root-id=${menu.id}" th:text="${menu.title}" data-pjax>
+                           th:attr="data-root-id=${menu.id}" th:text="${menu.title}" data-pjax="menu">
                             Mailbox
                         </a>
                     </th:block>

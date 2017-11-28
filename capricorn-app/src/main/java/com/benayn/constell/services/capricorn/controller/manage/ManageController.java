@@ -43,7 +43,8 @@ public class ManageController {
     }
 
     @GetMapping(value = "side-menu-small")
-    public void sideSmallView(Model model) {
+    public void sideSmallView(Model model, Authentication authentication) {
+        addMenuData(model, authentication);
     }
 
     @GetMapping(value = "navigation")
