@@ -7,23 +7,25 @@
         <th:block th:each="menu: ${group.menus}"
                   th:with="hasChildren=${not #lists.isEmpty(menu.children)},hasIcon=${not #strings.isEmpty(menu.icon)}">
             <div class="ui dropdown item">
-                <i class="paw icon" th:class="${hasIcon} ? ${menu.icon} : 'idea icon'"></i>
+                <i class="paw icon" th:attr="data-root-icon=${menu.id}" th:class="${hasIcon} ? ${menu.icon} : 'idea icon'"></i>
 
                 <div class="menu">
                     <div class="header">
-                        <i class="paw icon" th:class="${hasIcon} ? ${menu.icon} : 'idea icon'"></i>
+                        <i class="paw icon" th:attr="data-root-icon=${menu.id}" th:class="${hasIcon} ? ${menu.icon} : 'idea icon'"></i>
                         <th:block th:text="${menu.title}">Apps</th:block>
                     </div>
                     <div class="ui divider"></div>
 
                     <th:block th:if="${hasChildren}">
                         <a class="item" th:each="bread: ${menu.children}"
+                           th:attr="data-root-id=${menu.id}"
                            th:href="${bread.action}" th:text="${bread.title}" data-pjax>
                             Inbox
                         </a>
                     </th:block>
                     <th:block th:unless="${hasChildren}">
-                        <a class="item" th:href="${menu.action}" th:text="${menu.title}" data-pjax>
+                        <a class="item" th:href="${menu.action}"
+                           th:attr="data-root-id=${menu.id}" th:text="${menu.title}" data-pjax>
                             Mailbox
                         </a>
                     </th:block>

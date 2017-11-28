@@ -317,7 +317,16 @@ var mgr = {};
                 $toc.load('/manage/thin-menu', function () {
                     $('.ui .dropdown').dropdown({
                         transition: 'fade up',
-                        on: 'hover'
+                        on: 'hover',
+                        onChange: function(value, text, $choice) {
+                            // $('[data-root-id].selected')  $('[data-root-id]:not(.selected)')
+                            var rootMenuId = $choice.data('rootId'), clazz = 'blue';
+                            $('[data-root-id].' + clazz).removeClass(clazz);
+                            $('[data-root-id=' + rootMenuId + ']').addClass(clazz);
+
+                            $('[data-root-icon].' + clazz).removeClass(clazz);
+                            $('[data-root-icon=' + rootMenuId + ']').addClass(clazz);
+                        }
                     });
 
                     $('.logoImg').transition('jiggle');
