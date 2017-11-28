@@ -160,6 +160,12 @@ var mgr = {};
 
         if ('menu' === type) {
             index && index.touchClear();
+            var $prevEl = $('a[data-pjax=menu].blue'), $nextEl = $(target);
+            $prevEl.css({color: ''});
+            $prevEl.removeClass('blue');
+
+            $nextEl.css({color: 'blue'});
+            $nextEl.addClass('blue');
         }
 
         var innerHeaders = {};
@@ -340,6 +346,20 @@ var mgr = {};
                         on: 'hover',
                         onChange: function(value, text, $choice) {
                             // $('[data-root-id].selected')  $('[data-root-id]:not(.selected)')
+                            /*
+                            var rootMenuId = $choice.data('rootId'), clazz = 'blue',
+                                $prevRootId = $('[data-root-id].' + clazz), $nextRootId = $('[data-root-id=' + rootMenuId + ']'),
+                                $prevRootIcon = $('[data-root-icon].' + clazz), $nextRootIcon = $('[data-root-icon=' + rootMenuId + ']');
+                            $prevRootId.css({color: ''});
+                            $prevRootId.removeClass(clazz);
+                            $nextRootId.css({color: 'blue'});
+                            $nextRootId.addClass(clazz);
+
+                            $prevRootIcon.css({color: ''});
+                            $prevRootIcon.removeClass(clazz);
+                            $nextRootIcon.css({color: 'blue'});
+                            $nextRootIcon.addClass(clazz);
+                             */
                             var rootMenuId = $choice.data('rootId'), clazz = 'blue';
                             $('[data-root-id].' + clazz).removeClass(clazz);
                             $('[data-root-id=' + rootMenuId + ']').addClass(clazz);
