@@ -1,5 +1,7 @@
 package com.benayn.constell.services.capricorn.service.bean;
 
+import static com.benayn.constell.services.capricorn.config.Authorities.ROLE_CAPRICORN;
+
 import com.benayn.constell.service.server.menu.AuthorityMenuGroup;
 import com.benayn.constell.services.capricorn.repository.PermissionRepository;
 import com.benayn.constell.services.capricorn.repository.RoleRepository;
@@ -29,6 +31,10 @@ public class AuthorityServiceBean implements AuthorityService {
 
     @Override
     public boolean authenticate(String permission, List<String> authorities) {
+        if (authorities.stream().anyMatch(ROLE_CAPRICORN::equals)) {
+            return true;
+        }
+
         return authorities.stream()
             .map(this::getRoleDetailsByCode)
             .collect(Collectors.toList())

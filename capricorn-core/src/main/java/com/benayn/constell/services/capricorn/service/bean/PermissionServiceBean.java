@@ -82,7 +82,7 @@ public class PermissionServiceBean implements PermissionService {
     }
 
     private static final List<String> EXCLUDE_AUTHORITIES = Lists.newArrayList(
-        Authorities.ROLE_CAPRICORN, Authorities.ROLE_ANONYMOUS, Authorities.ROLE_MANAGE
+        Authorities.ROLE_CAPRICORN
     );
 
     @Override

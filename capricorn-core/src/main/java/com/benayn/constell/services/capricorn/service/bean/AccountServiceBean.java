@@ -5,6 +5,7 @@ import static com.benayn.constell.service.util.Assets.checkNotNull;
 import static com.benayn.constell.service.util.Assets.checkRecordDeleted;
 import static com.benayn.constell.service.util.Assets.checkRecordNoneExist;
 import static com.benayn.constell.service.util.Assets.checkRecordSaved;
+import static com.benayn.constell.services.capricorn.config.Authorities.ROLE_CAPRICORN;
 import static com.google.common.io.BaseEncoding.base64;
 import static com.google.common.net.HttpHeaders.AUTHORIZATION;
 import static java.lang.String.format;
@@ -124,8 +125,15 @@ public class AccountServiceBean implements AccountService {
 
         authorityMenus.forEach(authorityMenu -> {
             boolean alreadyAdd = false;
+
+            //check administrator role
+            if (roles.stream()
+                .anyMatch(role -> ROLE_CAPRICORN.equals(role.getCode()))) {
+                asMenuBread(menus, authorityMenu, roles, permissions, fetchUnauthorized, true);
+                alreadyAdd = true;
+            }
             //check role
-            if (null != authorityMenu.getRole()) {
+            else if (null != authorityMenu.getRole()) {
                 if (roles.stream()
                     .anyMatch(role -> authorityMenu.getRole().equals(role.getCode()))) {
                     asMenuBread(menus, authorityMenu, roles, permissions, fetchUnauthorized, true);

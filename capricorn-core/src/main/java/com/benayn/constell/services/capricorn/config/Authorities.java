@@ -2,10 +2,10 @@ package com.benayn.constell.services.capricorn.config;
 
 public class Authorities {
 
+    /**
+     * Administrator Role of Capricorn
+     */
     public static final String ROLE_CAPRICORN = "ROLE_CAPRICORN";
-
-    public static final String ROLE_MANAGE = "ROLE_MANAGE";
-    public static final String ROLE_ANONYMOUS = "ROLE_ANONYMOUS";
 
     /* manage start */
 
