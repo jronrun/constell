@@ -45,6 +45,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -56,11 +57,14 @@ public class AccountServiceBean implements AccountService {
 
     private AccountRepository accountRepository;
     private AuthorityService authorityService;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AccountServiceBean(AccountRepository accountRepository, AuthorityService authorityService) {
+    public AccountServiceBean(AccountRepository accountRepository,
+        AuthorityService authorityService, PasswordEncoder passwordEncoder) {
         this.accountRepository = accountRepository;
         this.authorityService = authorityService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -173,7 +177,7 @@ public class AccountServiceBean implements AccountService {
         Date now = new Date();
 
         user.setEmail(email);
-        user.setPassword(password);
+        user.setPassword(passwordEncoder.encode(password));
         user.setUsername(name);
         user.setGender(Gender.UNKNOWN.getValue());
         user.setStatus(AccountStatus.USING.getValue());
@@ -283,7 +287,11 @@ public class AccountServiceBean implements AccountService {
         if (null == item.getId()) {
             checkRecordNoneExist(null == savedAccount, item.getEmail());
 
-            item.setPassword(entity.getPassword());
+            if (null == item.getStatus()) {
+                item.setStatus(AccountStatus.USING.getValue());
+            }
+
+            item.setPassword(passwordEncoder.encode(entity.getPassword()));
             item.setCreateTime(now);
             result = accountRepository.insertAll(item);
         }
