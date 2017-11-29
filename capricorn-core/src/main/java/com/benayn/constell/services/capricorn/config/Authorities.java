@@ -7,6 +7,11 @@ public class Authorities {
      */
     public static final String ROLE_CAPRICORN = "ROLE_CAPRICORN";
 
+    /**
+     * User Base Role, cannot login if have not this role
+     */
+    public static final String ROLE_USER = "ROLE_USER";
+
     /* manage start */
 
     public static final String RELATION_ACCOUNT_ROLE_CREATE = "hasPermission(null, 'RELATION_ACCOUNT_ROLE_CREATE')";
