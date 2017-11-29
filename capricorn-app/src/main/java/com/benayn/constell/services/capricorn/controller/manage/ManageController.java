@@ -8,9 +8,11 @@ import static org.springframework.util.StringUtils.parseLocaleString;
 import com.benayn.constell.service.server.menu.MenuGroup;
 import com.benayn.constell.service.server.respond.Message;
 import com.benayn.constell.service.server.security.ConstellationUserDetails;
+import com.benayn.constell.services.capricorn.config.Authorities;
 import com.benayn.constell.services.capricorn.service.AccountService;
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,43 +34,52 @@ public class ManageController {
 
     private AccountService accountService;
 
+    @RolesAllowed(Authorities.ROLE_MANAGE)
     @GetMapping(value = "index")
     public void index(Model model) {
         model.addAttribute("now", LocalDateTime.now());
     }
 
+    @RolesAllowed(Authorities.ROLE_MANAGE)
     @GetMapping(value = "side-menu")
     public void sideMenu(Model model, Authentication authentication) {
         addMenuData(model, authentication);
     }
 
+    @RolesAllowed(Authorities.ROLE_MANAGE)
     @GetMapping(value = "side-menu-small")
     public void sideSmallView(Model model, Authentication authentication) {
         addMenuData(model, authentication);
     }
 
+    @RolesAllowed(Authorities.ROLE_MANAGE)
     @GetMapping(value = "navigation")
     public void navigation(Model model) {
     }
 
+    @RolesAllowed(Authorities.ROLE_MANAGE)
     @GetMapping(value = "navigation-small")
     public void navigationSmall(Model model) {
     }
 
+    @RolesAllowed(Authorities.ROLE_MANAGE)
     @GetMapping(value = "thin-menu")
     public void thinMenu(Model model, Authentication authentication) {
         addMenuData(model, authentication);
     }
 
+    @RolesAllowed(Authorities.ROLE_MANAGE)
     @GetMapping(value = "footer")
     public void footer(Model model) {
     }
 
+    @RolesAllowed(Authorities.ROLE_MANAGE)
     @GetMapping(value = "language", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> getLanguage() {
         return success(LocaleContextHolder.getLocale().toString());
     }
 
+    @RolesAllowed(Authorities.ROLE_MANAGE)
     @PostMapping(value = "language/{lang}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> setLanguage(@PathVariable("lang") String lang, HttpServletRequest request,
         HttpServletResponse response) {

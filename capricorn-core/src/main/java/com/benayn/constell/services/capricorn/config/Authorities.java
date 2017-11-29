@@ -12,6 +12,11 @@ public class Authorities {
      */
     public static final String ROLE_USER = "ROLE_USER";
 
+    /**
+     * Manage User Base Role
+     */
+    public static final String ROLE_MANAGE = "ROLE_MANAGE";
+
     /* manage start */
 
     public static final String RELATION_ACCOUNT_ROLE_CREATE = "hasPermission(null, 'RELATION_ACCOUNT_ROLE_CREATE')";

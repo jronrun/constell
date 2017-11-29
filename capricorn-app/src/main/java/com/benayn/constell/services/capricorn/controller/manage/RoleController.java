@@ -8,6 +8,7 @@ import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.menu.MenuCapability;
 import com.benayn.constell.service.server.respond.Message;
 import com.benayn.constell.service.server.respond.TouchRelation;
+import com.benayn.constell.services.capricorn.config.Authorities;
 import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.service.RoleService;
 import com.benayn.constell.services.capricorn.settings.constant.Menus;
@@ -15,6 +16,7 @@ import com.benayn.constell.services.capricorn.viewobject.RoleVo;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,31 +40,31 @@ public class RoleController extends BaseManageController<RoleVo> {
     }
 
     @MenuCapability(value = Menus.ROLE_MANAGE, parent = Menus.AUTHORIZATION)
-//    @PreAuthorize(Authorities.ROLE_INDEX)
+    @PreAuthorize(Authorities.MODEL_ROLE_INDEX)
     @GetMapping("role/index")
     public String index(Model model, @RequestHeader(value = "touchable", required = false) Boolean touchable) {
         return genericIndex(model, touchable);
     }
 
-    //    @PreAuthorize(Authorities.RELATION_CREATE_ACCOUNT_ROLE)
+    @PreAuthorize(Authorities.RELATION_ACCOUNT_ROLE_CREATE)
     @PostMapping(value = "role/relation", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> createRelation(@Valid @RequestBody TouchRelation relation) throws ServiceException {
         return success(roleService.createAccountRole(relation));
     }
 
-    //    @PreAuthorize(Authorities.RELATION_DELETE_ACCOUNT_ROLE)
+    @PreAuthorize(Authorities.RELATION_ACCOUNT_ROLE_DELETE)
     @DeleteMapping(value = "role/relation", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> deleteRelation(@Valid @RequestBody TouchRelation relation) throws ServiceException {
         return success(roleService.deleteAccountRole(relation));
     }
 
-//    @PreAuthorize(Authorities.ROLE_INDEX)
+    @PreAuthorize(Authorities.MODEL_ROLE_INDEX)
     @GetMapping("roles")
     public String roles(Model model, RoleVo condition) {
         return genericList(model, roleService.selectPageBy(condition), condition);
     }
 
-//    @PreAuthorize(Authorities.ROLE_RETRIEVE)
+    @PreAuthorize(Authorities.MODEL_ROLE_RETRIEVE)
     @GetMapping(value = "role/{entityId}")
     public String retrieve(Model model, @PathVariable("entityId") Long entityId) {
         Role item = null;
@@ -73,19 +75,19 @@ public class RoleController extends BaseManageController<RoleVo> {
         return genericEdit(model, item);
     }
 
-//    @PreAuthorize(Authorities.ROLE_CREATE)
+    @PreAuthorize(Authorities.MODEL_ROLE_CREATE)
     @PostMapping(value = "role", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> create(@Valid @RequestBody RoleVo entity) throws ServiceException {
         return success(roleService.save(entity));
     }
 
-//    @PreAuthorize(Authorities.ROLE_UPDATE)
+    @PreAuthorize(Authorities.MODEL_ROLE_UPDATE)
     @PutMapping(value = "role", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> update(@Valid @RequestBody RoleVo entity) throws ServiceException {
         return success(roleService.save(entity));
     }
 
-//    @PreAuthorize(Authorities.ROLE_DELETE)
+    @PreAuthorize(Authorities.MODEL_ROLE_DELETE)
     @DeleteMapping(value = "role/{entityId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> delete(@PathVariable("entityId") Long entityId) throws ServiceException {
         return success(roleService.deleteById(entityId));

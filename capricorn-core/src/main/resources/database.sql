@@ -124,3 +124,21 @@ ALTER TABLE public.t_role_permission
     OWNER to postgres;
 COMMENT ON TABLE public.t_role_permission
     IS 'Role Permission Information';
+
+-- Initialize Base Role
+INSERT INTO public.t_role(
+	code, label, create_time, last_modify_time)
+	VALUES ('ROLE_CAPRICORN', 'Role Capricorn', now(), now());
+INSERT INTO public.t_role(
+	code, label, create_time, last_modify_time)
+	VALUES ('ROLE_USER', 'User Base Role', now(), now());
+INSERT INTO public.t_role(
+	code, label, create_time, last_modify_time)
+	VALUES ('ROLE_MANAGE', 'Role Manage', now(), now());
+
+-- Initialize Admin User, default password capricorn
+-- INSERT INTO public.t_account( username, email, password, gender, status, create_time, last_modify_time, enabled, credentials_expired, expired, locked)
+-- VALUES ('username', 'email', '$2a$10$NiLXcpG06An0yRnMwohv2.Y1k5NX24QJpueIi1u02nQCH4t2AEgFe', '1', '1', now(), now(), true, false, false, false);
+
+-- Initialize Admin User Role
+-- INSERT INTO public.t_account_role( role_id, account_id, create_time, last_modify_time) VALUES (?, ?, now(), now());
