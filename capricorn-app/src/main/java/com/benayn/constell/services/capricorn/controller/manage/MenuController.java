@@ -29,6 +29,7 @@ public class MenuController {
         this.accountService = accountService;
     }
 
+    @MenuCapability(value = Menus.MENU_MANAGE, parent = Menus.AUTHORIZATION)
     @PreAuthorize(Authorities.MENU_RETRIEVE)
     @GetMapping("menu/index")
     public void index(Model model, Authentication authentication) {
