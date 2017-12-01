@@ -181,6 +181,6 @@ public class ApplicationEventListener {
 
         Arrays
             .stream(Authorities.class.getDeclaredFields())
-            .forEach(field -> authorities.add(field.getName().toLowerCase()));
+            .forEach(field -> authorities.add(field.getName()));
     }
 }

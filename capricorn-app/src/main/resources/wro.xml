@@ -35,6 +35,9 @@
     <group name="item-index">
         <js>/manages/item-index.js</js>
     </group>
+    <group name="menu-index">
+        <js>/manages/menu-index.js</js>
+    </group>
 
     <group name="login">
         <js>/manages/login.js</js>

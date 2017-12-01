@@ -16,6 +16,7 @@ import com.benayn.constell.service.server.respond.Message;
 import com.benayn.constell.service.server.respond.Responds;
 import com.benayn.constell.services.capricorn.repository.model.UserToken;
 import com.benayn.constell.services.capricorn.service.AccountService;
+import com.benayn.constell.services.capricorn.service.AuthorityService;
 import com.benayn.constell.services.capricorn.settings.config.CapricornAppConfiguration.CapricornConfigurer;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.hash.Hashing;
@@ -42,11 +43,14 @@ public class AuthenticationController {
 
     private AccountService accountService;
     private CapricornConfigurer configurer;
+    private AuthorityService authorityService;
 
     @Autowired
-    public AuthenticationController(AccountService accountService, CapricornConfigurer configurer) {
+    public AuthenticationController(AccountService accountService,
+        CapricornConfigurer configurer, AuthorityService authorityService) {
         this.accountService = accountService;
         this.configurer = configurer;
+        this.authorityService = authorityService;
     }
 
     @GetMapping("login")
@@ -179,7 +183,10 @@ public class AuthenticationController {
 
     @RequestMapping(value="/usermenu", method= GET)
     public ResponseEntity<Message> usermenu(@RequestParam("accountId") Long accountId, @RequestParam("all") Boolean all){
-        return Responds.success(accountService.getUserMenus(accountId, all));
+        return Responds.success(ImmutableMap.of(
+            "user", accountService.getUserMenus(accountId, all),
+                "source", authorityService.getMenuGroup()
+        ));
     }
 
 }

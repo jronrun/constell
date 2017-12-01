@@ -11,7 +11,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**
- * Relation define by {@link DefineTouch#master()}
+ * Usually relation define by {@link DefineTouch#master()}
  */
 @Data
 public class TouchRelation {

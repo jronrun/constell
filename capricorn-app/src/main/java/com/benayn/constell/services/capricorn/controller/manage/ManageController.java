@@ -1,13 +1,13 @@
 package com.benayn.constell.services.capricorn.controller.manage;
 
 import static com.benayn.constell.service.server.respond.Responds.success;
+import static com.benayn.constell.service.server.security.Authentications.getUserId;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.MANAGE_BASE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.util.StringUtils.parseLocaleString;
 
 import com.benayn.constell.service.server.menu.MenuGroup;
 import com.benayn.constell.service.server.respond.Message;
-import com.benayn.constell.service.server.security.ConstellationUserDetails;
 import com.benayn.constell.services.capricorn.config.Authorities;
 import com.benayn.constell.services.capricorn.service.AccountService;
 import java.time.LocalDateTime;
@@ -99,11 +99,9 @@ public class ManageController {
     }
 
     private void addMenuData(Model model, Authentication authentication) {
-        ConstellationUserDetails user = (ConstellationUserDetails) authentication.getPrincipal();
-
         //TODO rem
-        List<MenuGroup> groups = accountService.getUserMenus(user.getId(), true);
-//        List<MenuGroup> groups = accountService.getUserMenus(user.getId(), false);
+        List<MenuGroup> groups = accountService.getUserMenus(getUserId(authentication), true);
+//        List<MenuGroup> groups = accountService.getUserMenus(getUserId(authentication), false);
         model.addAttribute("groups", groups);
 
         String firstGroupTitle = "";

@@ -34,7 +34,12 @@ var login = {};
             });
         },
         initialize: function () {
-            $('[data-login]').click(function (evt) {
+            var loginBtn = '[data-login]';
+            mgr.enter('[data-name=password]', function () {
+                core.login(loginBtn);
+            });
+
+            $(loginBtn).click(function (evt) {
                 core.login(evt.currentTarget);
             });
         }

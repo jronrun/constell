@@ -577,6 +577,41 @@ var mgr = {};
         }
     };
 
+    function enter(selector, options) {
+        if ($.isFunction(options)) {
+            options = {enter: options};
+        }
+
+        options = $.extend({
+            enter: null,
+            ctrlEnter: null,
+            shiftEnter: null,
+            preventDefault: true
+        }, options || {});
+
+        $(selector).keypress(function(event) {
+            if(event.ctrlKey && event.which === 13 || event.which === 10) {
+                if (options.preventDefault) {
+                    event.preventDefault();
+                }
+
+                $.isFunction(options.ctrlEnter) && options.ctrlEnter(event);
+            } else if (event.shiftKey && event.which === 13 || event.which === 10) {
+                if (options.preventDefault) {
+                    event.preventDefault();
+                }
+
+                $.isFunction(options.shiftEnter) && options.shiftEnter(event);
+            } else if (event.keyCode === 13) {
+                if (options.preventDefault) {
+                    event.preventDefault();
+                }
+
+                $.isFunction(options.enter) && options.enter(event);
+            }
+        });
+    }
+
     var theUniqueID = 0;
     $.extend(register, {
         pjax: pjax,
@@ -621,6 +656,9 @@ var mgr = {};
         },
         us: function (target) {
             return unSign(target);
+        },
+        enter: function(selector, options) {
+            return enter(selector, options);
         }
     });
 
