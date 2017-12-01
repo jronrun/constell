@@ -42,7 +42,7 @@ public class Authorities {
     public static final String PERMISSION_UPDATE = "hasPermission(null, 'PERMISSION_UPDATE')";
     public static final String PERMISSION_DELETE = "hasPermission(null, 'PERMISSION_DELETE')";
 
-    public static final String MENU_RETRIEVE = "hasPermission(null, 'MENU_RETRIEVE')";
+    public static final String MENU_INDEX = "hasPermission(null, 'MENU_INDEX')";
 
     /* manage end */
 }

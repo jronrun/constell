@@ -30,7 +30,7 @@ public class MenuController {
     }
 
     @MenuCapability(value = Menus.MENU_MANAGE, parent = Menus.AUTHORIZATION)
-    @PreAuthorize(Authorities.MENU_RETRIEVE)
+    @PreAuthorize(Authorities.MENU_INDEX)
     @GetMapping("menu/index")
     public void index(Model model, Authentication authentication) {
         List<MenuGroup> groups = accountService.getUserMenus(getUserId(authentication), true);
