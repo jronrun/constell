@@ -29,7 +29,7 @@ var index = {};
                     });
                 });
 
-                core.list.query();
+                core.list.query(getFormData(searchId));
             },
 
             query: function (param, callback) {

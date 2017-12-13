@@ -1,6 +1,7 @@
 package com.benayn.constell.service.server.menu;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 import com.google.common.collect.Lists;
 import java.util.List;
@@ -27,6 +28,15 @@ public class AuthorityMenuBread extends MenuBread {
         menu.setAuthorized(authorized);
         menu.setFresh(isFresh());
         menu.setIcon(getIcon());
+
+        if (!isNullOrEmpty(getRole())) {
+            menu.setRole(true);
+            menu.setValue(getRole());
+        } else {
+            menu.setRole(false);
+            menu.setValue(getAuthority());
+        }
+
         return menu;
     }
 

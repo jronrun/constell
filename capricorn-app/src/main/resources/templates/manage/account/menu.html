@@ -34,13 +34,27 @@
                                              th:with="hasChildren=${not #lists.isEmpty(menu.children)}">
                                             <div class="ui master checkbox">
                                                 <input type="checkbox" th:checked="${#bools.isTrue(menu.authorized)}" disabled="disabled"/>
-                                                <label th:text="${menu.title}"></label>
+                                                <label>
+                                                    <th:block th:text="${menu.title}">Title</th:block>
+                                                    &nbsp;
+                                                    <a data-menu-authority
+                                                       th:attr="data-is-role=${menu.role},data-args=${#star.encodes(#star.asMap('code',menu.value))}">
+                                                        <i class="info icon"></i>
+                                                    </a>
+                                                </label>
                                             </div>
                                             <div th:if="${hasChildren}" class="list">
                                                 <div class="item" th:each="item: ${menu.children}">
                                                     <div class="ui child checkbox">
                                                         <input type="checkbox" th:checked="${#bools.isTrue(item.authorized)}" disabled="disabled"/>
-                                                        <label th:text="${item.title}"></label>
+                                                        <label>
+                                                            <th:block th:text="${item.title}">Title</th:block>
+                                                            &nbsp;
+                                                            <a data-menu-authority
+                                                               th:attr="data-is-role=${item.role},data-args=${#star.encodes(#star.asMap('code',item.value))}">
+                                                                <i class="info icon"></i>
+                                                            </a>
+                                                        </label>
                                                     </div>
                                                 </div>
                                             </div>

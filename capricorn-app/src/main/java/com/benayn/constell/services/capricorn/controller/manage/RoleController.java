@@ -1,6 +1,7 @@
 package com.benayn.constell.services.capricorn.controller.manage;
 
 import static com.benayn.constell.service.server.respond.Responds.success;
+import static com.benayn.constell.service.util.LZString.decodes;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.MANAGE_BASE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -42,8 +43,9 @@ public class RoleController extends BaseManageController<RoleVo> {
     @MenuCapability(value = Menus.ROLE_MANAGE, parent = Menus.AUTHORIZATION)
     @PreAuthorize(Authorities.MODEL_ROLE_INDEX)
     @GetMapping("role/index")
-    public String index(Model model, @RequestHeader(value = "touchable", required = false) Boolean touchable) {
-        return genericIndex(model, touchable);
+    public String index(Model model, @RequestHeader(value = "condition", required = false) String condition,
+        @RequestHeader(value = "touchable", required = false) Boolean touchable) {
+        return genericIndex(model, touchable, decodes(condition, RoleVo.class));
     }
 
     @PreAuthorize(Authorities.RELATION_ACCOUNT_ROLE_CREATE)

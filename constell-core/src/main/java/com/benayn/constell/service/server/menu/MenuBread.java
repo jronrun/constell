@@ -21,6 +21,9 @@ public class MenuBread {
     private boolean fresh;
     private String icon;
 
+    private boolean role;
+    private String value;
+
     private List<MenuBread> children = Lists.newArrayList();
 
 }

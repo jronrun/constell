@@ -32,6 +32,10 @@ public abstract class BaseManageController<T extends Renderable> {
     }
 
     String genericIndex(Model model, Boolean touchable) {
+        return genericIndex(model, touchable, null);
+    }
+
+    String genericIndex(Model model, Boolean touchable, Renderable searchValue) {
         boolean isTouchable = null != touchable && touchable;
         PageInfo pageInfo = getViewObjectResolver().getPageInfo(voClass, MANAGE_BASE);
 
@@ -39,7 +43,7 @@ public abstract class BaseManageController<T extends Renderable> {
         model.addAttribute("page", encodes(pageInfo));
         model.addAttribute("pageInfo", pageInfo);
         model.addAttribute("touchable", isTouchable);
-        model.addAttribute(DEFINED_SEARCH_KEY, getViewObjectResolver().getDefinedSearch(voClass, null));
+        model.addAttribute(DEFINED_SEARCH_KEY, getViewObjectResolver().getDefinedSearch(voClass, searchValue));
 
         return PAGE_INDEX;
     }

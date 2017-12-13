@@ -1,22 +1,32 @@
 <th:block xmlns:th="http://www.thymeleaf.org">
     <script th:inline="javascript">
         $(function () {
+            var aModal = null;
             index.register('[data-menu-id]', function (pi, el) {
                 if (mgr.loading(el)) {
                     mgr.get('/manage/account/menu', false, false, {
                         accountId: $(el).data('menuId')
                     }, true).done(function (data) {
-                        mgr.modal({
+                        aModal = mgr.modal({
                             close: true,
                             content: data
                         }, {
                             onShow: function () {
                                 $('.account-menu.ui.accordion').accordion();
                             }
-                        }).show();
+                        });
+                        aModal.show();
                         mgr.unloading(el);
                     });
                 }
+            });
+
+            index.register('a[data-menu-authority]', function (pi, el) {
+                var module = ((true === $(el).data('isRole')) ? 'role' : 'permission'), args = $(el).data('args');
+                aModal && aModal.hide();
+                mgr.pjax(fmt('/manage/{0}/index', module), {
+                    condition: args
+                });
             });
         });
     </script>
