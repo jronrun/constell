@@ -65,7 +65,7 @@ public abstract class BaseManageController<T extends Renderable> {
     }
 
     String getMessage(String code, String defaultMessage, Object... args) {
-        return getViewObjectResolver().getMessage(code, defaultMessage, args);
+        return getMessage(code, defaultMessage, null, args);
     }
 
     String getMessage(String code, String defaultMessage, Locale locale, Object... args) {

@@ -26,7 +26,7 @@ import org.hibernate.validator.constraints.Email;
 @Getter
 @Setter
 @ToString
-@Actionable(editField = "username")
+@Actionable(editField = "username", appendFragment = "account_list_append_action", readyFragment = "account_page_ready")
 @DefineTouch(name = "render.role.touch.role", view = RoleVo.class, master = true)
 public class AccountVo extends Renderable {
 

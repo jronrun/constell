@@ -20,6 +20,12 @@ public class DefinedAction {
     private boolean hasCreateFragment;
     private String createFragmentValue;
 
+    private boolean hasReadyFragment;
+    private String readyFragmentValue;
+
+    private boolean hasAppendFragment;
+    private String appendFragment;
+
     //default touch, show in action column
     private boolean hasTouch;
     private List<DefinedTouch> touches;

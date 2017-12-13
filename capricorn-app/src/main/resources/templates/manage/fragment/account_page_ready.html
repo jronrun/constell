@@ -1,0 +1,23 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+    <script th:inline="javascript">
+        $(function () {
+            index.register('[data-menu-id]', function (pi, el) {
+                if (mgr.loading(el)) {
+                    mgr.get('/manage/account/menu', false, false, {
+                        accountId: $(el).data('menuId')
+                    }, true).done(function (data) {
+                        mgr.modal({
+                            close: true,
+                            content: data
+                        }, {
+                            onShow: function () {
+                                $('.account-menu.ui.accordion').accordion();
+                            }
+                        }).show();
+                        mgr.unloading(el);
+                    });
+                }
+            });
+        });
+    </script>
+</th:block>

@@ -64,11 +64,15 @@ var mgr = {};
 
     var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-    function request(action, data, options, headers) {
+    function request(action, data, options, headers, noneLayout) {
         options = options || {};
         headers = $.extend({
             'Content-Type': 'application/json'
         }, options.headers || {}, headers || {});
+
+        if (true === noneLayout) {
+            $.extend(headers, {'X-PJAX': true});
+        }
 
         return $.ajax($.extend({
             type: 'GET',
@@ -81,10 +85,10 @@ var mgr = {};
     }
 
     $.each(['post', 'put', 'delete', 'get'], function (i, method) {
-        register[method] = function (action, data, options, headers) {
+        register[method] = function (action, data, options, headers, noneLayout) {
             return request(action, data, $.extend(options || {}, {
                 type: method
-            }), headers);
+            }), headers, noneLayout);
         }
     });
 
@@ -623,8 +627,8 @@ var mgr = {};
             var resp = (xhr.responseJSON || {});
             return resp.message || resp.result || xhr.responseText || (defaultMessage || 'request fail');
         },
-        request: function (action, data, options, headers) {
-            return request(action, data, options, headers);
+        request: function (action, data, options, headers, noneLayout) {
+            return request(action, data, options, headers, noneLayout);
         },
         uniqueId: function(prefix) {
             return (prefix || '') + (++theUniqueID);

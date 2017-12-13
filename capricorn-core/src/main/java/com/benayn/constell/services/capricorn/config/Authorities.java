@@ -25,6 +25,7 @@ public class Authorities {
     public static final String RELATION_ROLE_PERMISSION_DELETE = "hasPermission(null, 'RELATION_ROLE_PERMISSION_DELETE')";
 
     public static final String ACCOUNT_INDEX = "hasPermission(null, 'ACCOUNT_INDEX')";
+    public static final String ACCOUNT_MENU_INDEX = "hasPermission(null, 'ACCOUNT_MENU_INDEX')";
     public static final String ACCOUNT_CREATE = "hasPermission(null, 'ACCOUNT_CREATE')";
     public static final String ACCOUNT_RETRIEVE = "hasPermission(null, 'ACCOUNT_RETRIEVE')";
     public static final String ACCOUNT_UPDATE = "hasPermission(null, 'ACCOUNT_UPDATE')";
@@ -41,8 +42,6 @@ public class Authorities {
     public static final String PERMISSION_RETRIEVE = "hasPermission(null, 'PERMISSION_RETRIEVE')";
     public static final String PERMISSION_UPDATE = "hasPermission(null, 'PERMISSION_UPDATE')";
     public static final String PERMISSION_DELETE = "hasPermission(null, 'PERMISSION_DELETE')";
-
-    public static final String MENU_INDEX = "hasPermission(null, 'MENU_INDEX')";
 
     /* manage end */
 }

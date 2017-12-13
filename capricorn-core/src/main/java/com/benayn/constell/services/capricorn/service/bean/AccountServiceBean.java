@@ -107,6 +107,10 @@ public class AccountServiceBean implements AccountService {
     @Override
     @Cacheable(CacheName.MENUS)
     public List<MenuGroup> getUserMenus(Long accountId, boolean fetchUnauthorized) {
+        if (null == accountId) {
+            return Lists.newArrayList();
+        }
+
         List<AuthorityMenuGroup> authorityMenuGroups = authorityService.getMenuGroup();
 
         List<Role> roles = authorityService.getRolesByAccountId(accountId);

@@ -304,10 +304,12 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             String editField = actionable.editField();
             boolean hasDelete = actionable.delete();
             boolean hasActionFragment = !isNullOrEmpty(actionable.fragment());
-            boolean hasAction = hasEdit || hasDelete || hasActionFragment;
+            boolean hasAppendFragment = !isNullOrEmpty(actionable.appendFragment());
+            boolean hasAction = hasEdit || hasDelete || hasActionFragment || hasAppendFragment;
             String uniqueField = actionable.uniqueField();
             boolean hasCreate = actionable.create();
             boolean hasCreateFragment = !isNullOrEmpty(actionable.createFragment());
+            boolean hasReadyFragment = !isNullOrEmpty(actionable.readyFragment());
 
             definedAction.setHasEdit(hasEdit);
             definedAction.setHasEditField(hasEditField);
@@ -315,6 +317,8 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             definedAction.setHasDelete(hasDelete);
             definedAction.setHasActionFragment(hasActionFragment);
             definedAction.setActionFragment(actionable.fragment());
+            definedAction.setHasAppendFragment(hasAppendFragment);
+            definedAction.setAppendFragment(actionable.appendFragment());
             definedAction.setHasAction(hasAction);
             definedAction.setUniqueField(uniqueField);
             definedAction.setHasCreate(hasCreate);
@@ -322,6 +326,12 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             if (hasCreateFragment) {
                 String createFragmentValue = getFragmentValue(viewObjectType, actionable.createFragment());
                 definedAction.setCreateFragmentValue(createFragmentValue);
+            }
+
+            definedAction.setHasReadyFragment(hasReadyFragment);
+            if (hasReadyFragment) {
+                String readyFragmentValue = getFragmentValue(viewObjectType, actionable.readyFragment());
+                definedAction.setReadyFragmentValue(readyFragmentValue);
             }
 
             // DefineTouch
@@ -467,7 +477,18 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                         String actionFragment = definedAction.getActionFragment();
                         if (!isNullOrEmpty(actionFragment)) {
                             render.setFragmentAction(true);
-                            render.setAction(getFragmentValue(value, actionFragment));
+                            render.setAction(getFragmentValue(value, actionFragment,
+                                (Context context) -> context.setVariable("defact", definedAction)));
+                        }
+                    }
+
+                    //append action fragment
+                    if (definedAction.isHasAppendFragment()) {
+                        String appendActionFragment = definedAction.getAppendFragment();
+                        if (!isNullOrEmpty(appendActionFragment)) {
+                            render.setFragmentAppendAction(true);
+                            render.setAppendAction(getFragmentValue(value, appendActionFragment,
+                                (Context context) -> context.setVariable("defact", definedAction)));
                         }
                     }
                 }
@@ -1114,12 +1135,12 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
     @Override
     public String getMessage(String code, String defaultMessage, Object... args) {
-        Locale locale = LocaleContextHolder.getLocale();
-        return getMessage(code, defaultMessage, locale, args);
+        return getMessage(code, defaultMessage, null, args);
     }
 
     @Override
     public String getMessage(String code, String defaultMessage, Locale locale, Object... args) {
-        return messageSource.getMessage(code, args, defaultMessage, locale);
+        return messageSource.getMessage(code, args, defaultMessage,
+            null != locale ? locale : LocaleContextHolder.getLocale());
     }
 }

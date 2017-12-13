@@ -10,6 +10,9 @@
 <th:block th:if="${defact.hasCreate && defact.hasCreateFragment}"
           th:attr="data-replaceable=1" th:utext="${defact.createFragmentValue}">
 </th:block>
+<th:block th:if="${defact.hasReadyFragment}"
+          th:attr="data-replaceable=1" th:utext="${defact.readyFragmentValue}">
+</th:block>
 
 <th:block th:if="${defact.hasTouch}">
     <div style="display: none;" th:each="touch: ${defact.touches}" th:id="'touch-' + ${touch.id}" th:attr="data-define-touch=${#star.encodes(touch)}"></div>
@@ -92,8 +95,8 @@
 
         </td>
 
-        <td th:if="${defact.hasAction && defact.hasActionFragment}" th:utext="${defact.actionFragment}">Action
-            Fragment
+        <td th:if="${defact.hasAction && defact.hasActionFragment && item.fragmentAction}" th:utext="${item.action}">
+            Action Fragment
         </td>
         <td th:if="${defact.hasAction && !defact.hasActionFragment}">
 
@@ -122,6 +125,9 @@
                     <i class="delete red icon"></i>
                 </div>
             </div>
+
+            <th:block th:if="${defact.hasAppendFragment && item.fragmentAppendAction}" th:utext="${item.appendAction}">
+            </th:block>
         </td>
     </tr>
     </tbody>

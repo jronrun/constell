@@ -2,10 +2,12 @@ package com.benayn.constell.services.capricorn.controller.manage;
 
 import static com.benayn.constell.service.server.respond.Responds.success;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.MANAGE_BASE;
+import static java.util.Optional.ofNullable;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.menu.MenuCapability;
+import com.benayn.constell.service.server.menu.MenuGroup;
 import com.benayn.constell.service.server.respond.Message;
 import com.benayn.constell.service.util.Assets;
 import com.benayn.constell.services.capricorn.config.Authorities;
@@ -13,6 +15,7 @@ import com.benayn.constell.services.capricorn.repository.domain.Account;
 import com.benayn.constell.services.capricorn.service.AccountService;
 import com.benayn.constell.services.capricorn.settings.constant.Menus;
 import com.benayn.constell.services.capricorn.viewobject.AccountVo;
+import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +53,19 @@ public class AccountController extends BaseManageController<AccountVo> {
     @GetMapping("accounts")
     public String accounts(Model model, AccountVo condition) {
         return genericList(model, accountService.selectPageBy(condition), condition);
+    }
+
+    @PreAuthorize(Authorities.ACCOUNT_MENU_INDEX)
+    @GetMapping("account/menu")
+    public void index(Model model, @RequestHeader(value = "accountId", required = false) Long accountId) {
+        List<MenuGroup> groups = accountService.getUserMenus(accountId, true);
+        ofNullable(accountId).ifPresent(id -> {
+            Account account = accountService.selectById(id);
+            model.addAttribute("menuTitle",
+                getMessage("render.account.menu.title", "Menu", account.getUsername()));
+        });
+
+        model.addAttribute("groups", groups);
     }
 
     @PreAuthorize(Authorities.ACCOUNT_RETRIEVE)

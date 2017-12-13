@@ -46,6 +46,11 @@ public @interface Actionable {
     String fragment() default "";
 
     /**
+     * Define Append Action Fragment, different from {@link Actionable#fragment()} which is replace the default actions.
+     */
+    String appendFragment() default "";
+
+    /**
      * Define create action, default behave if true
      */
     boolean create() default true;
@@ -56,5 +61,11 @@ public @interface Actionable {
      * trigger create form just add data-edit-id="0" to the element, eg: <a data-edit-id="0">test</a>
      */
     String createFragment() default "";
+
+    /**
+     * Define Page Ready Fragment, usually use to execute javascript when page list is ready,
+     * triggers if page no changed. eg: add event to {@link Actionable#appendFragment()}
+     */
+    String readyFragment() default "";
 
 }

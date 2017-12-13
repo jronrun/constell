@@ -1,0 +1,62 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{ manage/layout }">
+<head>
+    <title>Home</title>
+    <script type="text/javascript" th:src="@{/module/menu-index.js}"></script>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <div class="ui equal width left aligned padded grid stackable">
+
+        <div class="row">
+            <div class="column">
+                <div class="ui segments" style="border:none; box-shadow:none;">
+                    <div class="ui segment">
+                        <h5 class="ui header" th:text="${menuTitle}">
+                            Account Menu
+                        </h5>
+                    </div>
+                    <div class="ui segment">
+                        <div class="ui vertical accordion fluid menu account-menu" style="border:none;">
+
+
+                            <div class="item" th:each="group: ${groups}" style="border-bottom:none;">
+                                <a class="title" th:class="${groupStat.count == 1} ? 'active title' : 'title'">
+                                    <i class="dropdown icon"></i>
+                                    <th:block th:text="${group.title}">Group Title</th:block>
+                                </a>
+                                <div class="content" th:class="${groupStat.count == 1} ? 'active content' : 'content'">
+
+                                    <div class="ui celled relaxed list">
+                                        <div class="item" th:each="menu: ${group.menus}" style="border-bottom:none;"
+                                             th:with="hasChildren=${not #lists.isEmpty(menu.children)}">
+                                            <div class="ui master checkbox">
+                                                <input type="checkbox" th:checked="${#bools.isTrue(menu.authorized)}" disabled="disabled"/>
+                                                <label th:text="${menu.title}"></label>
+                                            </div>
+                                            <div th:if="${hasChildren}" class="list">
+                                                <div class="item" th:each="item: ${menu.children}">
+                                                    <div class="ui child checkbox">
+                                                        <input type="checkbox" th:checked="${#bools.isTrue(item.authorized)}" disabled="disabled"/>
+                                                        <label th:text="${item.title}"></label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</body>
+</html>

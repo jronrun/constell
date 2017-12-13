@@ -62,6 +62,15 @@ public abstract class Renderable {
      */
     private boolean fragmentAction;
 
+    /**
+     * List append action fragment value
+     */
+    private String appendAction;
+    /**
+     * True if has list append action fragment
+     */
+    private boolean fragmentAppendAction;
+
     private int pageNo;
     private int pageSize = DEFAULT_PAGE_SIZE;
 
