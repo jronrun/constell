@@ -35,6 +35,7 @@ import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.FormBody;
@@ -45,6 +46,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -55,13 +58,15 @@ public class AccountServiceBean implements AccountService {
     @Value("${server.oauth.token.url}")
     private String oauthTokenUrl;
 
+    private MessageSource messageSource;
     private AccountRepository accountRepository;
     private AuthorityService authorityService;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AccountServiceBean(AccountRepository accountRepository,
+    public AccountServiceBean(MessageSource messageSource, AccountRepository accountRepository,
         AuthorityService authorityService, PasswordEncoder passwordEncoder) {
+        this.messageSource = messageSource;
         this.accountRepository = accountRepository;
         this.authorityService = authorityService;
         this.passwordEncoder = passwordEncoder;
@@ -105,6 +110,12 @@ public class AccountServiceBean implements AccountService {
     }
 
     @Override
+    @CacheEvict(CacheName.MENUS)
+    public void refreshUserMenus(Long accountId, boolean fetchUnauthorized) {
+
+    }
+
+    @Override
     @Cacheable(CacheName.MENUS)
     public List<MenuGroup> getUserMenus(Long accountId, boolean fetchUnauthorized) {
         if (null == accountId) {
@@ -123,7 +134,7 @@ public class AccountServiceBean implements AccountService {
         });
 
         return authorityMenuGroups.stream()
-            .map(AuthorityMenuGroup::asMenuGroup)
+            .map(this::asMenuGroup)
             .collect(Collectors.toList())
             ;
     }
@@ -166,6 +177,7 @@ public class AccountServiceBean implements AccountService {
     private void asMenuBread(List<MenuBread> menus, AuthorityMenuBread authorityMenu,
         List<Role> roles, List<Permission> permissions, boolean fetchUnauthorized, boolean authorized) {
         MenuBread menu = authorityMenu.asMenu(authorized);
+        menu.setTitle(getLocalText(menu.getTitle()));
 
         if (authorityMenu.hasChild()) {
             authenticateMenu(menu.getChildren(),
@@ -173,6 +185,17 @@ public class AccountServiceBean implements AccountService {
         }
 
         menus.add(menu);
+    }
+
+    private MenuGroup asMenuGroup(AuthorityMenuGroup authorityMenuGroup) {
+        MenuGroup menuGroup = authorityMenuGroup.asMenuGroup();
+        menuGroup.setTitle(getLocalText(menuGroup.getTitle()));
+        return menuGroup;
+    }
+
+    private String getLocalText(String value) {
+        Locale locale = LocaleContextHolder.getLocale();
+        return messageSource.getMessage(value, null, value, locale);
     }
 
     @Override

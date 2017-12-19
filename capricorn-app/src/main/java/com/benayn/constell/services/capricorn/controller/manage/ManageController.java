@@ -81,8 +81,8 @@ public class ManageController {
 
     @RolesAllowed(Authorities.ROLE_MANAGE)
     @PostMapping(value = "language/{lang}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Message> setLanguage(@PathVariable("lang") String lang, HttpServletRequest request,
-        HttpServletResponse response) {
+    public ResponseEntity<Message> setLanguage(Authentication authentication, @PathVariable("lang") String lang,
+        HttpServletRequest request, HttpServletResponse response) {
 
         LocaleResolver localeResolver = RequestContextUtils.getLocaleResolver(request);
         if (localeResolver == null) {
@@ -90,6 +90,7 @@ public class ManageController {
         }
 
         localeResolver.setLocale(request, response, parseLocaleString(lang));
+        accountService.refreshUserMenus(getUserId(authentication), false);
         return success(null);
     }
 
@@ -99,9 +100,7 @@ public class ManageController {
     }
 
     private void addMenuData(Model model, Authentication authentication) {
-        //TODO rem
-        List<MenuGroup> groups = accountService.getUserMenus(getUserId(authentication), true);
-//        List<MenuGroup> groups = accountService.getUserMenus(getUserId(authentication), false);
+        List<MenuGroup> groups = accountService.getUserMenus(getUserId(authentication), false);
         model.addAttribute("groups", groups);
 
         String firstGroupTitle = "";

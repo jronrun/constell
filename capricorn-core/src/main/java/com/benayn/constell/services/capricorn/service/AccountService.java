@@ -18,6 +18,7 @@ public interface AccountService {
     Account create(String email, String password, String name);
 
     List<MenuGroup> getUserMenus(Long accountId, boolean fetchUnauthorized);
+    void refreshUserMenus(Long accountId, boolean fetchUnauthorized);
 
     Account selectById(long entityId);
 

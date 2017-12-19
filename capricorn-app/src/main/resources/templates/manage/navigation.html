@@ -1,4 +1,4 @@
-<div xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" class="ui fixed top  menu no-border no-radius borderless navmenu">
+<div xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" class="ui fixed top  menu no-border no-radius borderless navmenu">
     <a class="item no-padding logo" style="width:250px;margin-top:1.9em;" id="logo">
         <div layout:insert="~{logo}" class="ui image logoImg">logo</div>
     </a>
@@ -49,12 +49,13 @@
                 </div>
             </div>
         </div>
-        <div class="ui dropdown item">
-            Language <i class="dropdown icon"></i>
+        <div class="ui dropdown item c-nav-lang">
+            <th:block th:text="#{render.nav.lang.title}">
+                Language
+            </th:block> <i class="dropdown icon"></i>
             <div class="menu">
-                <a class="item"><i class="united kingdom flag"></i>English</a>
-                <a class="item"><i class="turkey flag"></i>Turkish</a>
-                <a class="item"><i class="spain flag"></i>Spanish</a>
+                <a class="item" data-lang="en_US"><i class="united states flag"></i>English</a>
+                <a class="item" data-lang="zh_CN"><i class="china flag"></i>中文</a>
             </div>
         </div>
         <div class="ui dropdown item">

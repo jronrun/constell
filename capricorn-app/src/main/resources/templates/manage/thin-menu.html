@@ -6,7 +6,7 @@
     <th:block th:each="group: ${groups}">
         <th:block th:each="menu: ${group.menus}"
                   th:with="hasChildren=${not #lists.isEmpty(menu.children)},hasIcon=${not #strings.isEmpty(menu.icon)}">
-            <div class="ui dropdown item">
+            <div class="ui dropdown item c-thin-menu">
                 <i class="paw icon" th:attr="data-root-icon=${menu.id}" th:class="${hasIcon} ? ${menu.icon} : 'idea icon'"></i>
 
                 <div class="menu">

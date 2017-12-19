@@ -22,14 +22,14 @@ public class MenuController {
     }
 
     @RolesAllowed(Authorities.ROLE_MANAGE)
-    @MenuCapability(value = Menus.SETTINGS, group = Menus.GROUP_CAPRICORN)
+    @MenuCapability(value = Menus.SETTINGS, group = Menus.GROUP_CAPRICORN, groupOrder = 100)
     @GetMapping(value = "menu/settings")
     public void menuSettings() {
 
     }
 
     @RolesAllowed(Authorities.ROLE_MANAGE)
-    @MenuCapability(value = "Test Help", group = Menus.GROUP_HELP)
+    @MenuCapability(value = "Test Help", group = Menus.GROUP_HELP, groupOrder = 110)
     @GetMapping(value = "menu/help")
     public void testHelp() {
 

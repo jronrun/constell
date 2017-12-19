@@ -18,17 +18,14 @@ import com.google.common.hash.Hashing;
 import com.google.common.primitives.Ints;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -38,14 +35,11 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 @Slf4j
 public class ApplicationEventListener {
 
-    private MessageSource messageSource;
     private AuthorityService authorityService;
     private RequestMappingHandlerMapping handlerMapping;
 
     @Autowired
-    public ApplicationEventListener(MessageSource messageSource,
-        AuthorityService authorityService, RequestMappingHandlerMapping handlerMapping) {
-        this.messageSource = messageSource;
+    public ApplicationEventListener(AuthorityService authorityService, RequestMappingHandlerMapping handlerMapping) {
         this.authorityService = authorityService;
         this.handlerMapping = handlerMapping;
     }
@@ -89,8 +83,12 @@ public class ApplicationEventListener {
     }
 
     private String getLocalText(String value) {
+        /*
         Locale locale = LocaleContextHolder.getLocale();
         return messageSource.getMessage(value, null, value, locale);
+         */
+
+        return value;
     }
 
     private String getMenuRole(HandlerMethod value) {
