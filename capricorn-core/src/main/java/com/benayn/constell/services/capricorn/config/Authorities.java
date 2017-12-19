@@ -19,6 +19,9 @@ public class Authorities {
 
     /* manage start */
 
+    public static final String MENU_AUTHORIZATION = "hasPermission(null, 'MENU_AUTHORIZATION')";
+    public static final String MENU_SETTINGS = "hasPermission(null, 'MENU_SETTINGS')";
+
     public static final String RELATION_ACCOUNT_ROLE_CREATE = "hasPermission(null, 'RELATION_ACCOUNT_ROLE_CREATE')";
     public static final String RELATION_ACCOUNT_ROLE_DELETE = "hasPermission(null, 'RELATION_ACCOUNT_ROLE_DELETE')";
     public static final String RELATION_ROLE_PERMISSION_CREATE = "hasPermission(null, 'RELATION_ROLE_PERMISSION_CREATE')";

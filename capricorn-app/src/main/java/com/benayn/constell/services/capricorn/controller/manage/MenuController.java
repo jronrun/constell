@@ -14,24 +14,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping(value = MANAGE_BASE)
 public class MenuController {
 
-    @RolesAllowed(Authorities.ROLE_MANAGE)
+    @RolesAllowed(Authorities.MENU_AUTHORIZATION)
     @MenuCapability(value = Menus.AUTHORIZATION, group = Menus.GROUP_CAPRICORN)
     @GetMapping(value = "menu/authorization")
     public void menuAuthorization() {
 
     }
 
-    @RolesAllowed(Authorities.ROLE_MANAGE)
-    @MenuCapability(value = Menus.SETTINGS, group = Menus.GROUP_CAPRICORN, groupOrder = 100)
+    @RolesAllowed(Authorities.MENU_SETTINGS)
+    @MenuCapability(value = Menus.SETTINGS, group = Menus.GROUP_CAPRICORN)
     @GetMapping(value = "menu/settings")
     public void menuSettings() {
 
     }
 
     @RolesAllowed(Authorities.ROLE_MANAGE)
-    @MenuCapability(value = "Test Help", group = Menus.GROUP_HELP, groupOrder = 110)
+    @MenuCapability(value = Menus.HELP, group = Menus.GROUP_HELP, groupOrder = 20)
     @GetMapping(value = "menu/help")
-    public void testHelp() {
+    public void menuHelp() {
 
     }
 
