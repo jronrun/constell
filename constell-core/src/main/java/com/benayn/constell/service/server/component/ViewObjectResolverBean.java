@@ -16,16 +16,19 @@ import static java.util.Optional.ofNullable;
 
 import com.benayn.constell.service.common.Pair;
 import com.benayn.constell.service.server.repository.Page;
+import com.benayn.constell.service.server.respond.Accessable;
 import com.benayn.constell.service.server.respond.Actionable;
 import com.benayn.constell.service.server.respond.Creatable;
 import com.benayn.constell.service.server.respond.DefineElement;
 import com.benayn.constell.service.server.respond.DefineTouch;
 import com.benayn.constell.service.server.respond.DefineType;
+import com.benayn.constell.service.server.respond.DefinedAccess;
 import com.benayn.constell.service.server.respond.DefinedAction;
 import com.benayn.constell.service.server.respond.DefinedEditElement;
 import com.benayn.constell.service.server.respond.DefinedElement;
 import com.benayn.constell.service.server.respond.DefinedOption;
 import com.benayn.constell.service.server.respond.DefinedTouch;
+import com.benayn.constell.service.server.respond.DefinedTouchAccess;
 import com.benayn.constell.service.server.respond.Editable;
 import com.benayn.constell.service.server.respond.HtmlTag;
 import com.benayn.constell.service.server.respond.InputType;
@@ -34,10 +37,12 @@ import com.benayn.constell.service.server.respond.OptionValue;
 import com.benayn.constell.service.server.respond.PageInfo;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
+import com.benayn.constell.service.server.respond.TouchAccessable;
 import com.benayn.constell.service.server.respond.Touchable;
 import com.benayn.constell.service.server.respond.Updatable;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -52,6 +57,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
@@ -113,7 +120,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     @SuppressWarnings("unchecked")
     @Override
     public Page<Renderable> getDefinedPage(Class<? extends Renderable> viewObjectType, Page<?> page,
-        String manageBaseUrl, Renderable touchRenderable) {
+        String manageBaseUrl, Renderable touchRenderable, DefinedAccess definedAccess) {
         List<?> items = page.getResource();
         checkNotNull(items, "page resource cannot be null");
 
@@ -123,7 +130,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         List<Field> defineFields = getFields(viewObjectType);
         Page<Renderable> newPage = page.cloneButResource();
 
-        DefinedAction definedAction = getDefinedAction(viewObjectType, manageBaseUrl);
+        DefinedAction definedAction = getDefinedAction(viewObjectType, definedAccess, manageBaseUrl);
         newPage.addExtra("definedAction", definedAction);
 
         // label value <column, <value, label>>
@@ -131,12 +138,20 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         List<String> toggleWidget = newArrayList();
 
         boolean hasTouch = null != touchRenderable && touchRenderable.hasTouch();
+
+        DefinedTouchAccess definedTouchAccess = null;
+        if (hasTouch) {
+            definedTouchAccess = definedAccess.getTouchAccess().get(touchRenderable.getTouchModuleId());
+        }
+        DefinedTouchAccess finalDefinedTouchAccess = definedTouchAccess;
+
         if (hasTouch) {
             String touchColumn = "touchListValue";
             newPage.addColumn(touchColumn);
             String titleFragment = isNullOrEmpty(touchRenderable.getTouchListTitleFragment())
                 ? "touch_column_title" : touchRenderable.getTouchListTitleFragment();
-            newPage.addTitle(touchColumn, getFragmentValue(touchRenderable, titleFragment));
+            newPage.addTitle(touchColumn, getFragmentValue(touchRenderable, titleFragment,
+                (Context context) -> context.setVariable("access", finalDefinedTouchAccess)));
         }
 
         defineFields.forEach(field -> {
@@ -234,7 +249,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             ofNullable(asRenderable(viewObjectType, defineFields, item, finalItemFields, definedAction, hasTouch))
             .ifPresent(render -> {
                 if (hasTouch) {
-                    setTouchListValue(render, item, definedAction, newPage);
+                    setTouchListValue(render, item, definedAction, newPage, finalDefinedTouchAccess);
                 }
 
                 setTouchesFromItemValue(render, item, definedAction, newPage);
@@ -285,29 +300,31 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     }
 
     private void setTouchListValue(Renderable render, Object item, DefinedAction definedAction,
-        Page<Renderable> page) {
+        Page<Renderable> page, DefinedTouchAccess access) {
         String cellFragment = isNullOrEmpty(render.getTouchListCellFragment())
             ? "touch_column_cell" : render.getTouchListCellFragment();
         render.setTouchListValue(getFragmentValue(render, cellFragment, (Context context) -> {
                 context.setVariable("defact", definedAction);
                 context.setVariable("source", item);
+                context.setVariable("access", access);
                 context.setVariable("owners", ofNullable(page.getTouchOwnerIds()).orElse(newArrayList()));
             }));
     }
 
-    private DefinedAction getDefinedAction(Class<? extends Renderable> viewObjectType, String manageBaseUrl) {
+    private DefinedAction getDefinedAction(Class<? extends Renderable> viewObjectType,
+        DefinedAccess definedAccess, String manageBaseUrl) {
         DefinedAction definedAction = new DefinedAction();
         Actionable actionable = viewObjectType.getAnnotation(Actionable.class);
         if (null != actionable) {
-            boolean hasEdit = actionable.edit();
-            boolean hasEditField = !isNullOrEmpty(actionable.editField());
+            boolean hasEdit = definedAccess.isHasRetrieve() && actionable.edit();
+            boolean hasEditField = definedAccess.isHasRetrieve() && !isNullOrEmpty(actionable.editField());
             String editField = actionable.editField();
-            boolean hasDelete = actionable.delete();
+            boolean hasDelete = definedAccess.isHasDelete() && actionable.delete();
             boolean hasActionFragment = !isNullOrEmpty(actionable.fragment());
             boolean hasAppendFragment = !isNullOrEmpty(actionable.appendFragment());
             boolean hasAction = hasEdit || hasDelete || hasActionFragment || hasAppendFragment;
             String uniqueField = actionable.uniqueField();
-            boolean hasCreate = actionable.create();
+            boolean hasCreate = definedAccess.isHasCreate() && actionable.create();
             boolean hasCreateFragment = !isNullOrEmpty(actionable.createFragment());
             boolean hasReadyFragment = !isNullOrEmpty(actionable.readyFragment());
 
@@ -324,13 +341,15 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             definedAction.setHasCreate(hasCreate);
             definedAction.setHasCreateFragment(hasCreateFragment);
             if (hasCreateFragment) {
-                String createFragmentValue = getFragmentValue(viewObjectType, actionable.createFragment());
+                String createFragmentValue = getFragmentValue(viewObjectType, actionable.createFragment(),
+                    (Context context) -> context.setVariable("access", definedAccess));
                 definedAction.setCreateFragmentValue(createFragmentValue);
             }
 
             definedAction.setHasReadyFragment(hasReadyFragment);
             if (hasReadyFragment) {
-                String readyFragmentValue = getFragmentValue(viewObjectType, actionable.readyFragment());
+                String readyFragmentValue = getFragmentValue(viewObjectType, actionable.readyFragment(),
+                    (Context context) -> context.setVariable("access", definedAccess));
                 definedAction.setReadyFragmentValue(readyFragmentValue);
             }
 
@@ -350,11 +369,18 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             List<DefinedTouch> defaultTouches = newArrayList();
             Map<String, DefinedTouch> fieldTouches = Maps.newHashMap();
             definedTouches.forEach(definedTouch -> {
-                if (isNullOrEmpty(definedTouch.getActionField())) {
-                    defaultTouches.add(definedTouch);
-                } else {
-                    fieldTouches.put(definedTouch.getActionField(), definedTouch);
-                }
+                DefinedTouchAccess definedTouchAccess = definedAccess.getTouchAccess().get(definedTouch.getId());
+                ofNullable(definedTouchAccess).ifPresent(access -> {
+                    if (isNullOrEmpty(definedTouch.getActionField())) {
+                        if (access.isHasIndex()) {
+                            defaultTouches.add(definedTouch);
+                        }
+                    } else {
+                        if (access.isHasIndex()) {
+                            fieldTouches.put(definedTouch.getActionField(), definedTouch);
+                        }
+                    }
+                });
             });
 
             /*
@@ -374,6 +400,17 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         return definedAction;
     }
 
+    private String getTouchId(DefineTouch defineTouch) {
+        Class<? extends Renderable> touchViewType = defineTouch.view();
+        checkArgument(hasTouchViewObjectValue(touchViewType),
+            "DefineTouch view must be a sub class of Renderable");
+        return getTouchId(touchViewType);
+    }
+
+    private String getTouchId(Class<? extends Renderable> viewObjectType) {
+        return encodes(viewObjectType.getSimpleName());
+    }
+
     private DefinedTouch asDefinedTouch(DefineTouch defineTouch,
         Class<? extends Renderable> viewObjectType, String manageBaseUrl) {
         String name = defineTouch.name();
@@ -384,11 +421,9 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             viewObjectType.getSimpleName());
 
         Class<? extends Renderable> touchViewType = defineTouch.view();
-        checkArgument(hasTouchViewObjectValue(touchViewType),
-            "DefineTouch view must be a sub class of Renderable");
 
         DefinedTouch definedTouch = new DefinedTouch();
-        definedTouch.setId(encodes(touchViewType.getSimpleName()));
+        definedTouch.setId(getTouchId(defineTouch));
         definedTouch.setName(getMessage(name, name));
         definedTouch.setActionField(actionField);
         definedTouch.setHasActionField(hasActionField);
@@ -403,6 +438,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
         PageInfo viewObjectTypePageInfo = getPageInfo(viewObjectType, manageBaseUrl);
         definedTouch.setModule(viewObjectTypePageInfo.getModule());
+        definedTouch.setModuleId(getTouchId(viewObjectType));
 
         String relationHref;
         if (definedTouch.isMaster()) {
@@ -1092,6 +1128,57 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         }
 
         return fragmentTemplateEngine.process(fragment, context);
+    }
+
+    @Override
+    public DefinedAccess getDefinedAccess(Class<? extends Renderable> viewObjectType,
+        boolean denyAllIfNoneDefine, Predicate<String> predicate) {
+        Actionable actionable = viewObjectType.getAnnotation(Actionable.class);
+        Accessable accessable = viewObjectType.getAnnotation(Accessable.class);
+
+        List<DefineTouch> touches = Lists.newArrayList();
+        DefineTouch relation = viewObjectType.getAnnotation(DefineTouch.class);
+        ofNullable(relation).ifPresent(touches::add);
+
+        if (null != actionable) {
+            DefineTouch[] relations = actionable.relations();
+            touches.addAll(Arrays.asList(relations));
+        }
+
+        boolean hasAccessDefine = null != accessable;
+        boolean hasActionableDefine = null != actionable && touches.size() > 0;
+
+        if (!hasAccessDefine && !hasActionableDefine) {
+            return denyAllIfNoneDefine ? DefinedAccess.denyAll() : DefinedAccess.allowAll();
+        }
+
+        DefinedAccess definedAccess = new DefinedAccess();
+
+        if (hasAccessDefine) {
+            definedAccess.setHasCreate(predicate.test(accessable.create()));
+            definedAccess.setHasRetrieve(predicate.test(accessable.retrieve()));
+            definedAccess.setHasUpdate(predicate.test(accessable.update()));
+            definedAccess.setHasDelete(predicate.test(accessable.delete()));
+        }
+
+        if (hasActionableDefine) {
+            Map<String, DefinedTouchAccess> touchAccess = touches.stream()
+                .map(touch -> asDefinedTouchAccess(touch, predicate))
+                .collect(Collectors.toMap(DefinedTouchAccess::getId, Function.identity()))
+                ;
+
+            definedAccess.setTouchAccess(touchAccess);
+        }
+
+        return definedAccess;
+    }
+
+    private DefinedTouchAccess asDefinedTouchAccess(DefineTouch defineTouch, Predicate<String> predicate) {
+        TouchAccessable touchAccessable = defineTouch.accessable();
+        boolean hasIndex = predicate.test(touchAccessable.index());
+        boolean hasCreate = predicate.test(touchAccessable.create());
+        boolean hasDelete = predicate.test(touchAccessable.delete());
+        return DefinedTouchAccess.of(getTouchId(defineTouch), hasIndex, hasCreate, hasDelete);
     }
 
     private static final String TITLE_FORMAT = "render.%s.module.title";

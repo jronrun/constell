@@ -60,4 +60,8 @@ public @interface DefineTouch {
      */
     String touchFragment() default "";
 
+    /**
+     * Touch access authorities
+     */
+    TouchAccessable accessable();
 }

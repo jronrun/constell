@@ -1,5 +1,14 @@
 package com.benayn.constell.services.capricorn.viewobject;
 
+import static com.benayn.constell.services.capricorn.config.Authorities.MODEL_ROLE_INDEX;
+import static com.benayn.constell.services.capricorn.config.Authorities.PERMISSION_CREATE;
+import static com.benayn.constell.services.capricorn.config.Authorities.PERMISSION_DELETE;
+import static com.benayn.constell.services.capricorn.config.Authorities.PERMISSION_RETRIEVE;
+import static com.benayn.constell.services.capricorn.config.Authorities.PERMISSION_UPDATE;
+import static com.benayn.constell.services.capricorn.config.Authorities.RELATION_ROLE_PERMISSION_CREATE;
+import static com.benayn.constell.services.capricorn.config.Authorities.RELATION_ROLE_PERMISSION_DELETE;
+
+import com.benayn.constell.service.server.respond.Accessable;
 import com.benayn.constell.service.server.respond.Actionable;
 import com.benayn.constell.service.server.respond.DefineElement;
 import com.benayn.constell.service.server.respond.DefineTouch;
@@ -8,6 +17,7 @@ import com.benayn.constell.service.server.respond.HtmlTag;
 import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
+import com.benayn.constell.service.server.respond.TouchAccessable;
 import com.benayn.constell.service.server.respond.Touchable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -19,7 +29,10 @@ import lombok.ToString;
 @Setter
 @ToString
 @Actionable(createFragment = "permission_create", delete = false)
-@DefineTouch(name = "render.permission.touch.role", view = RoleVo.class)
+@DefineTouch(name = "render.permission.touch.role", view = RoleVo.class, accessable = @TouchAccessable(
+    index = MODEL_ROLE_INDEX, create = RELATION_ROLE_PERMISSION_CREATE, delete = RELATION_ROLE_PERMISSION_DELETE
+))
+@Accessable(create = PERMISSION_CREATE, retrieve = PERMISSION_RETRIEVE, update = PERMISSION_UPDATE, delete = PERMISSION_DELETE)
 public class PermissionVo extends Renderable {
 
     @DefineElement("render.common.id")

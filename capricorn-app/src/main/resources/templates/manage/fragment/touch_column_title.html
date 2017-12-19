@@ -1,6 +1,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <div th:if="${item.switchable}" class="ui fitted slider checkbox" data-touch-toggle-all="0">
-        <input type="checkbox"/>
+        <input th:if="${access.isHasCreate()}" type="checkbox"/>
+        <input th:unless="${access.isHasCreate()}" type="checkbox" disabled="disabled"/>
         <label></label>
     </div>
     <div th:unless="${item.switchable}" class="ui fitted slider checkbox">

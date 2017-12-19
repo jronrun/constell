@@ -1,17 +1,19 @@
 package com.benayn.constell.services.capricorn.service.bean;
 
 import static com.benayn.constell.services.capricorn.config.Authorities.ROLE_CAPRICORN;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 import com.benayn.constell.service.server.menu.AuthorityMenuGroup;
 import com.benayn.constell.services.capricorn.repository.PermissionRepository;
 import com.benayn.constell.services.capricorn.repository.RoleRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
 import com.benayn.constell.services.capricorn.repository.domain.Role;
+import com.benayn.constell.services.capricorn.repository.model.CheckPermission;
 import com.benayn.constell.services.capricorn.repository.model.RoleDetails;
 import com.benayn.constell.services.capricorn.service.AuthorityService;
 import com.google.common.collect.Lists;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -30,16 +32,22 @@ public class AuthorityServiceBean implements AuthorityService {
     }
 
     @Override
-    public boolean authenticate(String permission, List<String> authorities) {
+    public boolean authenticate(String permission, List<String> authorities, Predicate<CheckPermission> predicate) {
+        if (isNullOrEmpty(permission)) {
+            return false;
+        }
+
         if (authorities.stream().anyMatch(ROLE_CAPRICORN::equals)) {
             return true;
         }
 
+        /*
+        return authorities.stream() .map(this::getRoleDetailsByCode) .collect(Collectors.toList())
+            .stream() .anyMatch(role -> role.has(permission));
+         */
+
         return authorities.stream()
-            .map(this::getRoleDetailsByCode)
-            .collect(Collectors.toList())
-            .stream()
-            .anyMatch(role -> role.has(permission));
+            .anyMatch(authority -> getRoleDetailsByCode(authority).has(permission, predicate));
     }
 
     @Override

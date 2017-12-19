@@ -1,5 +1,17 @@
 package com.benayn.constell.services.capricorn.viewobject;
 
+import static com.benayn.constell.services.capricorn.config.Authorities.ACCOUNT_INDEX;
+import static com.benayn.constell.services.capricorn.config.Authorities.MODEL_ROLE_CREATE;
+import static com.benayn.constell.services.capricorn.config.Authorities.MODEL_ROLE_DELETE;
+import static com.benayn.constell.services.capricorn.config.Authorities.MODEL_ROLE_RETRIEVE;
+import static com.benayn.constell.services.capricorn.config.Authorities.MODEL_ROLE_UPDATE;
+import static com.benayn.constell.services.capricorn.config.Authorities.PERMISSION_INDEX;
+import static com.benayn.constell.services.capricorn.config.Authorities.RELATION_ACCOUNT_ROLE_CREATE;
+import static com.benayn.constell.services.capricorn.config.Authorities.RELATION_ACCOUNT_ROLE_DELETE;
+import static com.benayn.constell.services.capricorn.config.Authorities.RELATION_ROLE_PERMISSION_CREATE;
+import static com.benayn.constell.services.capricorn.config.Authorities.RELATION_ROLE_PERMISSION_DELETE;
+
+import com.benayn.constell.service.server.respond.Accessable;
 import com.benayn.constell.service.server.respond.Actionable;
 import com.benayn.constell.service.server.respond.DefineElement;
 import com.benayn.constell.service.server.respond.DefineTouch;
@@ -8,6 +20,7 @@ import com.benayn.constell.service.server.respond.HtmlTag;
 import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
+import com.benayn.constell.service.server.respond.TouchAccessable;
 import com.benayn.constell.service.server.respond.Touchable;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -20,9 +33,16 @@ import lombok.ToString;
 @Setter
 @ToString
 @Actionable(delete = false, relations = {
-    @DefineTouch(name = "render.role.touch.permission", view = PermissionVo.class, master = true, switchable = true),
-    @DefineTouch(name = "render.role.touch.account", view = AccountVo.class)
+    @DefineTouch(name = "render.role.touch.permission", view = PermissionVo.class, master = true, switchable = true,
+        accessable = @TouchAccessable(
+            index = PERMISSION_INDEX, create = RELATION_ROLE_PERMISSION_CREATE, delete = RELATION_ROLE_PERMISSION_DELETE
+    )),
+    @DefineTouch(name = "render.role.touch.account", view = AccountVo.class,
+        accessable = @TouchAccessable(
+            index = ACCOUNT_INDEX, create = RELATION_ACCOUNT_ROLE_CREATE, delete = RELATION_ACCOUNT_ROLE_DELETE
+    ))
 })
+@Accessable(create = MODEL_ROLE_CREATE, retrieve = MODEL_ROLE_RETRIEVE, update = MODEL_ROLE_UPDATE, delete = MODEL_ROLE_DELETE)
 public class RoleVo extends Renderable {
 
     @DefineElement("render.common.id")

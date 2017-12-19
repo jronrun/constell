@@ -23,6 +23,7 @@ import lombok.ToString;
  * @see Updatable
  * @see DefineTouch
  * @see Touchable
+ * @see Accessable
  */
 @Getter
 @Setter
@@ -33,6 +34,7 @@ public abstract class Renderable {
      * Touch item ID
      */
     private Long touchId;
+    private String touchModuleId;
     private String touchModule;
     private boolean switchable;
     private String touchListTitleFragment;

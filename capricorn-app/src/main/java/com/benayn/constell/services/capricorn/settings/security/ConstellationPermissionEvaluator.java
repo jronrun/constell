@@ -36,7 +36,7 @@ public class ConstellationPermissionEvaluator implements PermissionEvaluator {
             .collect(Collectors.toList())
             ;
 
-        return authorityService.authenticate((String) permission, authorities);
+        return authorityService.authenticate((String) permission, authorities, null);
     }
 
     @Override

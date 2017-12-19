@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -45,14 +46,15 @@ public class AccountController extends BaseManageController<AccountVo> {
     @MenuCapability(value = Menus.ACCOUNT_MANAGE, parent = Menus.AUTHORIZATION)
     @PreAuthorize(Authorities.ACCOUNT_INDEX)
     @GetMapping("account/index")
-    public String index(Model model, @RequestHeader(value = "touchable", required = false) Boolean touchable) {
-        return genericIndex(model, touchable);
+    public String index(Authentication authentication, Model model,
+        @RequestHeader(value = "touchable", required = false) Boolean touchable) {
+        return genericIndex(authentication, model, touchable);
     }
 
     @PreAuthorize(Authorities.ACCOUNT_INDEX)
     @GetMapping("accounts")
-    public String accounts(Model model, AccountVo condition) {
-        return genericList(model, accountService.selectPageBy(condition), condition);
+    public String accounts(Authentication authentication, Model model, AccountVo condition) {
+        return genericList(authentication, model, accountService.selectPageBy(condition), condition);
     }
 
     @PreAuthorize(Authorities.ACCOUNT_MENU_INDEX)
@@ -62,7 +64,7 @@ public class AccountController extends BaseManageController<AccountVo> {
         ofNullable(accountId).ifPresent(id -> {
             Account account = accountService.selectById(id);
             model.addAttribute("menuTitle",
-                getMessage("render.account.menu.title", "Menu", account.getUsername()));
+                getMessage("render.account.menu.title", account.getUsername()));
         });
 
         model.addAttribute("groups", groups);
@@ -70,13 +72,13 @@ public class AccountController extends BaseManageController<AccountVo> {
 
     @PreAuthorize(Authorities.ACCOUNT_RETRIEVE)
     @GetMapping(value = "account/{entityId}")
-    public String retrieve(Model model, @PathVariable("entityId") Long entityId) {
+    public String retrieve(Authentication authentication, Model model, @PathVariable("entityId") Long entityId) {
         Account item = null;
         if (entityId > 0) {
             item = accountService.selectById(entityId);
         }
 
-        return genericEdit(model, item);
+        return genericEdit(authentication, model, item);
     }
 
     @PreAuthorize(Authorities.ACCOUNT_CREATE)

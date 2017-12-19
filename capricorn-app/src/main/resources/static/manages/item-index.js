@@ -3,11 +3,13 @@
 var index = {};
 (function ($, root, register) {
 
-    var pageInfo = null, formId = null, editId = null, searchId = null, core = {
+    var pageInfo = null, access = null, formId = null, editId = null, searchId = null, core = {
 
         index: {
             init: function () {
-                pageInfo = JSON.parse(mgr.us($$('[data-page-info]').data('pageInfo'))) || {};
+                var pageData = $$('[data-page-info]').data() || {};
+                pageInfo = JSON.parse(mgr.us(pageData.pageInfo));
+                access = JSON.parse(mgr.us(pageData.access));
                 formId = '#' + pageInfo.editId;
                 editId = '#' + pageInfo.contentId;
                 searchId = '#' + pageInfo.searchId;
@@ -53,6 +55,7 @@ var index = {};
                     $.extend(param, {
                         touchId: defined.touchId,
                         touchModule: defined.module,
+                        touchModuleId: defined.moduleId,
                         touchOwner: isTouchOwner,
                         switchable: defined.switchable,
                         touchListTitleFragment: defined.titleFragment,

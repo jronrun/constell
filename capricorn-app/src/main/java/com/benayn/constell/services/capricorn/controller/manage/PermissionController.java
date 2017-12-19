@@ -18,6 +18,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,9 +44,10 @@ public class PermissionController extends BaseManageController<PermissionVo> {
     @MenuCapability(value = Menus.PERMISSION_MANAGE, parent = Menus.AUTHORIZATION)
     @PreAuthorize(Authorities.PERMISSION_INDEX)
     @GetMapping("permission/index")
-    public String index(Model model, @RequestHeader(value = "condition", required = false) String condition,
+    public String index(Authentication authentication, Model model,
+        @RequestHeader(value = "condition", required = false) String condition,
         @RequestHeader(value = "touchable", required = false) Boolean touchable) {
-        return genericIndex(model, touchable, decodes(condition, PermissionVo.class));
+        return genericIndex(authentication, model, touchable, decodes(condition, PermissionVo.class));
     }
 
     @PreAuthorize(Authorities.RELATION_ROLE_PERMISSION_CREATE)
@@ -62,24 +64,24 @@ public class PermissionController extends BaseManageController<PermissionVo> {
 
     @PreAuthorize(Authorities.PERMISSION_INDEX)
     @GetMapping("permissions")
-    public String permissions(Model model, PermissionVo condition) {
-        return genericList(model, permissionService.selectPageBy(condition), condition);
+    public String permissions(Authentication authentication, Model model, PermissionVo condition) {
+        return genericList(authentication, model, permissionService.selectPageBy(condition), condition);
     }
 
     @PreAuthorize(Authorities.PERMISSION_RETRIEVE)
     @GetMapping(value = "permission/{entityId}")
-    public String retrieve(Model model, @PathVariable("entityId") Long entityId) {
+    public String retrieve(Authentication authentication, Model model, @PathVariable("entityId") Long entityId) {
         Permission item = null;
         if (entityId > 0) {
             item = permissionService.selectById(entityId);
         }
 
-        return genericEdit(model, item);
+        return genericEdit(authentication, model, item);
     }
 
     @PreAuthorize(Authorities.PERMISSION_CREATE)
     @PostMapping(value = "permission", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Message> create() throws ServiceException {
+    public ResponseEntity<Message> create() {
         return success(permissionService.saveFromAuthorities());
     }
 

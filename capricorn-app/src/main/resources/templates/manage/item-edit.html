@@ -51,7 +51,18 @@
         </form>
     </div>
     <div class="actions">
-        <div class="ui button deny" th:text="#{render.modal.button.cancel}">Cancel</div>
-        <div class="ui green button" th:attr="data-action-type=${actionType}" th:text="#{render.modal.button.submit}">Submit</div>
+        <th:block th:if="${actionType == 1}">
+            <div class="ui button deny"
+                 th:text="${access.isHasCreate()} ? #{render.modal.button.cancel} : #{render.modal.button.close}">Cancel Or Close</div>
+            <div th:if="${access.isHasCreate()}" class="ui green button"
+                 th:attr="data-action-type=${actionType}" th:text="#{render.modal.button.submit}">Submit</div>
+        </th:block>
+        <th:block th:if="${actionType == 2}">
+            <div class="ui button deny"
+                 th:text="${access.isHasUpdate()} ? #{render.modal.button.cancel} : #{render.modal.button.close}">Cancel Or Close</div>
+            <div th:if="${access.isHasUpdate()}" class="ui green button"
+                 th:attr="data-action-type=${actionType}" th:text="#{render.modal.button.submit}">Submit</div>
+        </th:block>
+
     </div>
 </div>

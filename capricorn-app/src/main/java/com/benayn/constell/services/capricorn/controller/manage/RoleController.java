@@ -18,6 +18,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -43,9 +44,10 @@ public class RoleController extends BaseManageController<RoleVo> {
     @MenuCapability(value = Menus.ROLE_MANAGE, parent = Menus.AUTHORIZATION)
     @PreAuthorize(Authorities.MODEL_ROLE_INDEX)
     @GetMapping("role/index")
-    public String index(Model model, @RequestHeader(value = "condition", required = false) String condition,
+    public String index(Authentication authentication, Model model,
+        @RequestHeader(value = "condition", required = false) String condition,
         @RequestHeader(value = "touchable", required = false) Boolean touchable) {
-        return genericIndex(model, touchable, decodes(condition, RoleVo.class));
+        return genericIndex(authentication, model, touchable, decodes(condition, RoleVo.class));
     }
 
     @PreAuthorize(Authorities.RELATION_ACCOUNT_ROLE_CREATE)
@@ -62,19 +64,19 @@ public class RoleController extends BaseManageController<RoleVo> {
 
     @PreAuthorize(Authorities.MODEL_ROLE_INDEX)
     @GetMapping("roles")
-    public String roles(Model model, RoleVo condition) {
-        return genericList(model, roleService.selectPageBy(condition), condition);
+    public String roles(Authentication authentication, Model model, RoleVo condition) {
+        return genericList(authentication, model, roleService.selectPageBy(condition), condition);
     }
 
     @PreAuthorize(Authorities.MODEL_ROLE_RETRIEVE)
     @GetMapping(value = "role/{entityId}")
-    public String retrieve(Model model, @PathVariable("entityId") Long entityId) {
+    public String retrieve(Authentication authentication, Model model, @PathVariable("entityId") Long entityId) {
         Role item = null;
         if (entityId > 0) {
             item = roleService.selectById(entityId);
         }
 
-        return genericEdit(model, item);
+        return genericEdit(authentication, model, item);
     }
 
     @PreAuthorize(Authorities.MODEL_ROLE_CREATE)

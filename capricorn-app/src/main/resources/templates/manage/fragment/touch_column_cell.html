@@ -1,6 +1,20 @@
 <div xmlns:th="http://www.thymeleaf.org" class="ui fitted slider checkbox"
-     th:with="idValue=${item[defact.uniqueField]},uniqueValue=${#strings.toString(idValue)}"
+     th:with="idValue=${item[defact.uniqueField]},
+     uniqueValue=${#strings.toString(idValue)},
+     isOwner=${#lists.contains(owners, uniqueValue)},
+     chkId='touch-tgl-' + ${idValue}"
      th:attr="data-touch-toggle=${idValue}">
-    <input type="checkbox" th:id="'touch-tgl-' + ${idValue}" th:attr="data-value=${idValue}" th:checked="${#lists.contains(owners, uniqueValue)}"/>
+    <th:block th:if="${isOwner}">
+        <input th:if="${access.isHasDelete()}" type="checkbox"
+               th:id="${chkId}" th:attr="data-value=${idValue}" th:checked="${isOwner}"/>
+        <input th:unless="${access.isHasDelete()}" type="checkbox"
+               th:id="${chkId}" th:attr="data-value=${idValue}" th:checked="${isOwner}" disabled="disabled"/>
+    </th:block>
+    <th:block th:unless="${isOwner}">
+        <input th:if="${access.isHasCreate()}" type="checkbox"
+               th:id="${chkId}" th:attr="data-value=${idValue}"/>
+        <input th:unless="${access.isHasCreate()}" type="checkbox"
+               th:id="${chkId}" th:attr="data-value=${idValue}" disabled="disabled"/>
+    </th:block>
     <label></label>
 </div>

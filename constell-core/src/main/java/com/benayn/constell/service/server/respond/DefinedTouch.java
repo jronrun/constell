@@ -8,6 +8,9 @@ public class DefinedTouch {
     private String id;
     // from module
     private String module;
+    // from module id
+    private String moduleId;
+
     private String name;
     private String touchHref;
     private boolean master;
