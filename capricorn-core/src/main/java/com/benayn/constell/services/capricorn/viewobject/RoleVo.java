@@ -35,14 +35,22 @@ import lombok.ToString;
 @Actionable(delete = false, relations = {
     @DefineTouch(name = "render.role.touch.permission", view = PermissionVo.class, master = true, switchable = true,
         accessable = @TouchAccessable(
-            index = PERMISSION_INDEX, create = RELATION_ROLE_PERMISSION_CREATE, delete = RELATION_ROLE_PERMISSION_DELETE
+            index = PERMISSION_INDEX,
+            create = RELATION_ROLE_PERMISSION_CREATE,
+            delete = RELATION_ROLE_PERMISSION_DELETE
     )),
     @DefineTouch(name = "render.role.touch.account", view = AccountVo.class,
         accessable = @TouchAccessable(
-            index = ACCOUNT_INDEX, create = RELATION_ACCOUNT_ROLE_CREATE, delete = RELATION_ACCOUNT_ROLE_DELETE
+            index = ACCOUNT_INDEX,
+            create = RELATION_ACCOUNT_ROLE_CREATE,
+            delete = RELATION_ACCOUNT_ROLE_DELETE
     ))
 })
-@Accessable(create = MODEL_ROLE_CREATE, retrieve = MODEL_ROLE_RETRIEVE, update = MODEL_ROLE_UPDATE, delete = MODEL_ROLE_DELETE)
+@Accessable(
+    create = MODEL_ROLE_CREATE,
+    retrieve = MODEL_ROLE_RETRIEVE,
+    update = MODEL_ROLE_UPDATE,
+    delete = MODEL_ROLE_DELETE)
 public class RoleVo extends Renderable {
 
     @DefineElement("render.common.id")
