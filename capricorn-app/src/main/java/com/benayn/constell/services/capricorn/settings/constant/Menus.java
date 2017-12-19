@@ -7,7 +7,7 @@ public class Menus {
 
     public static final String SETTINGS = "menu.root.settings";
     public static final String AUTHORIZATION = "menu.root.authorization";
-    public static final String HELP = "menu.root.help";
+    public static final String HELP = "menu.root.system.help";
 
     public static final String MENU_MANAGE = "menu.module.menus";
     public static final String ROLE_MANAGE = "menu.module.role";
