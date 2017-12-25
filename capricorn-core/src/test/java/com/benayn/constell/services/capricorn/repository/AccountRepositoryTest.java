@@ -18,22 +18,6 @@ public class AccountRepositoryTest {
 
     @Test
     public void testUserRepository() {
-        Random r = new Random();
-        int num = r.nextInt(10000);
-
-        Account user = new Account();
-        user.setCreateTime(new Date());
-        user.setLastModifyTime(new Date());
-        user.setEmail(num + "@test.com");
-        user.setUsername(num + "name");
-        user.setPassword(String.valueOf(num));
-        user.setGender((short)1);
-        user.setStatus((short)2);
-
-        userRepository.insert(user);
-        System.out.println(user.getId() + " after insert");
-
-        userRepository.selectById(user.getId()).toString();
-
+        System.out.println(userRepository.selectById(30L));;
     }
 }

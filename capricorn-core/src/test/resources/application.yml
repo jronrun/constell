@@ -10,3 +10,10 @@ spring:
 mybatis:
   type-aliases-package: com.benayn.constell.services.capricorn.mapper
   mapper-locations: classpath:mybatis/mapper/*.xml
+  type-handlers-package: com.benayn.constell.services.capricorn.repository.handlers
+
+server:
+  port: 8011
+  oauth:
+    token:
+      url: http://127.0.0.1:${server.port}/oauth/token
