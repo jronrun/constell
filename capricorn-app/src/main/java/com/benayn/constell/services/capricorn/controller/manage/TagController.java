@@ -1,5 +1,6 @@
 package com.benayn.constell.services.capricorn.controller.manage;
 
+
 import static com.benayn.constell.service.server.respond.Responds.success;
 import static com.benayn.constell.service.util.LZString.decodes;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.MANAGE_BASE;
@@ -9,10 +10,10 @@ import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.menu.MenuCapability;
 import com.benayn.constell.service.server.respond.Message;
 import com.benayn.constell.services.capricorn.config.Authorities;
-import com.benayn.constell.services.capricorn.repository.domain.Content;
-import com.benayn.constell.services.capricorn.service.ContentService;
+import com.benayn.constell.services.capricorn.repository.domain.Tag;
+import com.benayn.constell.services.capricorn.service.TagService;
 import com.benayn.constell.services.capricorn.settings.constant.Menus;
-import com.benayn.constell.services.capricorn.viewobject.ContentVO;
+import com.benayn.constell.services.capricorn.viewobject.TagVO;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,57 +32,57 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping(value = MANAGE_BASE)
-public class ContentController extends BaseManageController<ContentVO> {
+public class TagController extends BaseManageController<TagVO> {
 
-    private ContentService contentService;
+    private TagService tagService;
 
     @Autowired
-    public ContentController(ContentService contentService) {
-        this.contentService = contentService;
+    public TagController(TagService tagService) {
+        this.tagService = tagService;
     }
 
-    @MenuCapability(value = Menus.CONTENT_MANAGE, parent = Menus.UGC)
-    @PreAuthorize(Authorities.CONTENT_INDEX)
-    @GetMapping("content/index")
+    @MenuCapability(value = Menus.TAG_MANAGE, parent = Menus.UGC)
+    @PreAuthorize(Authorities.TAG_INDEX)
+    @GetMapping("tag/index")
     public String index(Authentication authentication, Model model,
         @RequestHeader(value = "condition", required = false) String condition,
         @RequestHeader(value = "touchable", required = false) Boolean touchable) {
-        return genericIndex(authentication, model, touchable, decodes(condition, ContentVO.class));
+        return genericIndex(authentication, model, touchable, decodes(condition, TagVO.class));
     }
 
-    @PreAuthorize(Authorities.CONTENT_INDEX)
-    @GetMapping("contents")
-    public String items(Authentication authentication, Model model, ContentVO condition) {
-        return genericList(authentication, model, contentService.selectPageBy(condition), condition);
+    @PreAuthorize(Authorities.TAG_INDEX)
+    @GetMapping("tags")
+    public String items(Authentication authentication, Model model, TagVO condition) {
+        return genericList(authentication, model, tagService.selectPageBy(condition), condition);
     }
 
-    @PreAuthorize(Authorities.CONTENT_RETRIEVE)
-    @GetMapping(value = "content/{entityId}")
+    @PreAuthorize(Authorities.TAG_RETRIEVE)
+    @GetMapping(value = "tag/{entityId}")
     public String retrieve(Authentication authentication, Model model, @PathVariable("entityId") Long entityId) {
-        Content item = null;
+        Tag item = null;
         if (entityId > 0) {
-            item = contentService.selectById(entityId);
+            item = tagService.selectById(entityId);
         }
 
         return genericEdit(authentication, model, item);
     }
 
-    @PreAuthorize(Authorities.CONTENT_CREATE)
-    @PostMapping(value = "content", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Message> create(@Valid @RequestBody ContentVO entity) throws ServiceException {
-        return success(contentService.save(entity));
+    @PreAuthorize(Authorities.TAG_CREATE)
+    @PostMapping(value = "tag", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Message> create(@Valid @RequestBody TagVO entity) throws ServiceException {
+        return success(tagService.save(entity));
     }
 
-    @PreAuthorize(Authorities.CONTENT_UPDATE)
-    @PutMapping(value = "content", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Message> update(@Valid @RequestBody ContentVO entity) throws ServiceException {
-        return success(contentService.save(entity));
+    @PreAuthorize(Authorities.TAG_UPDATE)
+    @PutMapping(value = "tag", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<Message> update(@Valid @RequestBody TagVO entity) throws ServiceException {
+        return success(tagService.save(entity));
     }
 
-    @PreAuthorize(Authorities.CONTENT_DELETE)
-    @DeleteMapping(value = "content/{entityId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @PreAuthorize(Authorities.TAG_DELETE)
+    @DeleteMapping(value = "tag/{entityId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> delete(@PathVariable("entityId") Long entityId) throws ServiceException {
-        return success(contentService.deleteById(entityId));
+        return success(tagService.deleteById(entityId));
     }
 
 }
