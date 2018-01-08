@@ -100,7 +100,7 @@ public class GenericExample {
             return addCriterion(new Criterion(condition, value1, value2));
         }
 
-        public <T> Criteria and(ConditionTemplate conditionTemplate, String property, T value1, T value2) {
+        public <T> Criteria and(ConditionTemplate conditionTemplate, String property, Object value1, Object value2) {
             if (null == value2) {
                 if (null == value1) {
                     return addCriterion(conditionTemplate.value(property));
