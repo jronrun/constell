@@ -3,8 +3,6 @@ package com.benayn.constell.service.server.respond;
 import static com.benayn.constell.service.common.BaseConstants.DEFAULT_PAGE_SIZE;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
-import com.benayn.constell.service.util.Likes;
-import com.benayn.constell.service.util.Likes.Side;
 import com.google.common.collect.Maps;
 import java.util.Map;
 import lombok.Getter;
@@ -82,14 +80,6 @@ public abstract class Renderable {
 
     public boolean hasTouchOwner() {
         return hasTouch() && isTouchOwner();
-    }
-
-    public String like(String target) {
-        return Likes.get(target);
-    }
-
-    public String like(String target, Side side) {
-        return Likes.get(target, side);
     }
 
     public void addFieldFragmentValue(String fieldName, String fragmentValue) {

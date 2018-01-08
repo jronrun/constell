@@ -1,5 +1,6 @@
 package com.benayn.constell.services.capricorn.viewobject;
 
+import static com.benayn.constell.service.server.repository.domain.ConditionTemplate.LIKE;
 import static com.benayn.constell.services.capricorn.config.Authorities.ACCOUNT_INDEX;
 import static com.benayn.constell.services.capricorn.config.Authorities.MODEL_ROLE_CREATE;
 import static com.benayn.constell.services.capricorn.config.Authorities.MODEL_ROLE_DELETE;
@@ -33,13 +34,13 @@ import lombok.ToString;
 @Setter
 @ToString
 @Actionable(delete = false, relations = {
-    @DefineTouch(name = "render.role.touch.permission", view = PermissionVo.class, master = true, switchable = true,
+    @DefineTouch(name = "render.role.touch.permission", view = PermissionVO.class, master = true, switchable = true,
         accessable = @TouchAccessable(
             index = PERMISSION_INDEX,
             create = RELATION_ROLE_PERMISSION_CREATE,
             delete = RELATION_ROLE_PERMISSION_DELETE
     )),
-    @DefineTouch(name = "render.role.touch.account", view = AccountVo.class,
+    @DefineTouch(name = "render.role.touch.account", view = AccountVO.class,
         accessable = @TouchAccessable(
             index = ACCOUNT_INDEX,
             create = RELATION_ACCOUNT_ROLE_CREATE,
@@ -51,7 +52,7 @@ import lombok.ToString;
     retrieve = MODEL_ROLE_RETRIEVE,
     update = MODEL_ROLE_UPDATE,
     delete = MODEL_ROLE_DELETE)
-public class RoleVo extends Renderable {
+public class RoleVO extends Renderable {
 
     @DefineElement("render.common.id")
     @Listable
@@ -62,7 +63,7 @@ public class RoleVo extends Renderable {
     @NotNull
     @Pattern(regexp = "^ROLE_.*", message = "{valid.role.code.pattern}")
     @DefineElement("render.role.code")
-    @Searchable(like = true)
+    @Searchable(condition = LIKE)
     @Listable
     @Editable
     @Touchable
@@ -71,7 +72,7 @@ public class RoleVo extends Renderable {
     @NotNull
     @Size(min = 1)
     @DefineElement("render.role.label")
-    @Searchable(like = true)
+    @Searchable(condition = LIKE)
     @Listable
     @Editable(tag = HtmlTag.TEXTAREA, attributes = {"rows=3"})
     @Touchable

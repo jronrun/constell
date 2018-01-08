@@ -18,6 +18,7 @@ import com.benayn.constell.service.server.menu.AuthorityMenuGroup;
 import com.benayn.constell.service.server.menu.MenuBread;
 import com.benayn.constell.service.server.menu.MenuGroup;
 import com.benayn.constell.service.server.repository.Page;
+import com.benayn.constell.service.util.Likes;
 import com.benayn.constell.services.capricorn.enums.AccountStatus;
 import com.benayn.constell.services.capricorn.enums.CacheName;
 import com.benayn.constell.services.capricorn.repository.AccountRepository;
@@ -30,7 +31,7 @@ import com.benayn.constell.services.capricorn.repository.model.AccountDetails;
 import com.benayn.constell.services.capricorn.repository.model.UserToken;
 import com.benayn.constell.services.capricorn.service.AccountService;
 import com.benayn.constell.services.capricorn.service.AuthorityService;
-import com.benayn.constell.services.capricorn.viewobject.AccountVo;
+import com.benayn.constell.services.capricorn.viewobject.AccountVO;
 import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.util.Date;
@@ -222,7 +223,7 @@ public class AccountServiceBean implements AccountService {
     }
 
     @Override
-    public Page<Account> selectPageBy(AccountVo condition) {
+    public Page<Account> selectPageBy(AccountVO condition) {
         AccountExample example = new AccountExample();
         Criteria criteria = example.createCriteria();
 
@@ -231,11 +232,11 @@ public class AccountServiceBean implements AccountService {
         }
 
         if (null != condition.getUsername()) {
-            criteria.andUsernameLike(condition.like(condition.getUsername()));
+            criteria.andUsernameLike(Likes.get(condition.getUsername()));
         }
 
         if (null != condition.getEmail()) {
-            criteria.andEmailLike(condition.like(condition.getEmail()));
+            criteria.andEmailLike(Likes.get(condition.getEmail()));
         }
 
         if (null != condition.getStatus()) {
@@ -291,7 +292,7 @@ public class AccountServiceBean implements AccountService {
 
     @Override
     @CacheEvict(value = CacheName.ACCOUNTS, condition = "null != #entity && null != #entity.id", key = "#entity.email")
-    public int save(AccountVo entity) throws ServiceException {
+    public int save(AccountVO entity) throws ServiceException {
         Date now = new Date();
 
         Account item = new Account();

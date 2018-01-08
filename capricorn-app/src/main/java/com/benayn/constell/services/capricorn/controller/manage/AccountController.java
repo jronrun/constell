@@ -14,7 +14,7 @@ import com.benayn.constell.services.capricorn.config.Authorities;
 import com.benayn.constell.services.capricorn.repository.domain.Account;
 import com.benayn.constell.services.capricorn.service.AccountService;
 import com.benayn.constell.services.capricorn.settings.constant.Menus;
-import com.benayn.constell.services.capricorn.viewobject.AccountVo;
+import com.benayn.constell.services.capricorn.viewobject.AccountVO;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping(value = MANAGE_BASE)
-public class AccountController extends BaseManageController<AccountVo> {
+public class AccountController extends BaseManageController<AccountVO> {
 
     private AccountService accountService;
 
@@ -53,7 +53,7 @@ public class AccountController extends BaseManageController<AccountVo> {
 
     @PreAuthorize(Authorities.ACCOUNT_INDEX)
     @GetMapping("accounts")
-    public String accounts(Authentication authentication, Model model, AccountVo condition) {
+    public String accounts(Authentication authentication, Model model, AccountVO condition) {
         return genericList(authentication, model, accountService.selectPageBy(condition), condition);
     }
 
@@ -83,7 +83,7 @@ public class AccountController extends BaseManageController<AccountVo> {
 
     @PreAuthorize(Authorities.ACCOUNT_CREATE)
     @PostMapping(value = "account", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Message> create(@Valid @RequestBody AccountVo entity) throws ServiceException {
+    public ResponseEntity<Message> create(@Valid @RequestBody AccountVO entity) throws ServiceException {
         Assets.checkNotBlank(entity.getPassword(), "{render.account.assets.password}");
         Assets.checkResults(entity.getPassword().equals(entity.getPassword2()),
             "{render.account.assets.password.confirm}");
@@ -92,7 +92,7 @@ public class AccountController extends BaseManageController<AccountVo> {
 
     @PreAuthorize(Authorities.ACCOUNT_UPDATE)
     @PutMapping(value = "account", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Message> update(@Valid @RequestBody AccountVo entity) throws ServiceException {
+    public ResponseEntity<Message> update(@Valid @RequestBody AccountVO entity) throws ServiceException {
         return success(accountService.save(entity));
     }
 

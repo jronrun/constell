@@ -1,5 +1,7 @@
 package com.benayn.constell.service.server.respond;
 
+import com.benayn.constell.service.server.repository.domain.ConditionTemplate;
+import com.benayn.constell.service.util.Likes.Side;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -78,6 +80,14 @@ public @interface Searchable {
      */
     String fragment() default "";
 
-    boolean like() default false;
+    /**
+     * Define search like behave
+     */
+    Side likeSide() default Side.BOTH;
+
+    /**
+     * Define search behave
+     */
+    ConditionTemplate condition() default ConditionTemplate.EQUAL_TO;
 
 }

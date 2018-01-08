@@ -13,7 +13,7 @@ import com.benayn.constell.services.capricorn.config.Authorities;
 import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.service.RoleService;
 import com.benayn.constell.services.capricorn.settings.constant.Menus;
-import com.benayn.constell.services.capricorn.viewobject.RoleVo;
+import com.benayn.constell.services.capricorn.viewobject.RoleVO;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping(value = MANAGE_BASE)
-public class RoleController extends BaseManageController<RoleVo> {
+public class RoleController extends BaseManageController<RoleVO> {
 
     private RoleService roleService;
 
@@ -47,7 +47,7 @@ public class RoleController extends BaseManageController<RoleVo> {
     public String index(Authentication authentication, Model model,
         @RequestHeader(value = "condition", required = false) String condition,
         @RequestHeader(value = "touchable", required = false) Boolean touchable) {
-        return genericIndex(authentication, model, touchable, decodes(condition, RoleVo.class));
+        return genericIndex(authentication, model, touchable, decodes(condition, RoleVO.class));
     }
 
     @PreAuthorize(Authorities.RELATION_ACCOUNT_ROLE_CREATE)
@@ -64,7 +64,7 @@ public class RoleController extends BaseManageController<RoleVo> {
 
     @PreAuthorize(Authorities.MODEL_ROLE_INDEX)
     @GetMapping("roles")
-    public String roles(Authentication authentication, Model model, RoleVo condition) {
+    public String roles(Authentication authentication, Model model, RoleVO condition) {
         return genericList(authentication, model, roleService.selectPageBy(condition), condition);
     }
 
@@ -81,13 +81,13 @@ public class RoleController extends BaseManageController<RoleVo> {
 
     @PreAuthorize(Authorities.MODEL_ROLE_CREATE)
     @PostMapping(value = "role", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Message> create(@Valid @RequestBody RoleVo entity) throws ServiceException {
+    public ResponseEntity<Message> create(@Valid @RequestBody RoleVO entity) throws ServiceException {
         return success(roleService.save(entity));
     }
 
     @PreAuthorize(Authorities.MODEL_ROLE_UPDATE)
     @PutMapping(value = "role", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Message> update(@Valid @RequestBody RoleVo entity) throws ServiceException {
+    public ResponseEntity<Message> update(@Valid @RequestBody RoleVO entity) throws ServiceException {
         return success(roleService.save(entity));
     }
 

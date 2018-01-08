@@ -4,15 +4,15 @@ import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.respond.TouchRelation;
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
-import com.benayn.constell.services.capricorn.viewobject.PermissionVo;
+import com.benayn.constell.services.capricorn.viewobject.PermissionVO;
 
 public interface PermissionService {
 
     Permission selectById(long entityId);
 
-    Page<Permission> selectPageBy(PermissionVo condition);
+    Page<Permission> selectPageBy(PermissionVO condition);
 
-    int save(PermissionVo entity) throws ServiceException;
+    int save(PermissionVO entity) throws ServiceException;
 
     int deleteById(Long entityId) throws ServiceException;
 

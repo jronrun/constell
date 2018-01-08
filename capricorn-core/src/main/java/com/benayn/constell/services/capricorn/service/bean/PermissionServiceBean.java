@@ -8,6 +8,7 @@ import static com.benayn.constell.service.util.Assets.checkRecordSaved;
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.respond.TouchRelation;
+import com.benayn.constell.service.util.Likes;
 import com.benayn.constell.services.capricorn.config.Authorities;
 import com.benayn.constell.services.capricorn.enums.CacheName;
 import com.benayn.constell.services.capricorn.repository.PermissionRepository;
@@ -15,7 +16,7 @@ import com.benayn.constell.services.capricorn.repository.domain.Permission;
 import com.benayn.constell.services.capricorn.repository.domain.PermissionExample;
 import com.benayn.constell.services.capricorn.repository.domain.PermissionExample.Criteria;
 import com.benayn.constell.services.capricorn.service.PermissionService;
-import com.benayn.constell.services.capricorn.viewobject.PermissionVo;
+import com.benayn.constell.services.capricorn.viewobject.PermissionVO;
 import com.google.common.base.Ascii;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -44,16 +45,16 @@ public class PermissionServiceBean implements PermissionService {
     }
 
     @Override
-    public Page<Permission> selectPageBy(PermissionVo condition) {
+    public Page<Permission> selectPageBy(PermissionVO condition) {
         PermissionExample example = new PermissionExample();
         Criteria criteria = example.createCriteria();
 
         if (null != condition.getCode()) {
-            criteria.andCodeLike(condition.like(condition.getCode()));
+            criteria.andCodeLike(Likes.get(condition.getCode()));
         }
 
         if (null != condition.getLabel()) {
-            criteria.andLabelLike(condition.like(condition.getLabel()));
+            criteria.andLabelLike(Likes.get(condition.getLabel()));
         }
 
         if (condition.hasTouchOwner()) {
@@ -134,7 +135,7 @@ public class PermissionServiceBean implements PermissionService {
         CacheName.ACCOUNT_ROLES,
         CacheName.ROLE_PERMISSIONS
     }, condition = "null != #entity && null != #entity.id", allEntries = true)
-    public int save(PermissionVo entity) throws ServiceException {
+    public int save(PermissionVO entity) throws ServiceException {
         Date now = new Date();
 
         Permission item = new Permission();

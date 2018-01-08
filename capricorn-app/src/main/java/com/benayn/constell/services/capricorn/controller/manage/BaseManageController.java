@@ -13,6 +13,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 import com.benayn.constell.service.server.component.ViewObjectResolver;
 import com.benayn.constell.service.server.repository.Page;
+import com.benayn.constell.service.server.respond.DataExchange;
 import com.benayn.constell.service.server.respond.DefinedAccess;
 import com.benayn.constell.service.server.respond.PageInfo;
 import com.benayn.constell.service.server.respond.Renderable;
@@ -52,7 +53,7 @@ public abstract class BaseManageController<T extends Renderable> {
         model.addAttribute("page", encodes(pageInfo));
         model.addAttribute("pageInfo", pageInfo);
         model.addAttribute("touchable", isTouchable);
-        model.addAttribute(DEFINED_SEARCH_KEY, getViewObjectResolver().getDefinedSearch(voClass, searchValue));
+        model.addAttribute(DEFINED_SEARCH_KEY, getViewObjectResolver().getDefinedSearch(voClass, searchValue, null));
 
         return PAGE_INDEX;
     }
@@ -70,13 +71,17 @@ public abstract class BaseManageController<T extends Renderable> {
     }
 
     String genericEdit(Authentication authentication, Model model, Object value) {
+        return genericEdit(authentication, model, value, null);
+    }
+
+    String genericEdit(Authentication authentication, Model model, Object value, DataExchange dataExchange) {
         addAccess(authentication, model);
         PageInfo pageInfo = getViewObjectResolver().getPageInfo(voClass, MANAGE_BASE);
 
         // 1 create, 2 edit
         model.addAttribute("actionType", null == value ? 1 : 2);
         model.addAttribute("editId", pageInfo.getEditId());
-        model.addAttribute(DEFINED_EDIT_KEY, getViewObjectResolver().getDefinedEdit(voClass, value));
+        model.addAttribute(DEFINED_EDIT_KEY, getViewObjectResolver().getDefinedEdit(voClass, value, dataExchange));
         return PAGE_EDIT;
     }
 

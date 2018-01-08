@@ -92,6 +92,8 @@ public final class Page<R> {
 
     @Setter
     private List<String> touchOwnerIds;
+    @Setter
+    private Object extraResource;
 
     public void setAsTouchOwnerIds(List<Long> theIds) {
         ofNullable(theIds).ifPresent(longs ->

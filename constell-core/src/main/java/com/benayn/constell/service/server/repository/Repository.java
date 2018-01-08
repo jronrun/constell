@@ -79,4 +79,9 @@ public interface Repository<T, E> {
      */
     int updateByIdAll(T record);
 
+    /**
+     * Returns repository namespace
+     */
+    String getNamespace();
+
 }

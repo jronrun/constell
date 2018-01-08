@@ -19,6 +19,7 @@ import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.respond.Accessable;
 import com.benayn.constell.service.server.respond.Actionable;
 import com.benayn.constell.service.server.respond.Creatable;
+import com.benayn.constell.service.server.respond.DataExchange;
 import com.benayn.constell.service.server.respond.DefineElement;
 import com.benayn.constell.service.server.respond.DefineTouch;
 import com.benayn.constell.service.server.respond.DefineType;
@@ -40,6 +41,9 @@ import com.benayn.constell.service.server.respond.Searchable;
 import com.benayn.constell.service.server.respond.TouchAccessable;
 import com.benayn.constell.service.server.respond.Touchable;
 import com.benayn.constell.service.server.respond.Updatable;
+import com.benayn.constell.service.server.service.SaveEntity;
+import com.benayn.constell.service.server.service.SearchEntity;
+import com.benayn.constell.service.server.service.SearchField;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -73,9 +77,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     private MessageSource messageSource;
     private TemplateEngine fragmentTemplateEngine;
     private static final String ELEMENT_ID_FORMAT = "el_%s";
+    private static final String ELEMENT_ID_WITH_PREFIX_FORMAT = "el_%s_%s";
+    private static final String ELEMENT_NAME_WITH_PREFIX_FORMAT = "%s.%s";
     private static final String SEARCH_ELEMENT_ID_FORMAT = "qry_%s";
     private static final String HIDDEN_STYLE = "display:none;";
     private static final String UNCHANGEABLE_MARK = "%s_unchangeable";
+
+    private static final String FIELD_CREATE_TIME = "createTime";
+    private static final String FIELD_LAST_MODIFY_TIME = "lastModifyTime";
 
     public ViewObjectResolverBean(MessageSource messageSource, TemplateEngine fragmentTemplateEngine) {
         this.messageSource = messageSource;
@@ -89,15 +98,16 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     }
 
     @Override
-    public List<DefinedElement> getDefinedSearch(Class<? extends Renderable> viewObjectType, Object value) {
-        return getDefinedElements(SEARCHABLE, viewObjectType, value);
+    public List<DefinedElement> getDefinedSearch(Class<? extends Renderable> viewObjectType, Object value, DataExchange dataExchange) {
+        return getDefinedElements(SEARCHABLE, viewObjectType, value, dataExchange);
     }
 
     @Override
-    public DefinedEditElement getDefinedEdit(Class<? extends Renderable> viewObjectType, Object value) {
+    public DefinedEditElement getDefinedEdit(Class<? extends Renderable> viewObjectType,
+        Object value, DataExchange dataExchange) {
         DefinedEditElement defined = new DefinedEditElement();
         DefineType defineType = null == value ? CREATABLE : UPDATABLE;
-        List<DefinedElement> elements = getDefinedElements(defineType, viewObjectType, value);
+        List<DefinedElement> elements = getDefinedElements(defineType, viewObjectType, value, dataExchange);
 
         elements.forEach(element -> {
             // hidden element
@@ -246,7 +256,8 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
         List<Field> finalItemFields = itemFields;
         items.forEach(item ->
-            ofNullable(asRenderable(viewObjectType, defineFields, item, finalItemFields, definedAction, hasTouch))
+            ofNullable(asRenderable(viewObjectType, defineFields,
+                item, finalItemFields, definedAction, hasTouch, page.getExtraResource()))
             .ifPresent(render -> {
                 if (hasTouch) {
                     setTouchListValue(render, item, definedAction, newPage, finalDefinedTouchAccess);
@@ -454,7 +465,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
     private Renderable asRenderable(Class<? extends Renderable> viewObjectType,
         List<Field> defineFields, Object value, List<Field> valueFields,
-        DefinedAction definedAction, boolean hasTouch) {
+        DefinedAction definedAction, boolean hasTouch, Object extraResource) {
         try {
             Renderable render = viewObjectType.newInstance();
             defineFields.forEach(field -> {
@@ -485,9 +496,17 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                         fragment = defineElement.fragment();
                     }
 
+                    boolean hasFragment = !isNullOrEmpty(fragment);
+                    if (!hasFragment && isRenderable(field.getType())) {
+                        throw new IllegalArgumentException(
+                            format("View object field must define fragment with @Listable or @Touchable %s.%s",
+                                viewObjectType.getSimpleName(), fieldName));
+                    }
+
                     //value from fragment
-                    if (!isNullOrEmpty(fragment)) {
-                        aValue = getFragmentValue(value, fragment);
+                    if (hasFragment) {
+                        aValue = getFragmentValue(value, fragment,
+                            (Context context) -> context.setVariable("extraResource", extraResource));
                         render.addFieldFragmentValue(fieldName, (String) aValue);
                     } else {
                         aValue = getFieldValueByName(value, valueFields, fieldName, null, field);
@@ -556,7 +575,12 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     }
 
     private List<DefinedElement> getDefinedElements(DefineType defineType,
-        Class<? extends Renderable> viewObjectType, Object value) {
+        Class<? extends Renderable> viewObjectType, Object value, DataExchange dataExchange) {
+        return getDefinedElements(defineType, viewObjectType, value, dataExchange, null);
+    }
+
+    private List<DefinedElement> getDefinedElements(DefineType defineType,
+        Class<? extends Renderable> viewObjectType, Object value, DataExchange dataExchange, String namePrefix) {
         List<DefinedElement> elements = newArrayList();
         List<Field> valueFields = null;
         if (null != value) {
@@ -566,7 +590,8 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         List<Field> defineFields = getFields(viewObjectType);
         List<Field> finalValueFields = valueFields;
         defineFields.forEach(field -> {
-            DefinedElement element = asDefinedElement(defineType, field, viewObjectType, value, finalValueFields);
+            DefinedElement element = asDefinedElement(defineType, field,
+                viewObjectType, value, finalValueFields, dataExchange, namePrefix);
             if (null != element) {
 
                 // readonly or disabled behave
@@ -594,9 +619,14 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
     @SuppressWarnings("unchecked")
     private DefinedElement asDefinedElement(DefineType defineType, Field field,
-        Class<? extends Renderable> viewObjectType, Object value, List<Field> valueFields) {
+        Class<? extends Renderable> viewObjectType, Object value, List<Field> valueFields,
+        DataExchange dataExchange, String namePrefix) {
         String  voName = viewObjectType.getSimpleName();
         String fieldName = field.getName();
+
+        boolean isRenderable = isRenderable(field.getType());
+        boolean hasDataExchange = null != dataExchange && dataExchange.has(fieldName);
+        Object extraResource = hasDataExchange ? dataExchange.get(fieldName).apply(value) : null;
 
         DefineElement defineElement = field.getAnnotation(DefineElement.class);
         boolean hasDefineElement = null != defineElement;
@@ -659,7 +689,8 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             }
 
             if (!isNullOrEmpty(fragment)) {
-                String fragmentValue = getFragmentValue(value, fragment);
+                String fragmentValue = getFragmentValue(value, fragment,
+                    (Context context) -> context.setVariable("extraResource", extraResource));
                 element.setValue(fragmentValue);
                 element.setFragmentValue(true);
                 return element;
@@ -687,11 +718,17 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 tag = defineElement.tag();
             }
 
+            //View object filed only supports HtmlTag.VIEW_OBJECT
+            if (isRenderable) {
+                tag = HtmlTag.VIEW_OBJECT;
+            }
+
             checkArgument(tag != UNDEFINED,
                 "undefined field tag %s.%s", voName, fieldName);
             element.setTag(tag);
             element.setTagName(tag.toString());
 
+            boolean hasNamePrefix = !isNullOrEmpty(namePrefix);
             //id
             String id = null;
             if (isEditable) {
@@ -716,7 +753,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
             if (isNullOrEmpty(id)) {
                 //auto generator "el_{fieldName}"
-                id = format(ELEMENT_ID_FORMAT, fieldName);
+                id = format(hasNamePrefix ? ELEMENT_ID_WITH_PREFIX_FORMAT : ELEMENT_ID_FORMAT, fieldName);
             }
 
             if (isSearchable) {
@@ -750,6 +787,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             if (isNullOrEmpty(name)) {
                 name = fieldName;
             }
+            name = hasNamePrefix ? format(ELEMENT_NAME_WITH_PREFIX_FORMAT, namePrefix, name) : name;
             element.setName(name);
 
             //type
@@ -976,7 +1014,32 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             element.setAttributes(elementAttributes);
 
             //value
-            if (null != valueFields && valueFields.size() > 0) {
+            Object fieldValue = null;
+
+            // View Object Field
+            if (isRenderable) {
+                Class<? extends Renderable> fieldViewObject = (Class<? extends Renderable>) field.getType();
+                if (hasDataExchange) {
+                    fieldValue = getDefinedElements(defineType, fieldViewObject, extraResource, dataExchange, fieldName);
+                } else {
+                    final Object[] aFieldValue = {null};
+
+                    getFieldByName(valueFields, fieldName).ifPresent(theValueField -> {
+                        Object aValue = getFieldValue(theValueField, value);
+                        if (null != aValue) {
+                            aFieldValue[0] = getDefinedElements(defineType, fieldViewObject, aValue, dataExchange, fieldName);
+                        }
+                    });
+
+                    fieldValue = aFieldValue[0];
+                }
+            }
+
+            if (null == fieldValue && hasDataExchange) {
+                fieldValue = extraResource;
+            }
+
+            if (null == fieldValue && !hasDataExchange && null != valueFields && valueFields.size() > 0) {
 
                 //date style
                 String dateStyle = null;
@@ -1000,8 +1063,9 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                     dateStyle = defineElement.dateStyle();
                 }
 
-                element.setValue(getFieldValueByName(value, valueFields, fieldName, dateStyle, field));
+                fieldValue = getFieldValueByName(value, valueFields, fieldName, dateStyle, field);
             }
+            element.setValue(fieldValue);
 
             //options
             Class<? extends Enum> optionsClass = null;
@@ -1066,12 +1130,16 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         element.setHidden(true);
     }
 
+    private boolean isRenderable(Class<?> targetClazz) {
+        return Renderable.class.isAssignableFrom(targetClazz);
+    }
+
     private boolean hasOptionsValue(Class<? extends Enum> optionsClass) {
         return newArrayList(optionsClass.getInterfaces()).contains(OptionValue.class);
     }
 
     private boolean hasTouchViewObjectValue(Class<? extends Renderable> targetClazz) {
-        return Renderable.class != targetClazz && Renderable.class.isAssignableFrom(targetClazz);
+        return Renderable.class != targetClazz && isRenderable(targetClazz);
     }
 
     private void setFieldValue(Field field, Object valueObj, Object aValue, String dateStyle) {
@@ -1083,6 +1151,18 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 valueObj.getClass().getSimpleName(), field.getName(), e.getMessage());
             Throwables.throwIfUnchecked(e);
         }
+    }
+
+    private Object getFieldValue(Field field, Object valueObj) {
+        try {
+            field.setAccessible(true);
+            return field.get(valueObj);
+        } catch (IllegalAccessException e) {
+            log.warn("value object {}.{} is not present", valueObj.getClass().getSimpleName(), field.getName());
+            Throwables.throwIfUnchecked(e);
+        }
+
+        return null;
     }
 
     private Object getFieldValueByName(Object valueObj, List<Field> fields,
@@ -1173,6 +1253,93 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         return definedAccess;
     }
 
+    @Override
+    public <T> SaveEntity<T> getSaveEntity(Renderable renderable, T entity) {
+        final boolean[] isCreate = {false};
+        List<Field> fields = getFields(renderable.getClass());
+
+        Actionable actionable = renderable.getClass().getAnnotation(Actionable.class);
+        String primaryKey = null == actionable ? "id" : actionable.uniqueField();
+
+        fields.stream()
+            .filter(field -> field.getName().equals(primaryKey))
+            .findFirst()
+            .ifPresent(field -> isCreate[0] = null == getFieldValue(field, renderable))
+            ;
+
+        fields.forEach(field -> setSaveEntity(isCreate[0], field, renderable, entity));
+        return SaveEntity.of(isCreate[0], primaryKey, entity);
+    }
+
+    @Override
+    public SearchEntity getSearchEntity(Renderable condition) {
+        List<Field> fields = getFields(condition.getClass());
+
+        Actionable actionable = condition.getClass().getAnnotation(Actionable.class);
+        String primaryKey = null == actionable ? "id" : actionable.uniqueField();
+
+        List<SearchField> searchFields = Lists.newArrayList();
+        fields.forEach(field -> asSearchField(field, condition, searchFields));
+        return SearchEntity.of(primaryKey, searchFields);
+    }
+
+    private void asSearchField(Field field, Renderable condition, List<SearchField> searchFields) {
+        Searchable searchable = field.getAnnotation(Searchable.class);
+        boolean isSearchable = null != searchable;
+
+        if (isSearchable) {
+            SearchField searchField = new SearchField();
+            searchField.setConditionTemplate(searchable.condition());
+            searchField.setSide(searchable.likeSide());
+            searchField.setName(field.getName());
+
+            Object aValue = getFieldValue(field, condition);
+            searchField.setValue(aValue);
+
+            searchFields.add(searchField);
+        }
+    }
+
+    private <T> void setSaveEntity(boolean isCreate, Field field, Renderable renderable, T entity) {
+        String fieldName = field.getName();
+        Creatable creatable = field.getAnnotation(Creatable.class);
+        boolean isCreateable = isCreate && null != creatable;
+
+        Updatable updatable = field.getAnnotation(Updatable.class);
+        boolean isUpdatable = !isCreate && null != updatable;
+
+        DefineElement defineElement = field.getAnnotation(DefineElement.class);
+        boolean hasDefineElement = null != defineElement;
+
+        if (isCreateable || isUpdatable) {
+
+            String dateStyle = null;
+            if (isCreateable) {
+                dateStyle = creatable.dateStyle();
+            }
+
+            if (isUpdatable) {
+                dateStyle = updatable.dateStyle();
+            }
+
+            if (isNullOrEmpty(dateStyle) && hasDefineElement) {
+                dateStyle = defineElement.dateStyle();
+            }
+
+            Object aValue = getFieldValue(field, renderable);
+
+            Date now = new Date();
+            if (FIELD_CREATE_TIME.equals(fieldName) && null == aValue) {
+                aValue = now;
+            }
+            if (FIELD_LAST_MODIFY_TIME.equals(fieldName) && null == aValue) {
+                aValue = now;
+            }
+
+            setFieldValue(field, entity, aValue, dateStyle);
+        }
+    }
+
     private DefinedTouchAccess asDefinedTouchAccess(DefineTouch defineTouch, Predicate<String> predicate) {
         TouchAccessable touchAccessable = defineTouch.accessable();
         boolean hasIndex = predicate.test(touchAccessable.index());
@@ -1182,17 +1349,17 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     }
 
     private static final String TITLE_FORMAT = "render.%s.module.title";
-    private static final String INDEX_FORMAT = "%s%s/index";
-    private static final String RELATION_FORMAT = "%s%s/relation";
-    private static final String LIST_FORMAT = "%s%ss";
-    private static final String RETRIEVE_FORMAT = "%s%s/{0}";
-    private static final String CREATE_FORMAT = "%s%s";
-    private static final String UPDATE_FORMAT = "%s%s";
-    private static final String DELETE_FORMAT = "%s%s/{0}";
-    private static final String PAGE_ID_FORMAT = "%s_%s";
-    private static final String SEARCH_ID_FORMAT = "%s_search_%s";
-    private static final String CONTENT_ID_FORMAT = "%s_content_%s";
-    private static final String EDIT_ID_FORMAT = "%s_edit_item";
+    private static final String INDEX_FORMAT = "%s%s/index";            // /manage/role/index
+    private static final String RELATION_FORMAT = "%s%s/relation";      // /manage/role/relation
+    private static final String LIST_FORMAT = "%s%ss";                  // /manage/roles
+    private static final String RETRIEVE_FORMAT = "%s%s/{0}";           // /manage/role/100
+    private static final String CREATE_FORMAT = "%s%s";                 // /manage/role
+    private static final String UPDATE_FORMAT = "%s%s";                 // /manage/role
+    private static final String DELETE_FORMAT = "%s%s/{0}";             // /manage/role/100
+    private static final String PAGE_ID_FORMAT = "%s_%s";               // role_1514540850329
+    private static final String SEARCH_ID_FORMAT = "%s_search_%s";      // role_search_1514540850329
+    private static final String CONTENT_ID_FORMAT = "%s_content_%s";    // role_content_1514540850329
+    private static final String EDIT_ID_FORMAT = "%s_edit_item";        // role_edit_item
 
     @Override
     public <T extends Renderable> PageInfo getPageInfo(Class<T> viewObjectType, String manageBaseUrl) {

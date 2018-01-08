@@ -30,7 +30,7 @@ public @interface Actionable {
     boolean delete() default true;
 
     /**
-     * Unique field value in the list
+     * Primary Key, unique field value in the list
      */
     String uniqueField() default "id";
 

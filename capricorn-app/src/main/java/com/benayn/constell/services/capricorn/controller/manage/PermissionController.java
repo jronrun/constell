@@ -13,7 +13,7 @@ import com.benayn.constell.services.capricorn.config.Authorities;
 import com.benayn.constell.services.capricorn.repository.domain.Permission;
 import com.benayn.constell.services.capricorn.service.PermissionService;
 import com.benayn.constell.services.capricorn.settings.constant.Menus;
-import com.benayn.constell.services.capricorn.viewobject.PermissionVo;
+import com.benayn.constell.services.capricorn.viewobject.PermissionVO;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping(value = MANAGE_BASE)
-public class PermissionController extends BaseManageController<PermissionVo> {
+public class PermissionController extends BaseManageController<PermissionVO> {
 
     private PermissionService permissionService;
 
@@ -47,7 +47,7 @@ public class PermissionController extends BaseManageController<PermissionVo> {
     public String index(Authentication authentication, Model model,
         @RequestHeader(value = "condition", required = false) String condition,
         @RequestHeader(value = "touchable", required = false) Boolean touchable) {
-        return genericIndex(authentication, model, touchable, decodes(condition, PermissionVo.class));
+        return genericIndex(authentication, model, touchable, decodes(condition, PermissionVO.class));
     }
 
     @PreAuthorize(Authorities.RELATION_ROLE_PERMISSION_CREATE)
@@ -64,7 +64,7 @@ public class PermissionController extends BaseManageController<PermissionVo> {
 
     @PreAuthorize(Authorities.PERMISSION_INDEX)
     @GetMapping("permissions")
-    public String permissions(Authentication authentication, Model model, PermissionVo condition) {
+    public String permissions(Authentication authentication, Model model, PermissionVO condition) {
         return genericList(authentication, model, permissionService.selectPageBy(condition), condition);
     }
 
@@ -87,7 +87,7 @@ public class PermissionController extends BaseManageController<PermissionVo> {
 
     @PreAuthorize(Authorities.PERMISSION_UPDATE)
     @PutMapping(value = "permission", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Message> update(@Valid @RequestBody PermissionVo entity) throws ServiceException {
+    public ResponseEntity<Message> update(@Valid @RequestBody PermissionVO entity) throws ServiceException {
         return success(permissionService.save(entity));
     }
 

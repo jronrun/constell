@@ -8,13 +8,14 @@ import static com.benayn.constell.service.util.Assets.checkRecordSaved;
 import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.service.server.respond.TouchRelation;
+import com.benayn.constell.service.util.Likes;
 import com.benayn.constell.services.capricorn.enums.CacheName;
 import com.benayn.constell.services.capricorn.repository.RoleRepository;
 import com.benayn.constell.services.capricorn.repository.domain.Role;
 import com.benayn.constell.services.capricorn.repository.domain.RoleExample;
 import com.benayn.constell.services.capricorn.repository.domain.RoleExample.Criteria;
 import com.benayn.constell.services.capricorn.service.RoleService;
-import com.benayn.constell.services.capricorn.viewobject.RoleVo;
+import com.benayn.constell.services.capricorn.viewobject.RoleVO;
 import com.google.common.collect.Lists;
 import java.util.Date;
 import java.util.List;
@@ -39,16 +40,16 @@ public class RoleServiceBean implements RoleService {
     }
 
     @Override
-    public Page<Role> selectPageBy(RoleVo condition) {
+    public Page<Role> selectPageBy(RoleVO condition) {
         RoleExample example = new RoleExample();
         Criteria criteria = example.createCriteria();
 
         if (null != condition.getCode()) {
-            criteria.andCodeLike(condition.like(condition.getCode()));
+            criteria.andCodeLike(Likes.get(condition.getCode()));
         }
 
         if (null != condition.getLabel()) {
-            criteria.andLabelLike(condition.like(condition.getLabel()));
+            criteria.andLabelLike(Likes.get(condition.getLabel()));
         }
 
         if (condition.hasTouchOwner()) {
@@ -128,7 +129,7 @@ public class RoleServiceBean implements RoleService {
         CacheName.MENUS,
         CacheName.ACCOUNT_ROLES
     }, condition = "null != #entity && null != #entity.id", allEntries = true)
-    public int save(RoleVo entity) throws ServiceException {
+    public int save(RoleVO entity) throws ServiceException {
         Date now = new Date();
 
         Role item = new Role();

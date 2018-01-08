@@ -1,5 +1,6 @@
 package com.benayn.constell.services.capricorn.viewobject;
 
+import static com.benayn.constell.service.server.repository.domain.ConditionTemplate.LIKE;
 import static com.benayn.constell.service.server.respond.HtmlTag.SELECT;
 import static com.benayn.constell.service.server.respond.HtmlTag.TOGGLE;
 import static com.benayn.constell.service.server.respond.InputType.PASSWORD;
@@ -36,7 +37,7 @@ import org.hibernate.validator.constraints.Email;
 @Setter
 @ToString
 @Actionable(editField = "username", appendFragment = "account_list_append_action", readyFragment = "account_page_ready")
-@DefineTouch(name = "render.role.touch.role", view = RoleVo.class, master = true, accessable = @TouchAccessable(
+@DefineTouch(name = "render.role.touch.role", view = RoleVO.class, master = true, accessable = @TouchAccessable(
     index = MODEL_ROLE_INDEX,
     create = RELATION_ACCOUNT_ROLE_CREATE,
     delete = RELATION_ACCOUNT_ROLE_DELETE
@@ -46,7 +47,7 @@ import org.hibernate.validator.constraints.Email;
     retrieve = ACCOUNT_RETRIEVE,
     update = ACCOUNT_UPDATE,
     delete = ACCOUNT_DELETE)
-public class AccountVo extends Renderable {
+public class AccountVO extends Renderable {
 
     @DefineElement("render.common.id")
     @Searchable
@@ -57,7 +58,7 @@ public class AccountVo extends Renderable {
 
     @NotNull
     @DefineElement("render.account.username")
-    @Searchable(like = true)
+    @Searchable(condition = LIKE)
     @Listable
     @Touchable
     @Editable
@@ -66,7 +67,7 @@ public class AccountVo extends Renderable {
     @NotNull
     @Email
     @DefineElement("render.account.email")
-    @Searchable(like = true)
+    @Searchable(condition = LIKE)
     @Listable
     @Touchable
     @Updatable(readonly = true, disabled = true)

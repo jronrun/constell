@@ -21,6 +21,7 @@ public class Authorities {
 
     public static final String MENU_AUTHORIZATION = "hasPermission(null, 'MENU_AUTHORIZATION')";
     public static final String MENU_SETTINGS = "hasPermission(null, 'MENU_SETTINGS')";
+    public static final String MENU_UGC = "hasPermission(null, 'MENU_UGC')";
 
     public static final String RELATION_ACCOUNT_ROLE_CREATE = "hasPermission(null, 'RELATION_ACCOUNT_ROLE_CREATE')";
     public static final String RELATION_ACCOUNT_ROLE_DELETE = "hasPermission(null, 'RELATION_ACCOUNT_ROLE_DELETE')";
@@ -46,5 +47,28 @@ public class Authorities {
     public static final String PERMISSION_UPDATE = "hasPermission(null, 'PERMISSION_UPDATE')";
     public static final String PERMISSION_DELETE = "hasPermission(null, 'PERMISSION_DELETE')";
 
+    public static final String TAG_INDEX = "hasPermission(null, 'TAG_INDEX')";
+    public static final String TAG_CREATE = "hasPermission(null, 'TAG_CREATE')";
+    public static final String TAG_RETRIEVE = "hasPermission(null, 'TAG_RETRIEVE')";
+    public static final String TAG_UPDATE = "hasPermission(null, 'TAG_UPDATE')";
+    public static final String TAG_DELETE = "hasPermission(null, 'TAG_DELETE')";
+
+    public static final String CONTENT_INDEX = "hasPermission(null, 'CONTENT_INDEX')";
+    public static final String CONTENT_CREATE = "hasPermission(null, 'CONTENT_CREATE')";
+    public static final String CONTENT_RETRIEVE = "hasPermission(null, 'CONTENT_RETRIEVE')";
+    public static final String CONTENT_UPDATE = "hasPermission(null, 'CONTENT_UPDATE')";
+    public static final String CONTENT_DELETE = "hasPermission(null, 'CONTENT_DELETE')";
+
+    public static final String SHARE_INDEX = "hasPermission(null, 'SHARE_INDEX')";
+    public static final String SHARE_CREATE = "hasPermission(null, 'SHARE_CREATE')";
+    public static final String SHARE_RETRIEVE = "hasPermission(null, 'SHARE_RETRIEVE')";
+    public static final String SHARE_UPDATE = "hasPermission(null, 'SHARE_UPDATE')";
+    public static final String SHARE_DELETE = "hasPermission(null, 'SHARE_DELETE')";
+
+    public static final String SHARE_ACCESS_INDEX = "hasPermission(null, 'SHARE_ACCESS_INDEX')";
+    public static final String SHARE_ACCESS_CREATE = "hasPermission(null, 'SHARE_ACCESS_CREATE')";
+    public static final String SHARE_ACCESS_RETRIEVE = "hasPermission(null, 'SHARE_ACCESS_RETRIEVE')";
+    public static final String SHARE_ACCESS_UPDATE = "hasPermission(null, 'SHARE_ACCESS_UPDATE')";
+    public static final String SHARE_ACCESS_DELETE = "hasPermission(null, 'SHARE_ACCESS_DELETE')";
     /* manage end */
 }

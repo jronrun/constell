@@ -6,7 +6,7 @@ import com.benayn.constell.service.server.repository.Page;
 import com.benayn.constell.services.capricorn.repository.domain.Account;
 import com.benayn.constell.services.capricorn.repository.model.AccountDetails;
 import com.benayn.constell.services.capricorn.repository.model.UserToken;
-import com.benayn.constell.services.capricorn.viewobject.AccountVo;
+import com.benayn.constell.services.capricorn.viewobject.AccountVO;
 import java.util.List;
 
 public interface AccountService {
@@ -22,10 +22,10 @@ public interface AccountService {
 
     Account selectById(long entityId);
 
-    Page<Account> selectPageBy(AccountVo condition);
+    Page<Account> selectPageBy(AccountVO condition);
 
     int deleteById(Long entityId) throws ServiceException;
 
-    int save(AccountVo entity) throws ServiceException;
+    int save(AccountVO entity) throws ServiceException;
 
 }

@@ -28,6 +28,13 @@ public class MenuController {
 
     }
 
+    @RolesAllowed(Authorities.MENU_UGC)
+    @MenuCapability(value = Menus.UGC, group = Menus.GROUP_CAPRICORN)
+    @GetMapping(value = "menu/ugc")
+    public void menuUGC() {
+
+    }
+
     @RolesAllowed(Authorities.ROLE_MANAGE)
     @MenuCapability(value = Menus.HELP, group = Menus.GROUP_HELP, groupOrder = 20)
     @GetMapping(value = "menu/help")

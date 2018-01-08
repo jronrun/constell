@@ -1,5 +1,6 @@
 package com.benayn.constell.services.capricorn.viewobject;
 
+import static com.benayn.constell.service.server.repository.domain.ConditionTemplate.LIKE;
 import static com.benayn.constell.services.capricorn.config.Authorities.MODEL_ROLE_INDEX;
 import static com.benayn.constell.services.capricorn.config.Authorities.PERMISSION_CREATE;
 import static com.benayn.constell.services.capricorn.config.Authorities.PERMISSION_DELETE;
@@ -8,6 +9,7 @@ import static com.benayn.constell.services.capricorn.config.Authorities.PERMISSI
 import static com.benayn.constell.services.capricorn.config.Authorities.RELATION_ROLE_PERMISSION_CREATE;
 import static com.benayn.constell.services.capricorn.config.Authorities.RELATION_ROLE_PERMISSION_DELETE;
 
+import com.benayn.constell.service.server.repository.domain.ConditionTemplate;
 import com.benayn.constell.service.server.respond.Accessable;
 import com.benayn.constell.service.server.respond.Actionable;
 import com.benayn.constell.service.server.respond.DefineElement;
@@ -29,7 +31,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Actionable(createFragment = "permission_create", delete = false)
-@DefineTouch(name = "render.permission.touch.role", view = RoleVo.class, accessable = @TouchAccessable(
+@DefineTouch(name = "render.permission.touch.role", view = RoleVO.class, accessable = @TouchAccessable(
     index = MODEL_ROLE_INDEX,
     create = RELATION_ROLE_PERMISSION_CREATE,
     delete = RELATION_ROLE_PERMISSION_DELETE
@@ -39,7 +41,7 @@ import lombok.ToString;
     retrieve = PERMISSION_RETRIEVE,
     update = PERMISSION_UPDATE,
     delete = PERMISSION_DELETE)
-public class PermissionVo extends Renderable {
+public class PermissionVO extends Renderable {
 
     @DefineElement("render.common.id")
     @Listable
@@ -50,7 +52,7 @@ public class PermissionVo extends Renderable {
     @NotNull
     @Size(min = 1)
     @DefineElement("render.permission.code")
-    @Searchable(like = true)
+    @Searchable(condition = LIKE)
     @Listable
     @Editable(readonly = true, disabled = true)
     @Touchable
@@ -59,7 +61,7 @@ public class PermissionVo extends Renderable {
     @NotNull
     @Size(min = 1)
     @DefineElement("render.permission.label")
-    @Searchable(like = true)
+    @Searchable(condition = LIKE)
     @Listable
     @Editable(tag = HtmlTag.TEXTAREA, attributes = {"rows=3"})
     @Touchable
