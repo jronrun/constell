@@ -56,7 +56,7 @@ public class TagVO extends Renderable {
     @Size(min = 1)
     @DefineElement("render.tag.label")
     @Searchable(condition = LIKE)
-    @Listable
+    @Listable(fragment = "tag_list_label")
     @Editable(tag = HtmlTag.TEXTAREA, attributes = {"rows=3"})
     private String label;
 
@@ -69,7 +69,6 @@ public class TagVO extends Renderable {
     @NotNull
     @DefineElement(value = "render.tag.color", options = ColorCode.class, defaultOption = "grey", tag = SELECT)
     @Editable
-    @Listable
     private String color;
 
     @DefineElement("render.common.createTime")
