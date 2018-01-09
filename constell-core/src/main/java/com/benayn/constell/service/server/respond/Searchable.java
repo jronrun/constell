@@ -76,6 +76,11 @@ public @interface Searchable {
     Class<? extends Enum> options() default Enum.class;
 
     /**
+     * Element default option, value should be an instance of {@link Searchable#options()}
+     */
+    String defaultOption() default "";
+
+    /**
      * Define By Fragment, if set then above set will be ignore
      */
     String fragment() default "";

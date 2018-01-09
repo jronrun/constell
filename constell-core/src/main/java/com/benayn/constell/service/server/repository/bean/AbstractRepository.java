@@ -20,16 +20,12 @@ import com.benayn.constell.service.server.repository.Sorting;
 import com.benayn.constell.service.server.repository.SqlStatement;
 import com.google.common.collect.Lists;
 import java.util.List;
+import lombok.Getter;
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractRepository<T, E> implements Repository<T, E>, InitializingBean {
-
-    /**
-     * Mybatis Example
-     */
-    private ExamplePageFeature pageFeature;
 
     @Override
     public long countBy(E example) {
@@ -117,15 +113,6 @@ public abstract class AbstractRepository<T, E> implements Repository<T, E>, Init
         return getSqlSession().getMapper(mapperType);
     }
 
-    /**
-     * Returns SqlSession
-     * @return SqlSession
-     */
-    @SuppressWarnings("WeakerAccess")
-    protected SqlSession getSqlSession() {
-        return sqlSession;
-    }
-
     private String getStatement(SqlStatement sqlId) {
         return getNamespace() + "." + sqlId.getStatement();
     }
@@ -157,16 +144,21 @@ public abstract class AbstractRepository<T, E> implements Repository<T, E>, Init
         this.sqlSession = sqlSession;
     }
 
-    @Override
-    public String getNamespace() {
-        return namespace;
-    }
-
     /**
      * Mapper Namespace
      */
+    @Getter
     private String namespace;
+
+    /**
+     * Mybatis Example
+     */
+    @Getter
+    private ExamplePageFeature pageFeature;
+
+    @Getter
     private SqlSession sqlSession;
+
     protected final List<T> EMPTY_ITEMS = Lists.newArrayList();
 
     public AbstractRepository(String namespace) {

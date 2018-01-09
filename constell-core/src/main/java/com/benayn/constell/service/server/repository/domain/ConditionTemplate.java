@@ -25,6 +25,10 @@ public enum ConditionTemplate {
     @Getter
     private final String template;
 
+    public boolean isNoneValueTemplate() {
+        return this == IS_NULL || this == IS_NOT_NULL;
+    }
+
     public boolean isLikeTemplate() {
         return this == LIKE || this == NOT_LIKE;
     }

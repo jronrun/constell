@@ -6,4 +6,8 @@ public interface OptionValue<V> {
 
     V getValue();
 
+    default String stringValue() {
+        return String.valueOf(getValue());
+    }
+
 }

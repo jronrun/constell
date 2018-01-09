@@ -2,6 +2,7 @@ package com.benayn.constell.services.capricorn.controller.manage;
 
 
 import static com.benayn.constell.service.server.respond.Responds.success;
+import static com.benayn.constell.service.server.security.Authentications.getUserId;
 import static com.benayn.constell.service.util.LZString.decodes;
 import static com.benayn.constell.services.capricorn.settings.constant.CapricornConstant.MANAGE_BASE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -69,7 +70,8 @@ public class TagController extends BaseManageController<TagVO> {
 
     @PreAuthorize(Authorities.TAG_CREATE)
     @PostMapping(value = "tag", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Message> create(@Valid @RequestBody TagVO entity) throws ServiceException {
+    public ResponseEntity<Message> create(@Valid @RequestBody TagVO entity, Authentication authentication) throws ServiceException {
+        entity.setUserId(getUserId(authentication));
         return success(tagService.save(entity));
     }
 

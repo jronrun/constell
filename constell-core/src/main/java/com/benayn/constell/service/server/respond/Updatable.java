@@ -95,6 +95,11 @@ public @interface Updatable {
     Class<? extends Enum> options() default Enum.class;
 
     /**
+     * Element default option, value should be an instance of {@link Updatable#options()}
+     */
+    String defaultOption() default "";
+
+    /**
      * Define By Fragment, if set then above set will be ignore
      */
     String fragment() default "";

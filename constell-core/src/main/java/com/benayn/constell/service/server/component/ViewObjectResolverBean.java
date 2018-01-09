@@ -37,6 +37,7 @@ import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.OptionValue;
 import com.benayn.constell.service.server.respond.PageInfo;
 import com.benayn.constell.service.server.respond.Renderable;
+import com.benayn.constell.service.server.respond.Saveable;
 import com.benayn.constell.service.server.respond.Searchable;
 import com.benayn.constell.service.server.respond.TouchAccessable;
 import com.benayn.constell.service.server.respond.Touchable;
@@ -1067,6 +1068,28 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             }
             element.setValue(fieldValue);
 
+            //default option
+            String defaultOption = null;
+            if (isEditable) {
+                defaultOption = editable.defaultOption();
+            }
+
+            if (isCreatable) {
+                defaultOption = creatable.defaultOption();
+            }
+
+            if (isUpdatable) {
+                defaultOption = updatable.defaultOption();
+            }
+
+            if (isSearchable) {
+                defaultOption = searchable.defaultOption();
+            }
+
+            if (isNullOrEmpty(defaultOption) && hasDefineElement) {
+                defaultOption = defineElement.defaultOption();
+            }
+
             //options
             Class<? extends Enum> optionsClass = null;
             if (isEditable) {
@@ -1090,11 +1113,16 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             }
 
             if (hasOptionsValue(optionsClass)) {
+
+                if (null == element.getValue() && !isNullOrEmpty(defaultOption)) {
+                    element.setValue(defaultOption);
+                }
+
                 List<DefinedOption> definedOptions = (List<DefinedOption>) EnumSet.allOf(optionsClass).stream()
                     .map(item -> {
                         OptionValue option = (OptionValue) item;
                         return DefinedOption.of(getMessage(option.getLabel(), option.getLabel()),
-                            option.getValue(), Objects.equals(option.getValue(), element.getValue()));
+                            option.getValue(), Objects.equals(option.stringValue(), String.valueOf(element.getValue())));
                     })
                     .collect(Collectors.toList());
 
@@ -1142,6 +1170,13 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         return Renderable.class != targetClazz && isRenderable(targetClazz);
     }
 
+    private <T> void setFieldValue(T entity, List<Field> entityFields,
+        String entityFieldName, Object entityFieldValue, String dateStyle) {
+        getFieldByName(entityFields, entityFieldName)
+            .ifPresent(entityField -> setFieldValue(entityField, entity, entityFieldValue, dateStyle))
+        ;
+    }
+
     private void setFieldValue(Field field, Object valueObj, Object aValue, String dateStyle) {
         try {
             field.setAccessible(true);
@@ -1151,6 +1186,15 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 valueObj.getClass().getSimpleName(), field.getName(), e.getMessage());
             Throwables.throwIfUnchecked(e);
         }
+    }
+
+    private Object getFieldValue(List<Field> fields, Object valueObject, String fieldName) {
+        final Object[] value = {null};
+        getFieldByName(fields, fieldName)
+            .ifPresent(entityField -> value[0] = getFieldValue(entityField, valueObject))
+        ;
+
+        return value[0];
     }
 
     private Object getFieldValue(Field field, Object valueObj) {
@@ -1255,20 +1299,22 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
     @Override
     public <T> SaveEntity<T> getSaveEntity(Renderable renderable, T entity) {
-        final boolean[] isCreate = {false};
         List<Field> fields = getFields(renderable.getClass());
+        List<Field> entityFields = getFields(entity.getClass());
 
         Actionable actionable = renderable.getClass().getAnnotation(Actionable.class);
         String primaryKey = null == actionable ? "id" : actionable.uniqueField();
 
-        fields.stream()
-            .filter(field -> field.getName().equals(primaryKey))
-            .findFirst()
-            .ifPresent(field -> isCreate[0] = null == getFieldValue(field, renderable))
-            ;
+        final boolean isCreate = null == getFieldValue(fields, renderable, primaryKey);
+        fields.forEach(field -> setSaveEntity(isCreate, field, renderable, entity, entityFields));
 
-        fields.forEach(field -> setSaveEntity(isCreate[0], field, renderable, entity));
-        return SaveEntity.of(isCreate[0], primaryKey, entity);
+        Date now = new Date();
+        if (isCreate) {
+            setFieldValue(entity, entityFields, FIELD_CREATE_TIME, now, null);
+        }
+        setFieldValue(entity, entityFields, FIELD_LAST_MODIFY_TIME, now, null);
+
+        return SaveEntity.of(isCreate, primaryKey, entity);
     }
 
     @Override
@@ -1300,8 +1346,13 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         }
     }
 
-    private <T> void setSaveEntity(boolean isCreate, Field field, Renderable renderable, T entity) {
+    private <T> void setSaveEntity(boolean isCreate, Field field, Renderable renderable,
+        T entity, List<Field> entityFields) {
         String fieldName = field.getName();
+
+        Editable editable = field.getAnnotation(Editable.class);
+        boolean isEditable = null != editable;
+
         Creatable creatable = field.getAnnotation(Creatable.class);
         boolean isCreateable = isCreate && null != creatable;
 
@@ -1311,9 +1362,16 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         DefineElement defineElement = field.getAnnotation(DefineElement.class);
         boolean hasDefineElement = null != defineElement;
 
-        if (isCreateable || isUpdatable) {
+        Saveable saveable = field.getAnnotation(Saveable.class);
+        boolean isSaveable = null != saveable;
+
+        if (isEditable || isCreateable || isUpdatable || isSaveable) {
 
             String dateStyle = null;
+            if (isEditable) {
+                dateStyle = editable.dateStyle();
+            }
+
             if (isCreateable) {
                 dateStyle = creatable.dateStyle();
             }
@@ -1327,16 +1385,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             }
 
             Object aValue = getFieldValue(field, renderable);
-
-            Date now = new Date();
-            if (FIELD_CREATE_TIME.equals(fieldName) && null == aValue) {
-                aValue = now;
-            }
-            if (FIELD_LAST_MODIFY_TIME.equals(fieldName) && null == aValue) {
-                aValue = now;
-            }
-
-            setFieldValue(field, entity, aValue, dateStyle);
+            setFieldValue(entity, entityFields, fieldName, aValue, dateStyle);
         }
     }
 

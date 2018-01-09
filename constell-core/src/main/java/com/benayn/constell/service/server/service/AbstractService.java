@@ -28,7 +28,15 @@ public abstract class AbstractService<T> implements Service<T> {
     private ViewObjectResolver viewObjectResolver;
 
     public AbstractService(Repository repository) {
-        this.repository = new AbstractRepository<T, GenericExample>(repository.getNamespace()) {};
+        AbstractRepository givenRepository = (AbstractRepository) repository;
+
+        AbstractRepository<T, GenericExample> abstractRepository =
+            new AbstractRepository<T, GenericExample>(repository.getNamespace()) {};
+
+        abstractRepository.setSqlSession(givenRepository.getSqlSession());
+        abstractRepository.setPageFeature(givenRepository.getPageFeature());
+
+        this.repository = abstractRepository;
     }
 
     @Override
@@ -43,15 +51,21 @@ public abstract class AbstractService<T> implements Service<T> {
 
         SearchEntity searchEntity = viewObjectResolver.getSearchEntity(condition);
         searchEntity.getFields().forEach(field -> {
-            Object value1, value2 = null;
             ConditionTemplate template = field.getConditionTemplate();
 
+            if (null == field.getValue() && !template.isNoneValueTemplate()) {
+                return;
+            }
+
+            Object value1, value2 = null;
             if (template.isLikeTemplate()) {
                 value1 = Likes.get(String.valueOf(field.getValue()), field.getSide());
             } else if (template.isBetweenTemplate()) {
                 Pair<?, ?> pair = (Pair<?, ?>) field.getValue();
                 value1 = pair.getKey();
                 value2 = pair.getValue();
+            } else if (template.isNoneValueTemplate()) {
+                value1 = null;
             } else {
                 value1 = field.getValue();
             }

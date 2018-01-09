@@ -14,6 +14,7 @@ import com.benayn.constell.service.server.respond.Editable;
 import com.benayn.constell.service.server.respond.HtmlTag;
 import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.Renderable;
+import com.benayn.constell.service.server.respond.Saveable;
 import com.benayn.constell.service.server.respond.Searchable;
 import com.benayn.constell.services.capricorn.enums.ColorCode;
 import com.benayn.constell.services.capricorn.enums.TagType;
@@ -36,10 +37,12 @@ import lombok.ToString;
 public class TagVO extends Renderable {
 
     @DefineElement("render.common.id")
-    @Searchable
     @Listable
     @Editable(hidden = true)
     private Long id;
+
+    @Saveable
+    private Long userId;
 
     @NotNull
     @Pattern(regexp = "^TAG_.*", message = "{valid.tag.code.pattern}")
@@ -57,12 +60,14 @@ public class TagVO extends Renderable {
     @Editable(tag = HtmlTag.TEXTAREA, attributes = {"rows=3"})
     private String label;
 
+    @NotNull
     @DefineElement(value = "render.tag.type", options = TagType.class, tag = SELECT)
     @Editable
     @Listable
     private Short type;
 
-    @DefineElement(value = "render.tag.color", options = ColorCode.class, tag = SELECT)
+    @NotNull
+    @DefineElement(value = "render.tag.color", options = ColorCode.class, defaultOption = "grey", tag = SELECT)
     @Editable
     @Listable
     private String color;
