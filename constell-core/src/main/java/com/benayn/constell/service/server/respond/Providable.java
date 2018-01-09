@@ -11,7 +11,8 @@ import java.lang.annotation.Target;
 
 /**
  * Will save or search by generic service,
- * even though none of {@link Editable}, {@link Creatable}, {@link Updatable}, {@link Searchable}
+ * even though none of {@link Editable}, {@link Creatable}, {@link Updatable}, {@link Searchable},
+ * and never show in page
  */
 @Target({ ElementType.FIELD, ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
