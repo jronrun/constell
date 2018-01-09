@@ -1,5 +1,8 @@
 package com.benayn.constell.services.capricorn.service.bean;
 
+import static com.benayn.constell.service.util.Assets.checkRecordDeleted;
+
+import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.service.GenericService;
 import com.benayn.constell.services.capricorn.enums.ContentStatus;
 import com.benayn.constell.services.capricorn.repository.ContentRepository;
@@ -20,10 +23,10 @@ public class ContentServiceBean extends GenericService<Content> implements Conte
     }
 
     @Override
-    public int deleteByContentId(Long entityId) {
+    public int deleteByContentId(Long entityId) throws ServiceException {
         Content delete = new Content();
         delete.setId(entityId);
         delete.setStatus(ContentStatus.DELETED.getValue());
-        return contentRepository.updateById(delete);
+        return checkRecordDeleted(contentRepository.updateById(delete));
     }
 }
