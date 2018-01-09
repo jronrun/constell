@@ -14,7 +14,7 @@ import com.benayn.constell.service.server.respond.Editable;
 import com.benayn.constell.service.server.respond.HtmlTag;
 import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.Renderable;
-import com.benayn.constell.service.server.respond.Saveable;
+import com.benayn.constell.service.server.respond.Providable;
 import com.benayn.constell.service.server.respond.Searchable;
 import com.benayn.constell.services.capricorn.enums.ColorCode;
 import com.benayn.constell.services.capricorn.enums.TagType;
@@ -41,7 +41,7 @@ public class TagVO extends Renderable {
     @Editable(hidden = true)
     private Long id;
 
-    @Saveable
+    @Providable
     private Long userId;
 
     @NotNull

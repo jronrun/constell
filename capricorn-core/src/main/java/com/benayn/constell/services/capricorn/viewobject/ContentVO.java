@@ -13,9 +13,9 @@ import com.benayn.constell.service.server.respond.DefineElement;
 import com.benayn.constell.service.server.respond.Editable;
 import com.benayn.constell.service.server.respond.HtmlTag;
 import com.benayn.constell.service.server.respond.Listable;
+import com.benayn.constell.service.server.respond.Providable;
 import com.benayn.constell.service.server.respond.Renderable;
 import com.benayn.constell.service.server.respond.Searchable;
-import com.benayn.constell.services.capricorn.enums.ContentStatus;
 import com.benayn.constell.services.capricorn.enums.ContentType;
 import java.util.List;
 import javax.validation.constraints.NotNull;
@@ -35,7 +35,6 @@ import lombok.ToString;
 public class ContentVO extends Renderable {
 
     @DefineElement("render.common.id")
-    @Searchable
     @Listable
     @Editable(hidden = true)
     private Long id;
@@ -49,12 +48,10 @@ public class ContentVO extends Renderable {
 
     @NotNull
     @DefineElement("render.content.summary")
-    @Searchable(condition = LIKE)
     @Listable
     @Editable(tag = HtmlTag.TEXTAREA, attributes = {"rows=3"})
     private String summary;
 
-    @NotNull
     @DefineElement("render.content.note")
     @Searchable(condition = LIKE)
     @Listable
@@ -69,10 +66,8 @@ public class ContentVO extends Renderable {
     @Listable(fragment = "content_list_tags")
     private List<TagVO> tags;
 
-    @DefineElement(value = "render.content.status", options = ContentStatus.class, tag = SELECT)
-    @Searchable
-    @Editable
-    @Listable
+    @Providable
+    //@DefineElement(value = "render.content.status", options = ContentStatus.class, tag = SELECT)
     private Short status;
 
     @DefineElement(value = "render.content.type", options = ContentType.class, tag = SELECT)

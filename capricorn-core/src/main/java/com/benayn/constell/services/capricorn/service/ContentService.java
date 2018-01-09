@@ -5,4 +5,5 @@ import com.benayn.constell.services.capricorn.repository.domain.Content;
 
 public interface ContentService extends Service<Content> {
 
+    int deleteByContentId(Long entityId);
 }

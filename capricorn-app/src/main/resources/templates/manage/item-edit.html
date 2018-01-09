@@ -3,51 +3,7 @@
     <div class="header" th:text="#{render.modal.edit.title}">Edit</div>
     <div class="content">
         <form th:with="groupNum=2" class="ui form segment" style="border: none;" th:id="${editId}">
-
-            <!--/*/ <th:block th:each="el: ${editEl.hiddenGroup}"> /*/-->
-                <th:block th:switch="${el.tagName}">
-                    <th:block th:case="'INPUT'" th:insert="element::input (${el})">
-                    </th:block>
-                    <th:block th:case="*" th:insert="element::unsupported (${el.tag.toString()})">
-                    </th:block>
-                </th:block>
-            <!--/*/ </th:block> /*/-->
-
-            <!--/*/ <th:block th:each="groupEl: ${editEl.wellGroup}"> /*/-->
-                <div class="two fields">
-                    <!--/*/ <th:block th:each="el: ${editEl.wellGroup}"> /*/-->
-                        <!--/*/ <th:block th:if="${(elStat.count > ((groupElStat.count - 1) * groupNum))
-                         && (elStat.count <= (groupElStat.count * groupNum))}"> /*/-->
-
-                            <div class="field" th:id="'field_' + ${el.name}" th:switch="${el.tagName}">
-                                <th:block th:case="'INPUT'">
-                                    <label th:if="${not el.hidden}" th:text="${el.label}" th:for="${el.id}">Name</label>
-                                    <th:block th:insert="element::input (${el})">
-                                    </th:block>
-                                </th:block>
-                                <th:block th:case="'TOGGLE'" th:insert="element::toggle (${el})">
-                                </th:block>
-                                <th:block th:case="'SELECT'" th:insert="element::select (${el})">
-                                </th:block>
-                                <th:block th:case="*" th:insert="element::unsupported (${el.tag.toString()})">
-                                </th:block>
-                            </div>
-
-                        <!--/*/ </th:block> /*/-->
-                    <!--/*/ </th:block> /*/-->
-                </div>
-            <!--/*/ </th:block> /*/-->
-
-            <!--/*/ <th:block th:each="el: ${editEl.rowGroup}"> /*/-->
-                <div class="field" th:switch="${el.tag.toString()}" th:id="'field_' + ${el.name}">
-                    <label th:if="${not el.hidden}" th:text="${el.label}" th:for="${el.id}">Name</label>
-                    <th:block th:case="'TEXTAREA'" th:insert="element::textarea (${el})">
-                    </th:block>
-                    <th:block th:case="*" th:insert="element::unsupported (${el.tag.toString()})">
-                    </th:block>
-                </div>
-            <!--/*/ </th:block> /*/-->
-
+            <th:block th:insert="element::form (${editEl})">form</th:block>
         </form>
     </div>
     <div class="actions">

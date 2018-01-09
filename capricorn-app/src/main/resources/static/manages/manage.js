@@ -198,6 +198,24 @@ var mgr = {};
         }
     });
 
+    // https://stackoverflow.com/questions/6393943/convert-javascript-string-in-dot-notation-into-an-object-reference
+    function getset(target, path, value) {
+        var isWrite = value !== undefined;
+        if (typeof path === 'string') {
+            return getset(target, path.split('.'), value);
+        } else if (path.length === 1 && isWrite) {
+            return target[path[0]] = value;
+        } else if (path.length === 0) {
+            return target;
+        } else {
+            var key = path[0];
+            if (isWrite) {
+                target[key] = target[key] || {};
+            }
+            return getset(target[key] || {}, path.slice(1), value);
+        }
+    }
+
     function getFormData(selector, isGetEmptyField) {
         var indexed = {};
         $.map($(selector).serializeArray(), function (n) {
@@ -215,7 +233,12 @@ var mgr = {};
             indexed[$(el).attr('name')] = 'true';
         });
 
-        return indexed;
+        var result = {};
+        $.each(indexed, function (k, v) {
+            getset(result, k, v);
+        });
+
+        return result;
     }
 
     var lz = LZString;
@@ -260,6 +283,10 @@ var mgr = {};
 
         getFormData: function (selector, isGetEmptyField) {
             return getFormData(selector, isGetEmptyField);
+        },
+
+        getset: function (target, path, value) {
+            return getset(target, path, value);
         },
 
         fmt: function () {

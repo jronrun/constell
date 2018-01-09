@@ -1,6 +1,62 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:stars="http://www.benayn.org">
 
+    <th:block th:fragment="form (editEl)">
+        <!--/*/ <th:block th:each="el: ${editEl.hiddenGroup}"> /*/-->
+        <th:block th:switch="${el.tagName}">
+            <th:block th:case="'INPUT'" th:insert="element::input (${el})">
+            </th:block>
+            <th:block th:case="*" th:insert="element::unsupported (${el.tag.toString()})">
+            </th:block>
+        </th:block>
+        <!--/*/ </th:block> /*/-->
+
+        <!--/*/ <th:block th:each="groupEl: ${editEl.wellGroup}"> /*/-->
+        <div class="two fields">
+            <!--/*/ <th:block th:each="el: ${editEl.wellGroup}"> /*/-->
+            <!--/*/ <th:block th:if="${(elStat.count > ((groupElStat.count - 1) * groupNum))
+             && (elStat.count <= (groupElStat.count * groupNum))}"> /*/-->
+
+            <div class="field" th:id="'field_' + ${el.name}" th:switch="${el.tagName}">
+                <th:block th:case="'INPUT'">
+                    <label th:if="${not el.hidden}" th:text="${el.label}" th:for="${el.id}">Name</label>
+                    <th:block th:insert="element::input (${el})">
+                    </th:block>
+                </th:block>
+                <th:block th:case="'TOGGLE'" th:insert="element::toggle (${el})">
+                </th:block>
+                <th:block th:case="'SELECT'" th:insert="element::select (${el})">
+                </th:block>
+                <th:block th:case="*" th:insert="element::unsupported (${el.tag.toString()})">
+                </th:block>
+            </div>
+
+            <!--/*/ </th:block> /*/-->
+            <!--/*/ </th:block> /*/-->
+        </div>
+        <!--/*/ </th:block> /*/-->
+
+        <!--/*/ <th:block th:each="el: ${editEl.rowGroup}"> /*/-->
+        <div class="field" th:switch="${el.tag.toString()}" th:id="'field_' + ${el.name}">
+            <th:block th:case="'TEXTAREA'">
+                <label th:if="${not el.hidden}" th:text="${el.label}" th:for="${el.id}">Name</label>
+                <th:block th:insert="element::textarea (${el})">
+                </th:block>
+            </th:block>
+            <th:block th:case="'VIEW_OBJECT'">
+                <div class="ui segment">
+                    <a class="ui grey ribbon label" th:text="${el.label}">Header</a>
+                    <br/><br/>
+                    <th:block th:insert="element::form (${el.value})">
+                    </th:block>
+                </div>
+            </th:block>
+            <th:block th:case="*" th:insert="element::unsupported (${el.tag.toString()})">
+            </th:block>
+        </div>
+        <!--/*/ </th:block> /*/-->
+    </th:block>
+
     <th:block th:fragment="input (el)">
         <th:block th:if="${el.typeName eq 'RADIO'}">
             <div class="inline fields">

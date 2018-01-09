@@ -4,7 +4,6 @@ import static com.benayn.constell.service.server.respond.DefineType.CREATABLE;
 import static com.benayn.constell.service.server.respond.DefineType.SEARCHABLE;
 import static com.benayn.constell.service.server.respond.DefineType.UPDATABLE;
 import static com.benayn.constell.service.server.respond.HtmlTag.INPUT;
-import static com.benayn.constell.service.server.respond.HtmlTag.TEXTAREA;
 import static com.benayn.constell.service.server.respond.HtmlTag.UNDEFINED;
 import static com.benayn.constell.service.util.LZString.encodes;
 import static com.google.common.base.Preconditions.checkArgument;
@@ -16,6 +15,7 @@ import static java.util.Optional.ofNullable;
 
 import com.benayn.constell.service.common.Pair;
 import com.benayn.constell.service.server.repository.Page;
+import com.benayn.constell.service.server.repository.domain.ConditionTemplate;
 import com.benayn.constell.service.server.respond.Accessable;
 import com.benayn.constell.service.server.respond.Actionable;
 import com.benayn.constell.service.server.respond.Creatable;
@@ -36,8 +36,8 @@ import com.benayn.constell.service.server.respond.InputType;
 import com.benayn.constell.service.server.respond.Listable;
 import com.benayn.constell.service.server.respond.OptionValue;
 import com.benayn.constell.service.server.respond.PageInfo;
+import com.benayn.constell.service.server.respond.Providable;
 import com.benayn.constell.service.server.respond.Renderable;
-import com.benayn.constell.service.server.respond.Saveable;
 import com.benayn.constell.service.server.respond.Searchable;
 import com.benayn.constell.service.server.respond.TouchAccessable;
 import com.benayn.constell.service.server.respond.Touchable;
@@ -45,6 +45,7 @@ import com.benayn.constell.service.server.respond.Updatable;
 import com.benayn.constell.service.server.service.SaveEntity;
 import com.benayn.constell.service.server.service.SearchEntity;
 import com.benayn.constell.service.server.service.SearchField;
+import com.benayn.constell.service.util.Likes.Side;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -100,15 +101,20 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
     @Override
     public List<DefinedElement> getDefinedSearch(Class<? extends Renderable> viewObjectType, Object value, DataExchange dataExchange) {
-        return getDefinedElements(SEARCHABLE, viewObjectType, value, dataExchange);
+        return getDefinedElements(SEARCHABLE, viewObjectType, value, dataExchange, null);
     }
 
     @Override
     public DefinedEditElement getDefinedEdit(Class<? extends Renderable> viewObjectType,
         Object value, DataExchange dataExchange) {
+        return getDefinedEdit(viewObjectType, value, dataExchange, null);
+    }
+
+    private DefinedEditElement getDefinedEdit(Class<? extends Renderable> viewObjectType,
+        Object value, DataExchange dataExchange, String namePrefix) {
         DefinedEditElement defined = new DefinedEditElement();
         DefineType defineType = null == value ? CREATABLE : UPDATABLE;
-        List<DefinedElement> elements = getDefinedElements(defineType, viewObjectType, value, dataExchange);
+        List<DefinedElement> elements = getDefinedElements(defineType, viewObjectType, value, dataExchange, namePrefix);
 
         elements.forEach(element -> {
             // hidden element
@@ -116,7 +122,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 defined.addHiddenElement(element);
             }
             // row element
-            else if (TEXTAREA == element.getTag()) {
+            else if (element.isRowElement()) {
                 defined.addRowElement(element);
             }
             // well element
@@ -576,11 +582,6 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
     }
 
     private List<DefinedElement> getDefinedElements(DefineType defineType,
-        Class<? extends Renderable> viewObjectType, Object value, DataExchange dataExchange) {
-        return getDefinedElements(defineType, viewObjectType, value, dataExchange, null);
-    }
-
-    private List<DefinedElement> getDefinedElements(DefineType defineType,
         Class<? extends Renderable> viewObjectType, Object value, DataExchange dataExchange, String namePrefix) {
         List<DefinedElement> elements = newArrayList();
         List<Field> valueFields = null;
@@ -640,6 +641,8 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
         Updatable updatable = field.getAnnotation(Updatable.class);
         boolean isUpdatable = UPDATABLE == defineType && null != updatable;
+
+        boolean hasValueFields = null != valueFields && valueFields.size() > 0;
 
         // create || update
         if (CREATABLE == defineType || UPDATABLE == defineType) {
@@ -754,7 +757,11 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
             if (isNullOrEmpty(id)) {
                 //auto generator "el_{fieldName}"
-                id = format(hasNamePrefix ? ELEMENT_ID_WITH_PREFIX_FORMAT : ELEMENT_ID_FORMAT, fieldName);
+                if (hasNamePrefix) {
+                    id = format(ELEMENT_ID_WITH_PREFIX_FORMAT, namePrefix, fieldName);
+                } else {
+                    id = format(ELEMENT_ID_FORMAT, fieldName);
+                }
             }
 
             if (isSearchable) {
@@ -1021,16 +1028,23 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
             if (isRenderable) {
                 Class<? extends Renderable> fieldViewObject = (Class<? extends Renderable>) field.getType();
                 if (hasDataExchange) {
-                    fieldValue = getDefinedElements(defineType, fieldViewObject, extraResource, dataExchange, fieldName);
+                    fieldValue = getDefinedEdit(fieldViewObject, extraResource, dataExchange, fieldName);
                 } else {
                     final Object[] aFieldValue = {null};
 
-                    getFieldByName(valueFields, fieldName).ifPresent(theValueField -> {
-                        Object aValue = getFieldValue(theValueField, value);
-                        if (null != aValue) {
-                            aFieldValue[0] = getDefinedElements(defineType, fieldViewObject, aValue, dataExchange, fieldName);
-                        }
-                    });
+
+                    if (hasValueFields) {
+                        getFieldByName(valueFields, fieldName).ifPresent(theValueField -> {
+                            Object aValue = getFieldValue(theValueField, value);
+                            if (null != aValue) {
+                                aFieldValue[0] = getDefinedEdit(fieldViewObject, aValue, dataExchange, fieldName);
+                            }
+                        });
+                    }
+
+                    if (null == aFieldValue[0]) {
+                        aFieldValue[0] = getDefinedEdit(fieldViewObject, null, dataExchange, fieldName);
+                    }
 
                     fieldValue = aFieldValue[0];
                 }
@@ -1040,7 +1054,7 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
                 fieldValue = extraResource;
             }
 
-            if (null == fieldValue && !hasDataExchange && null != valueFields && valueFields.size() > 0) {
+            if (null == fieldValue && !hasDataExchange && hasValueFields) {
 
                 //date style
                 String dateStyle = null;
@@ -1333,14 +1347,44 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         Searchable searchable = field.getAnnotation(Searchable.class);
         boolean isSearchable = null != searchable;
 
-        if (isSearchable) {
+        Providable providable = field.getAnnotation(Providable.class);
+        boolean isProvidable = null != providable;
+
+        if (isSearchable || isProvidable) {
             SearchField searchField = new SearchField();
-            searchField.setConditionTemplate(searchable.condition());
-            searchField.setSide(searchable.likeSide());
             searchField.setName(field.getName());
 
+            ConditionTemplate conditionTemplate = null;
+            if (isSearchable) {
+                conditionTemplate = searchable.condition();
+            }
+
+            if (isProvidable && null == conditionTemplate) {
+                conditionTemplate = providable.condition();
+            }
+            searchField.setConditionTemplate(conditionTemplate);
+
+            Side side = null;
+            if (isSearchable) {
+                side = searchable.likeSide();
+            }
+
+            if (isProvidable && null == side) {
+                side = providable.likeSide();
+            }
+            searchField.setSide(side);
+
             Object aValue = getFieldValue(field, condition);
-            searchField.setValue(aValue);
+
+            String dateStyle = null;
+            if (isSearchable) {
+                dateStyle = searchable.dateStyle();
+            }
+
+            if (isProvidable && null == dateStyle) {
+                dateStyle = providable.dateStyle();
+            }
+            searchField.setValue(convertDate(field, aValue, dateStyle));
 
             searchFields.add(searchField);
         }
@@ -1362,10 +1406,10 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
         DefineElement defineElement = field.getAnnotation(DefineElement.class);
         boolean hasDefineElement = null != defineElement;
 
-        Saveable saveable = field.getAnnotation(Saveable.class);
-        boolean isSaveable = null != saveable;
+        Providable providable = field.getAnnotation(Providable.class);
+        boolean isProvidable = null != providable;
 
-        if (isEditable || isCreateable || isUpdatable || isSaveable) {
+        if (isEditable || isCreateable || isUpdatable || isProvidable) {
 
             String dateStyle = null;
             if (isEditable) {
@@ -1382,6 +1426,10 @@ public class ViewObjectResolverBean implements ViewObjectResolver {
 
             if (isNullOrEmpty(dateStyle) && hasDefineElement) {
                 dateStyle = defineElement.dateStyle();
+            }
+
+            if (null == dateStyle && isProvidable) {
+                dateStyle = providable.dateStyle();
             }
 
             Object aValue = getFieldValue(field, renderable);

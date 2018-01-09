@@ -1,5 +1,8 @@
 package com.benayn.constell.service.server.respond;
 
+import static com.benayn.constell.service.server.respond.HtmlTag.TEXTAREA;
+import static com.benayn.constell.service.server.respond.HtmlTag.VIEW_OBJECT;
+
 import com.benayn.constell.service.common.Pair;
 import java.util.List;
 import lombok.Data;
@@ -25,6 +28,10 @@ public class DefinedElement {
     private boolean fragmentValue;
     private boolean hidden;
     private List<DefinedOption> options;
+
+    public boolean isRowElement() {
+        return TEXTAREA == getTag() || VIEW_OBJECT == getTag();
+    }
 
     public DefinedElement clones() {
         DefinedElement el = new DefinedElement();

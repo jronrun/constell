@@ -9,6 +9,7 @@ import com.benayn.constell.service.exception.ServiceException;
 import com.benayn.constell.service.server.menu.MenuCapability;
 import com.benayn.constell.service.server.respond.Message;
 import com.benayn.constell.services.capricorn.config.Authorities;
+import com.benayn.constell.services.capricorn.enums.ContentStatus;
 import com.benayn.constell.services.capricorn.repository.domain.Content;
 import com.benayn.constell.services.capricorn.service.ContentService;
 import com.benayn.constell.services.capricorn.settings.constant.Menus;
@@ -52,6 +53,7 @@ public class ContentController extends BaseManageController<ContentVO> {
     @PreAuthorize(Authorities.CONTENT_INDEX)
     @GetMapping("contents")
     public String items(Authentication authentication, Model model, ContentVO condition) {
+        condition.setStatus(ContentStatus.USING.getValue());
         return genericList(authentication, model, contentService.selectPageBy(condition), condition);
     }
 
@@ -69,6 +71,7 @@ public class ContentController extends BaseManageController<ContentVO> {
     @PreAuthorize(Authorities.CONTENT_CREATE)
     @PostMapping(value = "content", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> create(@Valid @RequestBody ContentVO entity) throws ServiceException {
+        entity.setStatus(ContentStatus.USING.getValue());
         return success(contentService.save(entity));
     }
 
@@ -81,7 +84,7 @@ public class ContentController extends BaseManageController<ContentVO> {
     @PreAuthorize(Authorities.CONTENT_DELETE)
     @DeleteMapping(value = "content/{entityId}", consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<Message> delete(@PathVariable("entityId") Long entityId) throws ServiceException {
-        return success(contentService.deleteById(entityId));
+        return success(contentService.deleteByContentId(entityId));
     }
 
 }
