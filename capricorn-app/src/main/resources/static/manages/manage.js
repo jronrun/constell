@@ -221,24 +221,19 @@ var mgr = {};
         $.map($(selector).serializeArray(), function (n) {
             var key = n['name'], val = n['value'];
             if (isGetEmptyField) {
-                indexed[key] = val;
+                getset(indexed, key, val);
             } else {
                 if (val && val.length > 0) {
-                    indexed[key] = val;
+                    getset(indexed, key, val);
                 }
             }
         });
 
         $.map($(selector + ' input[type="checkbox"]:checked'), function (el) {
-            indexed[$(el).attr('name')] = 'true';
+            getset(indexed, $(el).attr('name'), 'true');
         });
 
-        var result = {};
-        $.each(indexed, function (k, v) {
-            getset(result, k, v);
-        });
-
-        return result;
+        return indexed;
     }
 
     var lz = LZString;
