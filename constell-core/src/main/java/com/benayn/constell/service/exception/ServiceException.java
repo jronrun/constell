@@ -22,6 +22,7 @@ public class ServiceException extends Exception {
 
     public ServiceException(final int code, final String message) {
         super(message);
+        this.code = code;
     }
 
     public ServiceException(final int code, final String message, Object[] messageArgs) {
