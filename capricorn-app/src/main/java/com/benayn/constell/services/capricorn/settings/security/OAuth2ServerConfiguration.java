@@ -74,6 +74,8 @@ public class OAuth2ServerConfiguration {
 
             // @formatter:off
             http
+                .headers().frameOptions().sameOrigin()
+                .and()
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(BASE_API + "/**", "/manage/**")
