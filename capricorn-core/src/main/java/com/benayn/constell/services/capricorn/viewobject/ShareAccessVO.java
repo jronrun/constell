@@ -22,7 +22,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@Actionable
+@Actionable(create = false, edit = false, delete = false)
 @Accessable(
     create = SHARE_ACCESS_CREATE,
     retrieve = SHARE_ACCESS_RETRIEVE,
