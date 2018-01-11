@@ -24,8 +24,8 @@ var login = {};
                 return;
             }
 
-            var info = JSON.parse(mgr.us($(el).data('login')));
-            mgr.post(info.authorization, mgr.s(JSON.stringify(data))).fail(function (xhr) {
+            var info = fiona.deepUnsign($(el).data('login'));
+            fiona.post(info.authorization, fiona.sign(data)).fail(function (xhr) {
                 warning('Oops...', mgr.failMsg(xhr));
                 mgr.unloading(el);
             }).done(function (resp) {
@@ -35,7 +35,7 @@ var login = {};
         },
         initialize: function () {
             var loginBtn = '[data-login]';
-            mgr.enter('[data-name=password]', function () {
+            fiona.enter('[data-name=password]', function () {
                 core.login(loginBtn);
             });
 

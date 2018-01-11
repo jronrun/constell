@@ -11,7 +11,7 @@
             var selector = '[data-permission-create]'; $(selector).popup();
             index.register(selector, function (pi, el) {
                 if (mgr.loading(el)) {
-                    mgr.post(pi.create).done(function () {
+                    fiona.post(pi.create).done(function () {
                         mgr.unloading(el);
                         index.reload();
                     });

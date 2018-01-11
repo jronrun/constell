@@ -1,115 +1,10 @@
 'use strict';
 
-// John Resig - https://johnresig.com/ - MIT Licensed
-(function () {
-    var cache = {};
-
-    this.tmpl = function tmpl(str, data) {
-        // Figure out if we're getting a template, or if we need to
-        // load the template - and be sure to cache the result.
-        var fn = !/\W/.test(str) ? cache[str] = cache[str] ||
-            tmpl(document.getElementById(str).innerHTML) : // Generate a reusable function that will serve as a template
-            // generator (and which will be cached).
-            new Function("obj",
-                "var p=[],print=function(){p.push.apply(p,arguments);};" +
-
-                // Introduce the data as local variables using with(){}
-                "with(obj){p.push('" +
-
-                // Convert the template into pure JavaScript
-                str
-                .replace(/[\r\t\n]/g, " ")
-                .split("<%").join("\t")
-                .replace(/((^|%>)[^\t]*)'/g, "$1\r")
-                .replace(/\t=(.*?)%>/g, "',$1,'")
-                .split("\t").join("');")
-                .split("%>").join("p.push('")
-                .split("\r").join("\\'")
-                + "');}return p.join('');");
-
-        // Provide some basic currying to the user
-        return data ? fn(data) : fn;
-    };
-})();
-
-Date.prototype.fmt = function (fmt) {
-    fmt = fmt || 'yyyy-MM-dd HH:mm:ss';
-    var o = {
-        "M+": this.getMonth() + 1,
-        "d+": this.getDate(),
-        "H+": this.getHours(),
-        "m+": this.getMinutes(),
-        "s+": this.getSeconds(),
-        "q+": Math.floor((this.getMonth() + 3) / 3),
-        "S": this.getMilliseconds()
-    };
-
-    if (/(y+)/.test(fmt)) {
-        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    }
-
-    for (var k in o) {
-        if (new RegExp("(" + k + ")").test(fmt)) {
-            fmt = fmt.replace(RegExp.$1,
-                (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
-        }
-    }
-
-    return fmt;
-};
-
 var mgr = {};
 
 (function ($, root, register) {
 
     var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-
-    function request(action, data, options, headers, noneLayout) {
-        options = options || {};
-        headers = $.extend({
-            'Content-Type': 'application/json'
-        }, options.headers || {}, headers || {});
-
-        if (true === noneLayout) {
-            $.extend(headers, {'X-PJAX': true});
-        }
-
-        return $.ajax($.extend({
-            type: 'GET',
-            async: true,
-            url: action,
-            data: data || {}
-        }, options, {
-            headers: headers
-        }));
-    }
-
-    $.each(['post', 'put', 'delete', 'get'], function (i, method) {
-        register[method] = function (action, data, options, headers, noneLayout) {
-            return request(action, data, $.extend(options || {}, {
-                type: method
-            }), headers, noneLayout);
-        }
-    });
-
-    function jsonp(action, data, options, headers) {
-        return request(action, data, $.extend(options || {}, {
-            type: 'GET',
-            async: false,
-            dataType: 'jsonp'
-        }), headers);
-    }
-
-    function script(action, callback) {
-        $.ajax({
-            url: action,
-            dataType: 'script',
-            async: true,
-            success: function (data, textStatus, jqXHR) {
-                callback && callback(data, textStatus, jqXHR);
-            }
-        });
-    }
 
     root.paceOptions = {
         restartOnRequestAfter: false
@@ -119,13 +14,9 @@ var mgr = {};
         Pace.restart();
     });
 
-    function getURI() {
-        return location.href.replace(location.origin, '');
-    }
-
     var onEndCalls = {};
     var pageable = '.containerli.pageable', pjax = function (url, headerParams, container) {
-        var callId = 'call-' + mgr.uniqueId();
+        var callId = 'call-' + fiona.uniqueId();
         headerParams = headerParams || {};
         if (headerParams.onEnd && $.isFunction(headerParams.onEnd)) {
             onEndCalls[callId] = headerParams.onEnd;
@@ -143,7 +34,7 @@ var mgr = {};
     };
 
     pjax.reload = function (container) {
-        pjax(getURI(), container);
+        pjax(fiona.getURI(), container);
     };
 
     $(document).pjax('a[data-pjax]', pageable);
@@ -198,102 +89,10 @@ var mgr = {};
         }
     });
 
-    // https://stackoverflow.com/questions/6393943/convert-javascript-string-in-dot-notation-into-an-object-reference
-    function getset(target, path, value) {
-        var isWrite = value !== undefined;
-        if (typeof path === 'string') {
-            return getset(target, path.split('.'), value);
-        } else if (path.length === 1 && isWrite) {
-            return target[path[0]] = value;
-        } else if (path.length === 0) {
-            return target;
-        } else {
-            var key = path[0];
-            if (isWrite) {
-                target[key] = target[key] || {};
-            }
-            return getset(target[key] || {}, path.slice(1), value);
-        }
-    }
-
-    function getFormData(selector, isGetEmptyField) {
-        var indexed = {};
-        $.map($(selector).serializeArray(), function (n) {
-            var key = n['name'], val = n['value'];
-            if (isGetEmptyField) {
-                getset(indexed, key, val);
-            } else {
-                if (val && val.length > 0) {
-                    getset(indexed, key, val);
-                }
-            }
-        });
-
-        $.map($(selector + ' input[type="checkbox"]:checked'), function (el) {
-            getset(indexed, $(el).attr('name'), 'true');
-        });
-
-        return indexed;
-    }
-
-    var lz = LZString;
-    LZString = undefined;
-
-    function sign(target) {
-        return lz.compressToEncodedURIComponent(target);
-    }
-
-    function unSign(target) {
-        return lz.decompressFromEncodedURIComponent(target);
-    }
-
-    var handles = {};
-    function liveClk(selector, callback, event) {
-        event = event || 'click';
-        var handleId = selector + '-' + event;
-        if (!handles[handleId]) {
-            $('body').on(event, selector, function (evt) {
-                var el = evt.currentTarget;
-                callback && callback(el, evt);
-            });
-
-            handles[handleId] = true;
-        }
-    }
-
     $.extend(root, {
-        liveClk: function (selector, callback, event) {
-            return liveClk(selector, callback, event);
-        },
         $$: function (selector) {
             return $(pageable + ' ' + selector);
         },
-
-        delay: function (func, wait) {
-            var args = Array.prototype.slice.call(arguments, 2);
-            return setTimeout((function() {
-                return func.apply(null, args);
-            }), wait);
-        },
-
-        getFormData: function (selector, isGetEmptyField) {
-            return getFormData(selector, isGetEmptyField);
-        },
-
-        getset: function (target, path, value) {
-            return getset(target, path, value);
-        },
-
-        fmt: function () {
-            var s = arguments[0];
-            for (var i = 0; i < arguments.length - 1; i++) {
-                var reg = new RegExp("\\{" + i + "\\}", "gm");
-                s = s.replace(reg, arguments[i + 1]);
-            }
-
-            return s;
-        },
-
         getMessage: function () {
             var msg = messages[arguments[0]] || '';
             if (1 === arguments.length) {
@@ -332,6 +131,10 @@ var mgr = {};
 
     function scrollRefresh(selector) {
         $(selector || 'body').getNiceScroll().resize();
+    }
+    
+    function scrollHide(selector) {
+        $(selector || 'body').getNiceScroll().hide();
     }
 
     function scrollable(selector, options) {
@@ -417,6 +220,24 @@ var mgr = {};
         });
     }
 
+    function preview(text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents) {
+        modalEvents = modalEvents || {};
+        var originalOnVisible = modalEvents.onVisible;
+
+        modalOptions = $.extend({}, modalOptions || {}, {
+            size: 5
+        });
+
+        modalEvents = $.extend(modalEvents, {
+            onVisible: function () {
+
+                $.isFunction(originalOnVisible) && originalOnVisible();
+            }
+        });
+
+        var previewM = modal(modalOptions, modalEvents);
+    }
+
     function modal(options, events) {
         var sized = { 0: '', 1: 'mini', 2: 'tiny', 3: 'small', 4: 'large', 5: 'fullscreen' },
             modalOptions = $.extend({
@@ -437,9 +258,9 @@ var mgr = {};
             }, (options = options || {}).modal || {});
 
         options = $.extend({
-            id: 'modal-' + mgr.uniqueId(),
+            id: 'modal-' + fiona.uniqueId(),
             close: false,
-            once: true,         //destroy on hidden if true
+            cache: false,       //destroy on hidden if false
             size: 0,
             remote: '',         //content load by remote url
             header: '',
@@ -466,7 +287,7 @@ var mgr = {};
             //attach button id
             $.each(options.buttons || [], function (idx, btn) {
                 if (btn.text && btn.text.length > 0) {
-                    btn.id = 'modal-btn-' + mgr.uniqueId();
+                    btn.id = 'modal-btn-' + fiona.uniqueId();
                 }
             });
 
@@ -484,7 +305,7 @@ var mgr = {};
                     events.onHide && events.onHide();
                 },
                 onHidden: function () {
-                    if (options.once) {
+                    if (!options.cache) {
                         $(modalId).remove();
                     }
                     events.onHidden && events.onHidden();
@@ -574,7 +395,7 @@ var mgr = {};
                 },
 
                 lang: function (lang) {
-                    register.post(fmt('/manage/language/{0}', lang)).fail(function (xhr) {
+                    fiona.post(fmt('/manage/language/{0}', lang)).fail(function (xhr) {
                         swal('Oops...', mgr.failMsg(xhr), 'warning');
                     }).done(function (resp) {
                         location.reload();
@@ -618,63 +439,15 @@ var mgr = {};
         }
     };
 
-    function enter(selector, options) {
-        if ($.isFunction(options)) {
-            options = {enter: options};
-        }
-
-        options = $.extend({
-            enter: null,
-            ctrlEnter: null,
-            shiftEnter: null,
-            preventDefault: true
-        }, options || {});
-
-        $(selector).keypress(function(event) {
-            if(event.ctrlKey && event.which === 13 || event.which === 10) {
-                if (options.preventDefault) {
-                    event.preventDefault();
-                }
-
-                $.isFunction(options.ctrlEnter) && options.ctrlEnter(event);
-            } else if (event.shiftKey && event.which === 13 || event.which === 10) {
-                if (options.preventDefault) {
-                    event.preventDefault();
-                }
-
-                $.isFunction(options.shiftEnter) && options.shiftEnter(event);
-            } else if (event.keyCode === 13) {
-                if (options.preventDefault) {
-                    event.preventDefault();
-                }
-
-                $.isFunction(options.enter) && options.enter(event);
-            }
-        });
-    }
-
-    var theUniqueID = 0;
     $.extend(register, {
         pjax: pjax,
-        getURI: getURI,
         isMobile: isMobile,
         scrollable: scrollable,
         scrollRefresh: scrollRefresh,
+        scrollHide: scrollHide,
         failMsg: function (xhr, defaultMessage) {
             var resp = (xhr.responseJSON || {});
             return resp.message || resp.result || xhr.responseText || (defaultMessage || 'request fail');
-        },
-        request: function (action, data, options, headers, noneLayout) {
-            return request(action, data, options, headers, noneLayout);
-        },
-        uniqueId: function(prefix) {
-            return (prefix || '') + (++theUniqueID);
-        },
-        jsonp: function (action, data, options) {
-            return jsonp(action, data, options);
-        },
-        script: function (action, callback) {
-            return script(action, callback)
         },
         loading: function (selector, clazz) {
             return loading(selector, clazz);
@@ -691,15 +464,6 @@ var mgr = {};
         header: function (name, value) {
             addHeader(name, value);
             return register;
-        },
-        s: function (target) {
-            return sign(target);
-        },
-        us: function (target) {
-            return unSign(target);
-        },
-        enter: function(selector, options) {
-            return enter(selector, options);
         }
     });
 

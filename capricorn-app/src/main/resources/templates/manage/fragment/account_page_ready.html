@@ -4,7 +4,7 @@
             var aModal = null;
             index.register('[data-menu-id]', function (pi, el) {
                 if (mgr.loading(el)) {
-                    mgr.get('/manage/account/menu', false, false, {
+                    fiona.get('/manage/account/menu', false, false, {
                         accountId: $(el).data('menuId')
                     }, true).done(function (data) {
                         aModal = mgr.modal({
