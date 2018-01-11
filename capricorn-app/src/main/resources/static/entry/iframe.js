@@ -136,8 +136,6 @@ var iFrame = {};
                         $.isFunction(onready) && onready(meta);
                     });
 
-
-
                     return meta;
                 },
                 reload: function() {
