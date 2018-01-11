@@ -143,7 +143,7 @@ var fiona = {};
             if (undefined === target) {
                 var $el = $(selector), r = $el.data() || {}, rdata = {};
                 $.each(r, function (k) {
-                    rdata[k] = core.deepUnsign($el.attr(prefix + deCase(k)));
+                    rdata[k] = core.deepUnsign($el.attr(prefix + core.deCase(k)));
                 });
 
                 return rdata;
@@ -151,11 +151,11 @@ var fiona = {};
 
             //get
             if (typeof target === 'string') {
-                return core.deepUnsign($(selector).attr(prefix + deCase(target)));
+                return core.deepUnsign($(selector).attr(prefix + core.deCase(target)));
             } else if ($.isArray(target)) {
                 var ar = {};
                 $.each(target, function (idx, tkey) {
-                    ar[tkey] = core.deepUnsign($(selector).attr(prefix + deCase(tkey)));
+                    ar[tkey] = core.deepUnsign($(selector).attr(prefix + core.deCase(tkey)));
                 });
 
                 return ar;
@@ -164,13 +164,23 @@ var fiona = {};
             //set
             var theData = {};
             $.each(target, function (k, v) {
-                theData[prefix + deCase(k)] = core.sign(v);
+                theData[prefix + core.deCase(k)] = core.sign(v);
             });
             $(selector).attr(theData);
         },
 
         getURI: function () {
             return location.href.replace(location.origin, '');
+        },
+        isUrl: function(text) {
+            return /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/.test(text);
+        },
+
+        viewport: function () {
+            return {
+                w: $(window).width(),
+                h: $(window).height()
+            };
         },
 
         initialize: function () {

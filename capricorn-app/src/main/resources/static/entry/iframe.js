@@ -22,7 +22,15 @@ var iFrame = {};
 
             return window.top === window.self;
         },
-        iframes: function(target) {
+        setEncryption: function (encodeFunc, decodeFunc) {
+            if ($.isFunction(encodeFunc)) {
+                encode = encodeFunc;
+            }
+            if ($.isFunction(encodeFunc)) {
+                decode = decodeFunc;
+            }
+        },
+        wrap: function(target) {
             var iframe = null;
             if (typeof target === 'string') {
                 var selector = /^#/.test(target) ? target : ('iframe[name="' + target + '"]');
@@ -119,9 +127,16 @@ var iFrame = {};
                     meta.attr({ src: url });
                     meta.srcIsUrl = true;
 
+                    /*
                     $('#' + meta.getId()).load(function() {
                         $.isFunction(onready) && onready(meta);
                     });
+                     */
+                    $('#' + meta.getId()).on('load', function() {
+                        $.isFunction(onready) && onready(meta);
+                    });
+
+
 
                     return meta;
                 },
@@ -180,10 +195,10 @@ var iFrame = {};
                                 var evtData = decode(e.originalEvent.data),
                                     ackFunc = ackCalls(evtData.id), ackFuncAvail = $.isFunction(ackFunc);
 
-                                if (3 == evtData.type) {
+                                if (3 === evtData.type) {
                                     ackFuncAvail && ackFunc(evtData.data || {}, evtData);
                                     ackCalls(evtData.id, null);
-                                } else if ([1, 2].indexOf(evtData.type) != -1) {
+                                } else if ([1, 2].indexOf(evtData.type) !== -1) {
                                     var ackData = callback(evtData, e) || {};
                                     if (ackFuncAvail) {
                                         //1 tell, 2 reply
@@ -191,7 +206,7 @@ var iFrame = {};
                                             case 1: ackFunc = meta.reply; break;
                                             case 2:
                                                 ackFunc = function (data, origin) {
-                                                    var ackTell = core.iframes(evtData.iframe.id);
+                                                    var ackTell = core.wrap(evtData.iframe.id);
                                                     if (ackTell.isAvailable()) {
                                                         ackTell.tell(data, origin);
                                                     }
@@ -229,7 +244,7 @@ var iFrame = {};
 
             return meta;
         },
-        iframe: function(options, selector) {
+        create: function(options, selector) {
             var uid = 'ifr_' + uniqueId();
             options = $.extend({
                 id: uid,
@@ -253,7 +268,7 @@ var iFrame = {};
             }, options || {});
 
             var iframe = document.createElement('iframe');
-            var iframes = core.iframes(iframe);
+            var iframes = core.wrap(iframe);
             iframes.attr(options);
             $(selector || 'body').append(iframe);
 
@@ -274,18 +289,16 @@ var iFrame = {};
 
     $.extend(register, {
         create: function(options, selector) {
-            return core.iframe(options, selector)
+            return core.create(options, selector)
         },
         wrap: function(target) {
-            return core.iframes(target);
+            return core.wrap(target);
+        },
+        isRootWin: function(targetWin) {
+            return core.isRootWin(targetWin);
         },
         setEncryption: function (encodeFunc, decodeFunc) {
-            if ($.isFunction(encodeFunc)) {
-                encode = encodeFunc;
-            }
-            if ($.isFunction(encodeFunc)) {
-                decode = decodeFunc;
-            }
+            return core.setEncryption(encodeFunc, decodeFunc);
         }
     });
 

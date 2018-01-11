@@ -1,25 +1,124 @@
 'use strict';
 
+/**
+    dependency semantic-ui
+
+    css
+    .ui.fullscreen.modal {
+        width: 100% !important;
+        left: 0;
+        height: 100% !important;
+        border-radius: 0;
+    }
+    .ui.fullscreen.modal .content {
+        padding: 0rem !important;
+    }
+    .modals.dimmer .ui.scrolling.fullscreen.modal {
+        margin-top: 0rem !important;
+        margin-bottom: 0rem !important;
+    }
+    template
+    <script type="text/html" id="modal_tmpl">
+        <div id="<%= id %>" class="ui <%= size %> modal">
+            <% if (close) { %> <i class="close red icon"></i> <% } %>
+            <% if (header.length > 0) { %>
+                <div class="header"> <%= header %> </div>
+            <% } %>
+            <div class="content" id="<%= id + '-content' %>"> <%= content %> </div>
+            <% if (buttons.length > 0) { %>
+            <div class="actions">
+                <% $.each(buttons, function(idx, btn) { %>
+                    <% if (btn.html && btn.html.length > 0) { %>
+                        <%= btn.html %>
+                    <% } else { %>
+                        <div class="ui button <%= btn.clazz %>" id="<%= btn.id %>"><%= btn.text %></div>
+                    <% } %>
+                <% }); %>
+            </div>
+            <% } %>
+        </div>
+    </script>
+ */
+
 var comm = {};
 (function ($, root, register) {
 
     var core = {
+        /**
+         * Preview in top window
+         * @param text
+         * @param callback                function(view, previewM) {}  view: iFrame instance, previewM: modal instance
+         * @param domReadyCallbackIfUrl   function(view, previewM) {}  view: iFrame instance, previewM: modal instance
+         * @param modalOptions
+         * @param modalEvents
+         * @returns {*}
+         */
         preview: function (text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents) {
+            var rootW = iFrame.isRootWin() ? window : top.window;
+            return rootW.comm.previewInSelfWin(text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents);
+        },
+        /**
+         * Preview in current self window
+         * @param text
+         * @param callback                function(view, previewM) {}  view: iFrame instance, previewM: modal instance
+         * @param domReadyCallbackIfUrl   function(view, previewM) {}  view: iFrame instance, previewM: modal instance
+         * @param modalOptions
+         * @param modalEvents
+         * @returns {*}
+         */
+        previewInSelfWin: function (text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents) {
             modalEvents = modalEvents || {};
-            var originalOnVisible = modalEvents.onVisible;
-
+            var originalOnVisible = modalEvents.onVisible, toggleable = 'toggleable',
+                previewModalId = 'preview-modal-' + fiona.uniqueId(), contextId = '#' + previewModalId + '-content';
             modalOptions = $.extend({}, modalOptions || {}, {
-                size: 5
+                size: 5,
+                id: previewModalId
             });
 
             modalEvents = $.extend(modalEvents, {
                 onVisible: function () {
+                    if (toggleable === fiona.data(contextId, toggleable)) {
+                        return;
+                    }
 
+                    var viewport = fiona.viewport();
+
+                    var view = iFrame.create({
+                        frameborder: 0
+                    }, contextId);
+
+                    view.attr({
+                        //style: 'background-color: white'
+                        width: viewport.w,
+                        height: viewport.h - 4
+                    });
+
+                    if (fiona.isUrl(text)) {
+                        view.openUrl(text, function() {
+                            $.isFunction(domReadyCallbackIfUrl) && domReadyCallbackIfUrl(view, previewM);
+                        });
+                    } else {
+                        text = (text || '').replace(/\\\//g, '/');
+                        view.write(text);
+                        if (view.docInited) {
+                            view.doc.keydown(function(e){
+                                //esc key
+                                if (27 === e.keyCode) {
+                                    previewM.hide();
+                                }
+                            });
+                        }
+                    }
+
+                    fiona.data(contextId, {toggleable: toggleable});
                     $.isFunction(originalOnVisible) && originalOnVisible();
+                    $.isFunction(callback) && callback(view, previewM);
                 }
             });
 
-            var previewM = modal(modalOptions, modalEvents);
+            var previewM = core.modal(modalOptions, modalEvents);
+            previewM.show();
+            return previewM;
         },
 
         modal: function (options, events) {
@@ -77,9 +176,15 @@ var comm = {};
 
                 $('body').append(tmpl($('#modal_tmpl').html(), options));
 
-                events = $.extend(
-                    {onShow: null, onVisible: null, onHide: null, onHidden: null, onApprove: null, onDeny: null}, events
-                    || {});
+                events = $.extend({
+                    onShow: null,
+                    onVisible: null,
+                    onHide: null,
+                    onHidden: null,
+                    onApprove: null,
+                    onDeny: null
+                }, events || {});
+
                 modalOptions = $.extend({
                     onShow: function () {
                         events.onShow && events.onShow();
