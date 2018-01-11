@@ -27,6 +27,7 @@
         <!--<js minimize="false">/components/lodash/dist/lodash.min.js</js>-->
         <js>/entry/fiona.js</js>
         <js>/entry/iframe.js</js>
+        <js>/entry/semantic-comm.js</js>
         <js>/manages/manage.js</js>
     </group>
 

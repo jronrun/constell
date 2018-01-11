@@ -7,7 +7,7 @@
                     fiona.get('/manage/account/menu', false, false, {
                         accountId: $(el).data('menuId')
                     }, true).done(function (data) {
-                        aModal = mgr.modal({
+                        aModal = comm.modal({
                             close: true,
                             content: data
                         }, {

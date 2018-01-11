@@ -253,7 +253,7 @@ var fiona = {};
 
             return s;
         },
-        exports: function (target, host) {
+        exporter: function (target, host) {
             $.each(target, function (k, v) {
                 if ($.isFunction(v)) {
                     host[k] = function () {
@@ -264,8 +264,8 @@ var fiona = {};
         }
     };
 
-    base.exports(base, root);
-    base.exports(core, register);
+    base.exporter(base, root);
+    base.exporter(core, register);
 
     $(function () {
         core.initialize();
