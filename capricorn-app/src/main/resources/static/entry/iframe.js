@@ -281,9 +281,9 @@ var iFrame = {};
         }
     };
 
-    var aFrames = core.wrap();
+    var aFrames = core.wrap(), aFramesEventHandle = {}, isEventHandleBind = false;
     $.extend(core, {
-        //Post Event
+        //Post Event in iFrame
         post: function(eventName, data, callback, fromIFrame) {
             if (fromIFrame) {
                 var aFrame = core.wrap(fromIFrame);
@@ -303,6 +303,32 @@ var iFrame = {};
         //Listener Message
         subscribe: function(callback, once) {
             aFrames.listen(callback, once, window);
+        },
+        register: function (eventName, callback, once) {
+            if (!aFramesEventHandle[eventName]) {
+                aFramesEventHandle[eventName] = {
+                    once: once,
+                    func: callback
+                };
+            }
+
+            if (!isEventHandleBind) {
+                core.subscribe(function (data) {
+                    var evtName = data.event, evtData = data.data;
+                    if (data && evtName) {
+                        var handle = aFramesEventHandle[evtName] || {};
+                        if ($.isFunction(handle.func)) {
+                            var ackData = handle.func(evtName, evtData, data);
+                            if (true === handle.once) {
+                                delete aFramesEventHandle[evtName];
+                            }
+                            return ackData;
+                        }
+                    }
+                });
+
+                isEventHandleBind = true;
+            }
         }
     });
 
