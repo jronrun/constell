@@ -278,30 +278,40 @@ var iFrame = {};
             } catch (e) {/**/}
 
             return iframes;
-        },
-
-        initialize: function () {
-            
         }
     };
 
-    $.extend(register, {
-        create: function(options, selector) {
-            return core.create(options, selector)
+    var aFrames = core.wrap();
+    $.extend(core, {
+        //Post Event
+        post: function(eventName, data, callback, fromIFrame) {
+            if (fromIFrame) {
+                var aFrame = core.wrap(fromIFrame);
+                if (aFrame.isAvailable()) {
+                    aFrame.tellEvent(eventName, data, callback);
+                }
+            } else {
+                aFrames.replyEvent(eventName, data, callback);
+            }
         },
-        wrap: function(target) {
-            return core.wrap(target);
+        //Publish Message in iFrame
+        publish: function(data) {
+            if (data && !core.isRootWin()) {
+                aFrames.reply(data);
+            }
         },
-        isRootWin: function(targetWin) {
-            return core.isRootWin(targetWin);
-        },
-        setEncryption: function (encodeFunc, decodeFunc) {
-            return core.setEncryption(encodeFunc, decodeFunc);
+        //Listener Message
+        subscribe: function(callback, once) {
+            aFrames.listen(callback, once, window);
         }
     });
 
-    $(function () {
-        core.initialize();
+    $.each(core, function (k, v) {
+        if ($.isFunction(v)) {
+            register[k] = function () {
+                return core[k].apply(this, arguments);
+            };
+        }
     });
 
 })(jQuery, iFrame);
