@@ -8,6 +8,22 @@ var fiona = {};
     var theUniqueID = 0;
 
     var core = {
+        now: function() {
+            return (Date.now || function() {
+                return new Date().getTime();
+            })();
+        },
+        sleep: function (milliseconds) {
+            var i, start;
+            start = core.now();
+            i = -1;
+            while (true) {
+                i++;
+                if ((core.now() - start) >= milliseconds) {
+                    break;
+                }
+            }
+        },
         sign: function (target) {
             if (typeof target !== 'string') {
                 target = JSON.stringify(target);
