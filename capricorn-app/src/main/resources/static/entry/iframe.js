@@ -304,6 +304,7 @@ var iFrame = {};
         subscribe: function(callback, once) {
             aFrames.listen(callback, once, window);
         },
+        //Register event handle
         register: function (eventName, callback, once) {
             if (!aFramesEventHandle[eventName]) {
                 aFramesEventHandle[eventName] = {
