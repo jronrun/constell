@@ -4,6 +4,12 @@ var mgr = {};
 
 (function ($, root, register) {
 
+    iFrame.setEncryption(function (target) {
+        return fiona.sign(target);
+    }, function (target) {
+        return fiona.deepUnsign(target);
+    });
+
     var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     root.paceOptions = {
