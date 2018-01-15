@@ -1,23 +1,12 @@
 
+/* checkbox */
 .ui.slider.checkbox input:checked ~ .box:before,
-.ui.slider.checkbox input:checked ~ label:before {
-    background-color: #2185d0 !important;
-}
+.ui.slider.checkbox input:checked ~ label:before {background-color: #2185d0 !important;}
+.ui.checkbox input:disabled {cursor: not-allowed;}
 
-.ui.checkbox input:disabled {
-    cursor: not-allowed;
-}
+/* full screen modal */
+.ui.fullscreen.modal {width: 100% !important;left: 0;height: 100% !important;border-radius: 0;}
+.ui.fullscreen.modal .content {padding: 0rem !important;}
+.modals.dimmer .ui.scrolling.fullscreen.modal {margin-top: 0rem !important;margin-bottom: 0rem !important;}
 
-.ui.fullscreen.modal {
-    width: 100% !important;
-    left: 0;
-    height: 100% !important;
-    border-radius: 0;
-}
-.ui.fullscreen.modal .content {
-    padding: 0rem !important;
-}
-.modals.dimmer .ui.scrolling.fullscreen.modal {
-    margin-top: 0rem !important;
-    margin-bottom: 0rem !important;
-}
+/*.ui.attached.segment {border: 0;}*/

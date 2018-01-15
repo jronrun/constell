@@ -43,6 +43,15 @@
 var comm = {};
 (function ($, root, register) {
 
+    function bindBehavior(methods, result, componentName) {
+        $.each(methods, function (i, method) {
+                result[$.camelCase(method.replace(/ /g, '-'))] = function () {
+                    return $(result.target)[componentName](method);
+                }
+            }
+        );
+    }
+
     var core = {
         /**
          * Preview in top window
@@ -165,7 +174,7 @@ var comm = {};
             delete options.modal;
             options.size = sized[options.size];
 
-            var modalId = (/^#/.test(options.id) ? '' : '#') + options.id, target = null, noneExists = false;
+            var modalId = (/^#/.test(options.id) ? '' : '#') + options.id, target = null, noneExists;
             if (noneExists = !$(modalId).length) {
                 //attach button id
                 $.each(options.buttons || [], function (idx, btn) {
@@ -177,35 +186,27 @@ var comm = {};
                 $('body').append(tmpl($('#modal_tmpl').html(), options));
 
                 events = $.extend({
+                    /*
                     onShow: null,
                     onVisible: null,
                     onHide: null,
                     onHidden: null,
                     onApprove: null,
                     onDeny: null
+                     */
                 }, events || {});
 
                 modalOptions = $.extend({
-                    onShow: function () {
-                        events.onShow && events.onShow();
-                    },
-                    onVisible: function () {
-                        events.onVisible && events.onVisible();
-                    },
-                    onHide: function () {
-                        events.onHide && events.onHide();
-                    },
+                    onShow: function () {events.onShow && events.onShow();},
+                    onVisible: function () {events.onVisible && events.onVisible();},
+                    onApprove: function () {events.onApprove && events.onApprove();},
+                    onDeny: function () {events.onDeny && events.onDeny();},
+                    onHide: function () {events.onHide && events.onHide();},
                     onHidden: function () {
                         if (!options.cache) {
                             $(modalId).remove();
                         }
                         events.onHidden && events.onHidden();
-                    },
-                    onApprove: function () {
-                        events.onApprove && events.onApprove();
-                    },
-                    onDeny: function () {
-                        events.onDeny && events.onDeny();
                     }
                 }, modalOptions);
 
@@ -213,14 +214,8 @@ var comm = {};
             }
 
             var result = {elId: modalId, target: target, settings: modalOptions};
-            $.each(['show', 'hide', 'toggle', 'refresh', 'show dimmer', 'hide dimmer', 'hide others', 'hide all',
-                    'is active'],
-                function (i, method) {
-                    result[$.camelCase(method.replace(' ', '-'))] = function () {
-                        return $(result.target).modal(method);
-                    }
-                }
-            );
+            bindBehavior(['show', 'hide', 'toggle', 'refresh', 'show dimmer', 'hide dimmer', 'hide others', 'hide all',
+                'is active'], result, 'modal');
 
             result.attach = function (selector, action) {
                 $(result.target).modal('attach events', selector, action);
@@ -240,6 +235,85 @@ var comm = {};
                     }
                 });
             }
+
+            return result;
+        },
+
+        sidebar: function (selector, options) {
+            options = $.extend({
+                //more https://semantic-ui.com/modules/sidebar.html#/settings
+                // push, overlay, scale down
+                // Vertical-Only Animations (left, right): uncover, slide along, slide out
+                transition: 'push',
+                closable: false,
+                dimPage: false
+                /*
+                context: 'body',
+                exclusive: false,
+                scrollLock: false,
+                returnScroll: false,
+                delaySetup: false,
+
+                onVisible: null,
+                onShow: null,
+                onChange: null,
+                onHide: null,
+                onHidden: null
+                 */
+            }, options || {});
+
+            var target = $(selector).sidebar(options),
+                result = {target: target, settings: options};
+
+            result.attach = function (selector, action) {
+                $(result.target).sidebar('attach events', selector, action);
+            };
+
+            bindBehavior(['toggle', 'show', 'is visible', 'is hidden', 'get transition event', 'pull page',
+                'get direction', 'push page', 'hide'], result, 'sidebar');
+
+            return result;
+        },
+
+        tab: function (selector, options) {
+            options = $.extend({
+                /*
+                //https://semantic-ui.com/modules/tab.html#/settings
+                auto: false,
+                // siblings, all
+                deactivate: 'siblings',
+                history: false,
+                ignoreFirstLoad: false,
+                // true, false, once
+                evaluateScripts: 'once',
+                alwaysRefresh: false,
+                cache: true
+
+                //parameters: tabPath, parameterArray, historyEvent
+                onFirstLoad: null,
+                //parameters: tabPath, parameterArray, historyEvent
+                onLoad: null,
+                //parameters: tabPath
+                onRequest: null,
+                //parameters: tabPath
+                onVisible: null
+                */
+            }, options || {});
+
+            var target = $(selector).tab(options),
+                result = {target: target, settings: options};
+
+            $.extend(result, {
+                attach: function (selector, action) {
+                    $(result.target).tab('attach events', selector, action);
+                },
+                //Changes tab to path
+                changeTab: function (path) {
+                    $(result.target).tab('change tab', path);
+                }
+            });
+
+            bindBehavior(['get path', 'is tab'], result, 'tab');
 
             return result;
         },

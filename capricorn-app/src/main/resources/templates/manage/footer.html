@@ -225,25 +225,5 @@
         </div>
     </script>
 
-    <script type="text/html" id="modal_tmpl">
-        <div id="<%= id %>" class="ui <%= size %> modal">
-            <% if (close) { %> <i class="close red icon"></i> <% } %>
-            <% if (header.length > 0) { %>
-                <div class="header"> <%= header %> </div>
-            <% } %>
-            <div class="content" id="<%= id + '-content' %>"> <%= content %> </div>
-            <% if (buttons.length > 0) { %>
-            <div class="actions">
-                <% $.each(buttons, function(idx, btn) { %>
-                    <% if (btn.html && btn.html.length > 0) { %>
-                        <%= btn.html %>
-                    <% } else { %>
-                        <div class="ui button <%= btn.clazz %>" id="<%= btn.id %>"><%= btn.text %></div>
-                    <% } %>
-                <% }); %>
-            </div>
-            <% } %>
-        </div>
-    </script>
-
+    <th:block th:replace="~{modal}"></th:block>
 </div>

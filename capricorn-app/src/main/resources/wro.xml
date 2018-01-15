@@ -3,14 +3,8 @@
 
 <groups xmlns="http://www.isdc.ro/wro">
 
-    <!-- Capricorn App Start -->
-
-    <!-- Capricorn App End -->
-    <!-- Capricorn Manage Start -->
-
-    <group name="manage">
+    <group name="base-heavy">
         <css>/components/semantic/dist/semantic.css</css>
-        <css>/manages/golgi/css/main.css</css>
         <css>/components/sweetalert2/dist/sweetalert2.css</css>
         <css>/components/PACE/themes/blue/pace-theme-minimal.css</css>
         <css>/logo.css</css>
@@ -28,6 +22,20 @@
         <js>/entry/fiona.js</js>
         <js>/entry/iframe.js</js>
         <js>/entry/semantic-comm.js</js>
+    </group>
+
+    <!-- Capricorn App Start -->
+
+    <group name="write">
+        <group-ref>base-heavy</group-ref>
+    </group>
+
+    <!-- Capricorn App End -->
+    <!-- Capricorn Manage Start -->
+
+    <group name="manage">
+        <group-ref>base-heavy</group-ref>
+        <css>/manages/golgi/css/main.css</css>
         <js>/manages/manage.js</js>
     </group>
 
