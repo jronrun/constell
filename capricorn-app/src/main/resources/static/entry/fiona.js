@@ -5,7 +5,10 @@ var fiona = {};
 
     var lz = LZString;
     LZString = undefined;
-    var theUniqueID = 0;
+    var theUniqueID = 0, SELECT_TYPE = {
+        1: '#',     //id
+        2: '.'      //class
+    };
 
     var core = {
         now: function() {
@@ -278,6 +281,15 @@ var fiona = {};
             }
 
             return s;
+        },
+        $sel: function (elId, suffix, selectType) {
+            return $(sel(elId, suffix, selectType));
+        },
+        sel: function (elId, suffix, selectType) {
+            return fmt('{0}{1}{2}', (/^#/.test(elId) ? '' : SELECT_TYPE[selectType || 1]), elId, suffix || '');
+        },
+        tmpls: function (templateId, data) {
+            return tmpl($sel(templateId).html(), data);
         },
         exporter: function (target, host) {
             $.each(target, function (k, v) {

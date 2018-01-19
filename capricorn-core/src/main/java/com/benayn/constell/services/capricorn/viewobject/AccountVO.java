@@ -36,12 +36,18 @@ import org.hibernate.validator.constraints.Email;
 @Getter
 @Setter
 @ToString
-@Actionable(editField = "username", appendFragment = "account_list_append_action", readyFragment = "account_page_ready")
-@DefineTouch(name = "render.role.touch.role", view = RoleVO.class, master = true, accessable = @TouchAccessable(
-    index = MODEL_ROLE_INDEX,
-    create = RELATION_ACCOUNT_ROLE_CREATE,
-    delete = RELATION_ACCOUNT_ROLE_DELETE
-))
+@Actionable(
+    editField = "username",
+    appendFragment = "account_list_append_action",
+    readyFragment = "account_page_ready")
+@DefineTouch(
+    name = "render.role.touch.role",
+    view = RoleVO.class,
+    master = true,
+    accessable = @TouchAccessable(
+        index = MODEL_ROLE_INDEX,
+        create = RELATION_ACCOUNT_ROLE_CREATE,
+        delete = RELATION_ACCOUNT_ROLE_DELETE))
 @Accessable(
     create = ACCOUNT_CREATE,
     retrieve = ACCOUNT_RETRIEVE,

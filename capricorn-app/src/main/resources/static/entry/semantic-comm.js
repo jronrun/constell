@@ -78,7 +78,8 @@ var comm = {};
         previewInSelfWin: function (text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents) {
             modalEvents = modalEvents || {};
             var originalOnVisible = modalEvents.onVisible, toggleable = 'toggleable',
-                previewModalId = 'preview-modal-' + fiona.uniqueId(), contextId = '#' + previewModalId + '-content';
+                createViewInstance = null != text,
+                previewModalId = 'preview-modal-' + fiona.uniqueId(), contextId = sel(previewModalId, '-content');
             modalOptions = $.extend({}, modalOptions || {}, {
                 size: 5,
                 id: previewModalId
@@ -90,32 +91,34 @@ var comm = {};
                         return;
                     }
 
-                    var viewport = fiona.viewport();
+                    if (createViewInstance) {
+                        var viewport = fiona.viewport();
 
-                    var view = iFrame.create({
-                        frameborder: 0
-                    }, contextId);
+                        var view = iFrame.create({
+                            frameborder: 0
+                        }, contextId);
 
-                    view.attr({
-                        //style: 'background-color: white'
-                        width: viewport.w,
-                        height: viewport.h - 4
-                    });
-
-                    if (fiona.isUrl(text)) {
-                        view.openUrl(text, function() {
-                            $.isFunction(domReadyCallbackIfUrl) && domReadyCallbackIfUrl(view, previewM);
+                        view.attr({
+                            //style: 'background-color: white'
+                            width: viewport.w,
+                            height: viewport.h - 4
                         });
-                    } else {
-                        text = (text || '').replace(/\\\//g, '/');
-                        view.write(text);
-                        if (view.docInited) {
-                            view.doc.keydown(function(e){
-                                //esc key
-                                if (27 === e.keyCode) {
-                                    previewM.hide();
-                                }
+
+                        if (fiona.isUrl(text)) {
+                            view.openUrl(text, function() {
+                                $.isFunction(domReadyCallbackIfUrl) && domReadyCallbackIfUrl(view, previewM);
                             });
+                        } else {
+                            text = (text || '').replace(/\\\//g, '/');
+                            view.write(text);
+                            if (view.docInited) {
+                                view.doc.keydown(function(e){
+                                    //esc key
+                                    if (27 === e.keyCode) {
+                                        previewM.hide();
+                                    }
+                                });
+                            }
                         }
                     }
 
@@ -128,6 +131,100 @@ var comm = {};
             var previewM = core.modal(modalOptions, modalEvents);
             previewM.show();
             return previewM;
+        },
+
+        previews: function (text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents) {
+            var rootW = iFrame.isRootWin() ? window : top.window;
+            return rootW.comm.previewsInSelfWin(text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents);
+        },
+        previewsInSelfWin: function (options, tabOptions, modalOptions, modalEvents) {
+            options = $.extend({
+                toggle: true,
+                toggleId: '',
+                tabActiveIdx: 0,
+                tabHead: false,
+                content: [
+                    {
+                        id: '',
+                        title: '',
+                        context: '',
+                        loadedCallbackIfUrl: null
+                    }
+                ]
+            }, options || {});
+
+            options.toggleId = '' === options.toggleId ? fiona.uniqueId('tgl-head-') : options.toggleId;
+            options.content = $.isArray(options.content) ? options.content : [options.content];
+
+            var result = {}, containerId = fiona.uniqueId('previews-'), innerOptions = {
+                containerId: containerId,
+                headId: (containerId + '-head'),
+                tabHeadItem: (containerId + '-item'),
+                tabBodyItem: (containerId + '-body')
+            }, modalContent = tmpls('previews_tmpl', $.extend(innerOptions, options)),
+                refreshSize = function (heightOffset) {
+                    var headH = $sel(innerOptions.headId, ':visible').height() || 0,
+                        viewport = fiona.viewport(),
+                        bodyH = viewport.h - headH - (heightOffset || 1);
+                    $('.' + innerOptions.tabBodyItem).css({
+                        margin: 0,
+                        width: '100%',
+                        height: bodyH
+                    });
+                },
+                refreshTab = function () {
+                    result.target = core.tab('.' + innerOptions.tabHeadItem, tabOptions || {});
+                    refreshSize();
+                };
+
+            core.previewInSelfWin(null, function () {
+                refreshTab();
+
+                if (options.toggle) {
+                    $sel(options.toggleId).click(function () {
+                        $sel(innerOptions.headId).slideToggle(200, function () {
+                            refreshSize();
+                            $sel(options.toggleId, '-icon').toggleClass('green',
+                                $sel(innerOptions.headId, ':visible').length);
+                        });
+                    });
+                }
+            }, false, {
+                content: modalContent
+            });
+
+            var appendTab = function (defineTab) {
+                var define = {
+                    tab: defineTab,
+                    tabHeadItem: innerOptions.tabHeadItem,
+                    tabBodyItem: innerOptions.tabBodyItem
+                };
+                $sel(innerOptions.headId).append(tmpls('atab_head_tmpl', define));
+                $sel(innerOptions.containerId).append(tmpls('atab_body_tmpl', define));
+                refreshTab();
+                result.target.changeTab(defineTab.id);
+            }, remTab = function (path) {
+                $sel(innerOptions.containerId, ' [data-tab=' + path + ']').remove();
+                refreshTab();
+                result.target.changeTab($sel(innerOptions.tabHeadItem, ':eq(0)').data('tab'));
+            };
+
+            $.extend(result, {
+                addTab: function (defineTab) {
+                    appendTab(defineTab);
+                },
+                remTab: function(path) {
+                    remTab(path);
+                },
+                resize: function (heightOffset) {
+                    refreshSize(heightOffset);
+                },
+                active: function (path) {
+                    result.target.changeTab(path);
+                }
+            });
+            
+            return result;
         },
 
         modal: function (options, events) {
@@ -174,7 +271,7 @@ var comm = {};
             delete options.modal;
             options.size = sized[options.size];
 
-            var modalId = (/^#/.test(options.id) ? '' : '#') + options.id, target = null, noneExists;
+            var modalId = sel(options.id), target = null, noneExists;
             if (noneExists = !$(modalId).length) {
                 //attach button id
                 $.each(options.buttons || [], function (idx, btn) {
@@ -183,7 +280,7 @@ var comm = {};
                     }
                 });
 
-                $('body').append(tmpl($('#modal_tmpl').html(), options));
+                $('body').append(tmpls('modal_tmpl', options));
 
                 events = $.extend({
                     /*
@@ -229,7 +326,7 @@ var comm = {};
                 //attach button event
                 $.each(options.buttons || [], function (idx, btn) {
                     if (btn.id && $.isFunction(btn.onClick)) {
-                        $((/^#/.test(btn.id) ? '' : '#') + btn.id).click(function () {
+                        sel(btn.id).click(function () {
                             btn.onClick({button: btn, modal: result});
                         });
                     }
@@ -309,6 +406,7 @@ var comm = {};
                 },
                 //Changes tab to path
                 changeTab: function (path) {
+                    if (!path) {return;}
                     $(result.target).tab('change tab', path);
                 }
             });

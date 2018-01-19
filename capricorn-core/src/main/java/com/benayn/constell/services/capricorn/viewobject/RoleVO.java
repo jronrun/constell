@@ -34,13 +34,19 @@ import lombok.ToString;
 @Setter
 @ToString
 @Actionable(delete = false, relations = {
-    @DefineTouch(name = "render.role.touch.permission", view = PermissionVO.class, master = true, switchable = true,
+    @DefineTouch(
+        name = "render.role.touch.permission",
+        view = PermissionVO.class,
+        master = true,
+        switchable = true,
         accessable = @TouchAccessable(
             index = PERMISSION_INDEX,
             create = RELATION_ROLE_PERMISSION_CREATE,
             delete = RELATION_ROLE_PERMISSION_DELETE
     )),
-    @DefineTouch(name = "render.role.touch.account", view = AccountVO.class,
+    @DefineTouch(
+        name = "render.role.touch.account",
+        view = AccountVO.class,
         accessable = @TouchAccessable(
             index = ACCOUNT_INDEX,
             create = RELATION_ACCOUNT_ROLE_CREATE,

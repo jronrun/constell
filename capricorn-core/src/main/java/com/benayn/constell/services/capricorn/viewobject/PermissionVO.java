@@ -30,12 +30,16 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-@Actionable(createFragment = "permission_create", delete = false)
-@DefineTouch(name = "render.permission.touch.role", view = RoleVO.class, accessable = @TouchAccessable(
-    index = MODEL_ROLE_INDEX,
-    create = RELATION_ROLE_PERMISSION_CREATE,
-    delete = RELATION_ROLE_PERMISSION_DELETE
-))
+@Actionable(
+    createFragment = "permission_create",
+    delete = false)
+@DefineTouch(
+    name = "render.permission.touch.role",
+    view = RoleVO.class,
+    accessable = @TouchAccessable(
+        index = MODEL_ROLE_INDEX,
+        create = RELATION_ROLE_PERMISSION_CREATE,
+        delete = RELATION_ROLE_PERMISSION_DELETE))
 @Accessable(
     create = PERMISSION_CREATE,
     retrieve = PERMISSION_RETRIEVE,
