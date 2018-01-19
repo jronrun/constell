@@ -148,7 +148,7 @@ var comm = {};
                         id: '',
                         title: '',
                         context: '',
-                        loadedCallbackIfUrl: null
+                        callback: null
                     }
                 ]
             }, options || {});
@@ -156,12 +156,20 @@ var comm = {};
             options.toggleId = '' === options.toggleId ? fiona.uniqueId('tgl-head-') : options.toggleId;
             options.content = $.isArray(options.content) ? options.content : [options.content];
 
-            var result = {}, containerId = fiona.uniqueId('previews-'), innerOptions = {
+            var result = {}, views = {}, containerId = fiona.uniqueId('previews-'), innerOptions = {
                 containerId: containerId,
                 headId: (containerId + '-head'),
                 tabHeadItem: (containerId + '-item'),
                 tabBodyItem: (containerId + '-body')
             }, modalContent = tmpls('previews_tmpl', $.extend(innerOptions, options)),
+                viewResize = function (tabId, aView) {
+                    var $tab = $sel(tabId);
+                    aView.attr({
+                        //style: 'background-color: white'
+                        width: $tab.width(),
+                        height: $tab.height() - 4
+                    });
+                },
                 refreshSize = function (heightOffset) {
                     var headH = $sel(innerOptions.headId, ':visible').height() || 0,
                         viewport = fiona.viewport(),
@@ -171,27 +179,57 @@ var comm = {};
                         width: '100%',
                         height: bodyH
                     });
+
+                    $.each(views, function (tabId, aView) {
+                        viewResize(tabId, aView);
+                    });
                 },
                 refreshTab = function () {
                     result.target = core.tab('.' + innerOptions.tabHeadItem, tabOptions || {});
                     refreshSize();
+                },
+                openFrame = function (aTab) {
+                    var view = iFrame.create({
+                        frameborder: 0
+                    }, sel(aTab.id));
+
+                    $sel(aTab.id).css({
+                        padding: 0
+                    });
+
+                    viewResize(aTab.id, view);
+                    view.openUrl(aTab.context, function() {
+                        $.isFunction(aTab.callback) && aTab.callback(aTab.id, view, previewM);
+                    });
+
+                    views[aTab.id] = view;
                 };
 
-            core.previewInSelfWin(null, function () {
+            var previewM = core.previewInSelfWin(null, function () {
                 refreshTab();
 
                 if (options.toggle) {
                     $sel(options.toggleId).click(function () {
-                        $sel(innerOptions.headId).slideToggle(200, function () {
+                        $sel(innerOptions.headId).slideToggle(200);
+                        fiona.delay(function () {
                             refreshSize();
                             $sel(options.toggleId, '-icon').toggleClass('green',
                                 $sel(innerOptions.headId, ':visible').length);
-                        });
+                        }, 300);
                     });
                 }
-            }, false, {
+
+                $.each(options.content, function (idx, target) {
+                    if (fiona.isUrl(target.context)) {
+                        openFrame(target);
+                    } else {
+                        $.isFunction(target.callback) && target.callback(target.id, false, previewM);
+                    }
+                });
+
+            }, false, $.extend(modalOptions || {}, {
                 content: modalContent
-            });
+            }), modalEvents);
 
             var appendTab = function (defineTab) {
                 if ($sel(defineTab.id).length) {
@@ -210,6 +248,7 @@ var comm = {};
 
                 refreshTab();
                 result.target.changeTab(defineTab.id);
+                openFrame(defineTab);
             }, remTab = function (path) {
                 $sel(innerOptions.containerId, ' [data-tab=' + path + ']').remove();
                 refreshTab();
