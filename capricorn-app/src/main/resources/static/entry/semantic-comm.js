@@ -64,7 +64,7 @@ var comm = {};
          */
         preview: function (text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents) {
             var rootW = iFrame.isRootWin() ? window : top.window;
-            return rootW.comm.previewInSelfWin(text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents);
+            return rootW.register.previewInSelfWin(text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents);
         },
         /**
          * Preview in current self window
@@ -135,7 +135,7 @@ var comm = {};
 
         previews: function (text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents) {
             var rootW = iFrame.isRootWin() ? window : top.window;
-            return rootW.comm.previewsInSelfWin(text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents);
+            return rootW.register.previewsInSelfWin(text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents);
         },
         previewsInSelfWin: function (options, tabOptions, modalOptions, modalEvents) {
             options = $.extend({
