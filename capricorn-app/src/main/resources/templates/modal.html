@@ -111,12 +111,13 @@
     <div class="pusher" id="<%= containerId %>">
         <div class="ui top attached tabular menu" style="<%= (tabHead ? '' : 'display:none;') %>" id="<%= headId %>">
             <% $.each(content, function(idx, tab) { %>
-                <a class="<%= (tabActiveIdx === idx ? 'active' : '') %> item <%= tabHeadItem %>" data-tab="<%= tab.id %>"><%= tab.title %></a>
+                <a class="<%= (tabActiveIdx === idx ? 'active' : '') %> item <%= tabHeadItem %>"
+                   data-tab="<%= tab.id %>"><%= tab.title %></a>
             <% }); %>
         </div>
         <% $.each(content, function(idx, tab) { %>
             <div class="ui bottom attached <%= (tabActiveIdx === idx ? 'active' : '') %> tab segment <%= tabBodyItem %>"
-                 id="<%= tab.id %>" data-tab="<%= tab.id %>"><%= tab.context %></div>
+                 id="<%= tab.id %>" data-tab="<%= tab.id %>"><%= (fiona.isUrl(tab.context) ? '' : tab.context) %></div>
         <% }); %>
     </div>
 </script>
@@ -124,5 +125,6 @@
     <a class="item <%= tabHeadItem %>" data-tab="<%= tab.id %>"><%= tab.title %></a>
 </script>
 <script type="text/html" id="atab_body_tmpl">
-    <div class="ui bottom attached tab segment <%= tabBodyItem %>" id="<%= tab.id %>" data-tab="<%= tab.id %>"><%= tab.context %></div>
+    <div class="ui bottom attached tab segment <%= tabBodyItem %>"
+         id="<%= tab.id %>" data-tab="<%= tab.id %>"><%= (fiona.isUrl(tab.context) ? '' : tab.context) %></div>
 </script>

@@ -64,7 +64,7 @@ var comm = {};
          */
         preview: function (text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents) {
             var rootW = iFrame.isRootWin() ? window : top.window;
-            return rootW.register.previewInSelfWin(text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents);
+            return rootW.comm.previewInSelfWin(text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents);
         },
         /**
          * Preview in current self window
@@ -135,7 +135,7 @@ var comm = {};
 
         previews: function (text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents) {
             var rootW = iFrame.isRootWin() ? window : top.window;
-            return rootW.register.previewsInSelfWin(text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents);
+            return rootW.comm.previewsInSelfWin(text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents);
         },
         previewsInSelfWin: function (options, tabOptions, modalOptions, modalEvents) {
             options = $.extend({
@@ -194,13 +194,20 @@ var comm = {};
             });
 
             var appendTab = function (defineTab) {
+                if ($sel(defineTab.id).length) {
+                    result.target.changeTab(defineTab.id);
+                    return;
+                }
+
                 var define = {
                     tab: defineTab,
                     tabHeadItem: innerOptions.tabHeadItem,
                     tabBodyItem: innerOptions.tabBodyItem
                 };
+
                 $sel(innerOptions.headId).append(tmpls('atab_head_tmpl', define));
                 $sel(innerOptions.containerId).append(tmpls('atab_body_tmpl', define));
+
                 refreshTab();
                 result.target.changeTab(defineTab.id);
             }, remTab = function (path) {
