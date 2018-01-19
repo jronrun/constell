@@ -177,7 +177,8 @@ var comm = {};
                     $('.' + innerOptions.tabBodyItem).css({
                         margin: 0,
                         width: '100%',
-                        height: bodyH
+                        height: bodyH,
+                        overflow: 'hidden'
                     });
 
                     $.each(views, function (tabId, aView) {
@@ -211,13 +212,10 @@ var comm = {};
                 if (options.toggle) {
                     $sel(options.toggleId).click(function () {
                         $sel(innerOptions.headId).slideToggle(200, function () {
+                            refreshSize();
                             $sel(options.toggleId, '-icon').toggleClass('green',
                                 $sel(innerOptions.headId, ':visible').length);
                         });
-
-                        fiona.delay(function () {
-                            refreshSize();
-                        }, 300);
                     });
                 }
 
