@@ -210,11 +210,13 @@ var comm = {};
 
                 if (options.toggle) {
                     $sel(options.toggleId).click(function () {
-                        $sel(innerOptions.headId).slideToggle(200);
-                        fiona.delay(function () {
-                            refreshSize();
+                        $sel(innerOptions.headId).slideToggle(200, function () {
                             $sel(options.toggleId, '-icon').toggleClass('green',
                                 $sel(innerOptions.headId, ':visible').length);
+                        });
+
+                        fiona.delay(function () {
+                            refreshSize();
                         }, 300);
                     });
                 }
@@ -256,6 +258,7 @@ var comm = {};
             };
 
             $.extend(result, {
+                preview: previewM,
                 addTab: function (defineTab) {
                     appendTab(defineTab);
                 },
