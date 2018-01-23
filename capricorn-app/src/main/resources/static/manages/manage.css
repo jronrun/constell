@@ -10,3 +10,6 @@
 .modals.dimmer .ui.scrolling.fullscreen.modal {margin-top: 0rem !important;margin-bottom: 0rem !important;}
 
 .ui.attached.segment {border: 0;}
+
+.ui.tabular.menu {border-bottom: 1px solid #d9edf7}
+.ui.tabular.menu .active.item {border-color: #d9edf7}
