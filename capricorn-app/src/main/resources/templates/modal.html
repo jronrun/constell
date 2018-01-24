@@ -111,9 +111,19 @@
     <div class="pusher" id="<%= containerId %>">
         <div class="ui top attached tabular menu" style="<%= (tabHead ? '' : 'display:none;') %>" id="<%= headId %>">
             <% $.each(content, function(idx, tab) { %>
-                <a class="<%= (tabActiveIdx === idx ? 'active' : '') %> item <%= tabHeadItem %>"
+                <a class="<%= (tabActiveIdx === idx ? 'active' : '') %> teal item <%= tabHeadItem %>"
                    data-tab="<%= tab.id %>"><%= tab.title %></a>
             <% }); %>
+            <!--
+            <div class="menu">
+                <a class="item">
+                    <div class="mini ui basic animated fade button">
+                        <div class="visible content"><i class="add icon"></i></div>
+                        <div class="hidden content">New</div>
+                    </div>
+                </a>
+            </div>
+            -->
         </div>
         <% $.each(content, function(idx, tab) { %>
             <div class="ui bottom attached <%= (tabActiveIdx === idx ? 'active' : '') %> tab segment <%= tabBodyItem %>"

@@ -28,6 +28,7 @@
 
     <group name="write">
         <group-ref>base-heavy</group-ref>
+        <js>/entry/write.js</js>
     </group>
 
     <!-- Capricorn App End -->
