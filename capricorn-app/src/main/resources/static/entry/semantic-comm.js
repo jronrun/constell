@@ -159,6 +159,8 @@ var comm = {};
             var result = {}, views = {}, containerId = fiona.uniqueId('previews-'), innerOptions = {
                 containerId: containerId,
                 headId: (containerId + '-head'),
+                railId: (containerId + '-rail'),
+                sidebarItem: (containerId + '-side'),
                 tabHeadItem: (containerId + '-item'),
                 tabBodyItem: (containerId + '-body')
             }, modalContent = tmpls('previews_tmpl', $.extend(innerOptions, options)),
@@ -254,6 +256,10 @@ var comm = {};
                 refreshTab();
                 result.target.changeTab($sel(innerOptions.tabHeadItem, ':eq(0)').data('tab'));
             };
+
+            $(window).resize(function () {
+                refreshSize();
+            });
 
             $.extend(result, {
                 preview: previewM,
