@@ -8,7 +8,7 @@ var fiona = {};
     var theUniqueID = 0, SELECT_TYPE = {
         1: '#',     //id
         2: '.'      //class
-    };
+    }, MARKED = 'marked';
 
     var core = {
         now: function() {
@@ -288,8 +288,12 @@ var fiona = {};
         sel: function (elId, suffix, selectType) {
             return fmt('{0}{1}{2}', (/^#/.test(elId) ? '' : SELECT_TYPE[selectType || 1]), elId, suffix || '');
         },
-        tmpls: function (templateId, data) {
-            return tmpl($sel(templateId).html(), data);
+        tmpls: function (templateId, data, appendToSelector) {
+            var aHtml = tmpl($sel(templateId).html(), data || {});
+            if (appendToSelector) {
+                $(appendToSelector).append(aHtml);
+            }
+            return aHtml
         },
         exporter: function (target, host) {
             $.each(target, function (k, v) {
@@ -299,6 +303,40 @@ var fiona = {};
                     };
                 }
             });
+        },
+        //opt 1 toggle, 2 mark, 3 unmark, 4 get
+        attrTgl: function (selector, attrName, opt) {
+            var markD = {};
+            switch (opt = opt || 1) {
+                case 1:
+                    markD[attrName] = 1 === core.data(selector, attrName) ? 0 : 1;
+                    break;
+                case 2:
+                    if (1 !== core.data(selector, attrName)) {
+                        markD[attrName] = 1;
+                    }
+                    break;
+                case 3:
+                    if (1 === core.data(selector, attrName)) {
+                        markD[attrName] = 0;
+                    }
+                    break;
+            }
+
+            if ([1, 2, 3].indexOf(opt) !== -1) {
+                core.data(selector, markD);
+            }
+
+            return 1 === core.data(selector, attrName);
+        },
+        isMarked: function (selector) {
+            return base.attrTgl(selector, MARKED, 4);
+        },
+        unMarked: function (selector) {
+            return base.attrTgl(selector, MARKED, 3);
+        },
+        setMarked: function (selector) {
+            return base.attrTgl(selector, MARKED, 2);
         }
     };
 

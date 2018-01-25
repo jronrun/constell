@@ -77,7 +77,7 @@ var comm = {};
          */
         previewInSelfWin: function (text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents) {
             modalEvents = modalEvents || {};
-            var originalOnVisible = modalEvents.onVisible, toggleable = 'toggleable',
+            var originalOnVisible = modalEvents.onVisible,
                 createViewInstance = null != text,
                 previewModalId = 'preview-modal-' + fiona.uniqueId(), contextId = sel(previewModalId, '-content');
             modalOptions = $.extend({}, modalOptions || {}, {
@@ -87,7 +87,7 @@ var comm = {};
 
             modalEvents = $.extend(modalEvents, {
                 onVisible: function () {
-                    if (toggleable === fiona.data(contextId, toggleable)) {
+                    if (isMarked(contextId)) {
                         return;
                     }
 
@@ -122,7 +122,7 @@ var comm = {};
                         }
                     }
 
-                    fiona.data(contextId, {toggleable: toggleable});
+                    setMarked(contextId);
                     $.isFunction(originalOnVisible) && originalOnVisible();
                     $.isFunction(callback) && callback(view, previewM);
                 }
@@ -245,8 +245,8 @@ var comm = {};
                     tabBodyItem: innerOptions.tabBodyItem
                 };
 
-                $sel(innerOptions.headId).append(tmpls('atab_head_tmpl', define));
-                $sel(innerOptions.containerId).append(tmpls('atab_body_tmpl', define));
+                tmpls('atab_head_tmpl', define, sel(innerOptions.headId));
+                tmpls('atab_body_tmpl', define, sel(innerOptions.containerId));
 
                 refreshTab();
                 result.target.changeTab(defineTab.id);
@@ -263,11 +263,14 @@ var comm = {};
 
             $.extend(result, {
                 preview: previewM,
+                curTab: function () {
+                    return $sel(innerOptions.tabBodyItem, '.active', 2).data('tab');
+                },
                 addTab: function (defineTab) {
                     appendTab(defineTab);
                 },
                 remTab: function(path) {
-                    remTab(path);
+                    remTab(path || result.curTab());
                 },
                 resize: function (heightOffset) {
                     refreshSize(heightOffset);
@@ -333,8 +336,7 @@ var comm = {};
                     }
                 });
 
-                $('body').append(tmpls('modal_tmpl', options));
-
+                tmpls('modal_tmpl', options, 'body');
                 events = $.extend({
                     /*
                     onShow: null,
