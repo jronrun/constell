@@ -143,6 +143,7 @@ var comm = {};
                 toggleId: '',
                 tabActiveIdx: 0,
                 tabHead: false,
+                tail: false,
                 content: [
                     {
                         id: '',
@@ -211,16 +212,22 @@ var comm = {};
             var previewM = core.previewInSelfWin(null, function () {
                 refreshTab();
 
+                if (options.rail) {
+                    $sel(innerOptions.railId).show();
+                }
+
                 if (options.toggle) {
+                    $sel(options.toggleId).show();
                     $sel(options.toggleId).click(function () {
-                        $sel(innerOptions.headId).slideToggle(200, function () {
-                            refreshSize();
+                        result.tglTabHead(function () {
                             $sel(options.toggleId, '-icon').toggleClass('green',
                                 $sel(innerOptions.headId, ':visible').length);
 
                             if ($sel(options.toggleId, '-icon').hasClass('green')) {
-                                result.showRail();
-                            } else if (!options.toggle) {
+                                if (options.rail) {
+                                    result.showRail();
+                                }
+                            } else {
                                 result.hideRail();
                             }
                         });
@@ -275,10 +282,16 @@ var comm = {};
                     sidebarOptions = $.extend(sidebarOptions, {
                         onVisible: function () {
                             result.hideRail();
+                            $sel(options.toggleId).hide();
                             $.isFunction(onVisible) && onVisible();
                         },
                         onHidden: function () {
-                            result.showRail();
+                            if (options.rail) {
+                                result.showRail();
+                            }
+                            if (options.toggle) {
+                                $sel(options.toggleId).show();
+                            }
                             $.isFunction(onHidden) && onHidden();
                         }
                     });
@@ -303,6 +316,12 @@ var comm = {};
                 remTab: function(path) {
                     remTab(path || result.curTab());
                 },
+                tglTabHead: function (callback) {
+                    $sel(innerOptions.headId).slideToggle(200, function () {
+                        refreshSize();
+                        $.isFunction(callback) && callback();
+                    });
+                },
                 resize: function (heightOffset) {
                     refreshSize(heightOffset);
                 },
@@ -314,7 +333,6 @@ var comm = {};
             $.each(['toggle', 'show', 'hide'], function (idx, me) {
                 result[fmt('{0}Rail', me)] = function () {
                     $sel(innerOptions.railId)[me]();
-                    $sel(options.toggleId)[me]();
                 };
             });
 

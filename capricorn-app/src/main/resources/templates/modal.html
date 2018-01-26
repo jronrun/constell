@@ -20,13 +20,11 @@
 </script>
 
 <script type="text/html" id="previews_tmpl">
-    <% if (true === toggle) { %>
-        <a class="ui mini right corner label icondh" id="<%= toggleId %>" style="z-index: 1001;">
-            <i class="content <%= tabHead ? 'green' : '' %> icon" id="<%= toggleId %>-icon" style="cursor: pointer;"></i>
-        </a>
-    <% } %>
+    <a class="ui mini right corner label icondh" id="<%= toggleId %>" style="z-index: 1001;display: none;">
+        <i class="content <%= tabHead ? 'green' : '' %> icon" id="<%= toggleId %>-icon" style="cursor: pointer;"></i>
+    </a>
 
-    <div class="ui right internal rail" id="<%= railId %>" style="padding:0;z-index: 1000;">
+    <div class="ui right internal rail" id="<%= railId %>" style="padding:0;z-index: 1000;display: none;">
         <div class="ui compact menu float-right" style="border:0;box-shadow:none;">
             <a class="item icondh" style="padding-left: 0.5em;padding-right: 0.5em;">
                 <i class="green gamepad icon"></i>

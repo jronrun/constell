@@ -20,7 +20,9 @@ var write = {};
 
 $(function () {
     window.aa = comm.previews({
-        tabHead:true,
+        toggle: true,
+        rail:false,
+        tabHead:false,
         content: [
             {
                 id: 'testa',
