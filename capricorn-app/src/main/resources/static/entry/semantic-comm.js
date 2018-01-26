@@ -220,7 +220,7 @@ var comm = {};
 
                             if ($sel(options.toggleId, '-icon').hasClass('green')) {
                                 result.showRail();
-                            } else {
+                            } else if (!options.toggle) {
                                 result.hideRail();
                             }
                         });
