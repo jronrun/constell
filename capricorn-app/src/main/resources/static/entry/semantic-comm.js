@@ -217,6 +217,12 @@ var comm = {};
                             refreshSize();
                             $sel(options.toggleId, '-icon').toggleClass('green',
                                 $sel(innerOptions.headId, ':visible').length);
+
+                            if ($sel(options.toggleId, '-icon').hasClass('green')) {
+                                result.showRail();
+                            } else {
+                                result.hideRail();
+                            }
                         });
                     });
                 }
@@ -279,7 +285,42 @@ var comm = {};
                     result.target.changeTab(path);
                 }
             });
-            
+
+            $.each(['toggle', 'show', 'hide'], function (idx, me) {
+                result[fmt('{0}Rail', me)] = function () {
+                    $sel(innerOptions.railId)[me]();
+                };
+            });
+
+            $.each(['left', 'right', 'top', 'bottom'], function (idx, direct) {
+                result[$.camelCase(fmt('init-{0}-sidebar', direct))] = function (sidebarOptions) {
+                    if (result[direct]) {
+                        return result[direct];
+                    }
+
+                    sidebarOptions = $.extend(sidebarOptions || {}, {
+                        context: sel(previewM.elId, '-content')
+                    });
+
+                    if (options.toggle && ['right', 'top'].indexOf(direct) !== -1) {
+                        var onVisible = sidebarOptions.onVisible, onHidden = sidebarOptions.onHidden;
+                        sidebarOptions = $.extend(sidebarOptions, {
+                            onVisible: function () {
+                                result.hideRail();
+                                $.isFunction(onVisible) && onVisible();
+                            },
+                            onHidden: function () {
+                                result.showRail();
+                                $.isFunction(onHidden) && onHidden();
+                            }
+                        });
+                    }
+
+                    return (result[direct] =
+                        core.sidebar(sel(innerOptions.sidebarItem, '.' + direct, 2), sidebarOptions));
+                };
+            });
+
             return result;
         },
 
@@ -420,6 +461,19 @@ var comm = {};
             result.attach = function (selector, action) {
                 $(result.target).sidebar('attach events', selector, action);
             };
+
+            $.extend(result, {
+                refresh: function (html, callback) {
+                    $(selector).empty().html(html);
+                    $.isFunction(callback) && callback();
+                },
+                resize: function (size) {
+                    size = size || '50%';
+                    $(selector).css(
+                        ['left', 'right'].indexOf(result.getDirection()) !== -1 ? {width: size} : {height: size});
+                    return result;
+                }
+            });
 
             bindBehavior(['toggle', 'show', 'is visible', 'is hidden', 'get transition event', 'pull page',
                 'get direction', 'push page', 'hide'], result, 'sidebar');
