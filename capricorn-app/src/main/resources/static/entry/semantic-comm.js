@@ -261,6 +261,31 @@ var comm = {};
                 $sel(innerOptions.containerId, ' [data-tab=' + path + ']').remove();
                 refreshTab();
                 result.target.changeTab($sel(innerOptions.tabHeadItem, ':eq(0)').data('tab'));
+            }, initSidebar = function (direct, sidebarOptions) {
+                if (result[direct]) {
+                    return result[direct];
+                }
+
+                sidebarOptions = $.extend(sidebarOptions || {}, {
+                    context: sel(previewM.elId, '-content')
+                });
+
+                if (options.toggle && ['right', 'top'].indexOf(direct) !== -1) {
+                    var onVisible = sidebarOptions.onVisible, onHidden = sidebarOptions.onHidden;
+                    sidebarOptions = $.extend(sidebarOptions, {
+                        onVisible: function () {
+                            result.hideRail();
+                            $.isFunction(onVisible) && onVisible();
+                        },
+                        onHidden: function () {
+                            result.showRail();
+                            $.isFunction(onHidden) && onHidden();
+                        }
+                    });
+                }
+
+                return (result[direct] =
+                    core.sidebar(sel(innerOptions.sidebarItem, '.' + direct, 2), sidebarOptions));
             };
 
             $(window).resize(function () {
@@ -294,30 +319,7 @@ var comm = {};
 
             $.each(['left', 'right', 'top', 'bottom'], function (idx, direct) {
                 result[$.camelCase(fmt('init-{0}-sidebar', direct))] = function (sidebarOptions) {
-                    if (result[direct]) {
-                        return result[direct];
-                    }
-
-                    sidebarOptions = $.extend(sidebarOptions || {}, {
-                        context: sel(previewM.elId, '-content')
-                    });
-
-                    if (options.toggle && ['right', 'top'].indexOf(direct) !== -1) {
-                        var onVisible = sidebarOptions.onVisible, onHidden = sidebarOptions.onHidden;
-                        sidebarOptions = $.extend(sidebarOptions, {
-                            onVisible: function () {
-                                result.hideRail();
-                                $.isFunction(onVisible) && onVisible();
-                            },
-                            onHidden: function () {
-                                result.showRail();
-                                $.isFunction(onHidden) && onHidden();
-                            }
-                        });
-                    }
-
-                    return (result[direct] =
-                        core.sidebar(sel(innerOptions.sidebarItem, '.' + direct, 2), sidebarOptions));
+                    initSidebar(direct, sidebarOptions);
                 };
             });
 
