@@ -314,6 +314,7 @@ var comm = {};
             $.each(['toggle', 'show', 'hide'], function (idx, me) {
                 result[fmt('{0}Rail', me)] = function () {
                     $sel(innerOptions.railId)[me]();
+                    $sel(options.toggleId)[me]();
                 };
             });
 
