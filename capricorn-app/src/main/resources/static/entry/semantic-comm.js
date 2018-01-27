@@ -219,7 +219,7 @@ var comm = {};
                 if (options.toggle) {
                     $sel(options.toggleId).show();
                     $sel(options.toggleId).click(function () {
-                        result.tglTabHead(function () {
+                        result.toggleHead(function () {
                             $sel(options.toggleId, '-icon').toggleClass('green',
                                 $visible(innerOptions.headId).length);
 
@@ -307,11 +307,21 @@ var comm = {};
                     toggle: $visible(innerOptions.toggleId).length,
                     tabHead: $visible(innerOptions.headId).length
                 };
+            }, control = function (id, suffix) {
+                $.each(['toggle', 'show', 'hide'], function (idx, me) {
+                    result[$.camelCase(fmt('{0}-{1}', me, suffix))] = function () {
+                        $sel(id)[me]();
+                    };
+                });
             };
 
             $(window).resize(function () {
                 refreshSize();
             });
+
+            control(innerOptions.railId, 'rail');
+            control(innerOptions.headId, 'head');
+            control(options.toggleId, 'ctl');
 
             $.extend(result, {
                 preview: previewM,
@@ -327,7 +337,7 @@ var comm = {};
                 state: function () {
                     return states();
                 },
-                tglTabHead: function (callback) {
+                toggleHead: function (callback) {
                     $sel(innerOptions.headId).slideToggle(200, function () {
                         refreshSize();
                         $.isFunction(callback) && callback();
@@ -339,12 +349,6 @@ var comm = {};
                 active: function (path) {
                     result.target.changeTab(path);
                 }
-            });
-
-            $.each(['toggle', 'show', 'hide'], function (idx, me) {
-                result[fmt('{0}Rail', me)] = function () {
-                    $sel(innerOptions.railId)[me]();
-                };
             });
 
             $.each(['left', 'right', 'top', 'bottom'], function (idx, direct) {
