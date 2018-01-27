@@ -174,7 +174,7 @@ var comm = {};
                     });
                 },
                 refreshSize = function (heightOffset) {
-                    var headH = $sel(innerOptions.headId, ':visible').height() || 0,
+                    var headH = $visible(innerOptions.headId).height() || 0,
                         viewport = fiona.viewport(),
                         bodyH = viewport.h - headH - (heightOffset || 1);
                     $('.' + innerOptions.tabBodyItem).css({
@@ -221,7 +221,7 @@ var comm = {};
                     $sel(options.toggleId).click(function () {
                         result.tglTabHead(function () {
                             $sel(options.toggleId, '-icon').toggleClass('green',
-                                $sel(innerOptions.headId, ':visible').length);
+                                $visible(innerOptions.headId).length);
 
                             if ($sel(options.toggleId, '-icon').hasClass('green')) {
                                 if (options.rail) {
@@ -281,15 +281,17 @@ var comm = {};
                     var onVisible = sidebarOptions.onVisible, onHidden = sidebarOptions.onHidden;
                     sidebarOptions = $.extend(sidebarOptions, {
                         onVisible: function () {
+                            fiona.data(sel(innerOptions.headId), states());
                             result.hideRail();
                             $sel(options.toggleId).hide();
                             $.isFunction(onVisible) && onVisible();
                         },
                         onHidden: function () {
-                            if (options.rail) {
+                            var beforeStates = fiona.data(sel(innerOptions.headId));
+                            if (beforeStates.rail) {
                                 result.showRail();
                             }
-                            if (options.toggle) {
+                            if (beforeStates.toggle) {
                                 $sel(options.toggleId).show();
                             }
                             $.isFunction(onHidden) && onHidden();
@@ -299,6 +301,12 @@ var comm = {};
 
                 return (result[direct] =
                     core.sidebar(sel(innerOptions.sidebarItem, '.' + direct, 2), sidebarOptions));
+            }, states = function () {
+                return {
+                    rail: $visible(innerOptions.railId).length,
+                    toggle: $visible(innerOptions.toggleId).length,
+                    tabHead: $visible(innerOptions.headId).length
+                };
             };
 
             $(window).resize(function () {
@@ -315,6 +323,9 @@ var comm = {};
                 },
                 remTab: function(path) {
                     remTab(path || result.curTab());
+                },
+                state: function () {
+                    return states();
                 },
                 tglTabHead: function (callback) {
                     $sel(innerOptions.headId).slideToggle(200, function () {

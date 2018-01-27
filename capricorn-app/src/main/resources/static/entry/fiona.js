@@ -282,6 +282,9 @@ var fiona = {};
 
             return s;
         },
+        $visible: function (elId, selectType) {
+            return $sel(elId, ':visible', selectType);
+        },
         $sel: function (elId, suffix, selectType) {
             return $(sel(elId, suffix, selectType));
         },
