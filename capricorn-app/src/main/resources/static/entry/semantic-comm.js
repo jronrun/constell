@@ -160,7 +160,12 @@ var comm = {};
             options.toggleId = '' === options.toggleId ? fiona.uniqueId('tgl-head-') : options.toggleId;
             options.content = $.isArray(options.content) ? options.content : [options.content];
 
-            var result = {}, views = {}, containerId = fiona.uniqueId('previews-'), innerOptions = {
+            var containerId = fiona.uniqueId('previews-');
+            $.each(options.content, function (idx, tab) {
+                tab.id = tab.id || fiona.uniqueId(containerId + '-tab-');
+            });
+
+            var result = {}, views = {}, innerOptions = {
                 containerId: containerId,
                 headId: (containerId + '-head'),
                 railId: (containerId + '-rail'),
@@ -377,6 +382,9 @@ var comm = {};
                 },
                 remTab: function(path) {
                     remTab(path || result.curTab());
+                },
+                refreshTab: function (html, path) {
+                    $sel(path || result.curTab()).html(html);
                 },
                 state: function () {
                     return states();
