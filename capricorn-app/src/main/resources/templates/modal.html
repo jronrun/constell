@@ -25,19 +25,12 @@
     </a>
 
     <div class="ui right internal rail" id="<%= railId %>" style="padding:0;z-index: 1000;display: none;">
-        <div class="ui compact menu float-right" style="border:0;box-shadow:none;">
+        <div class="ui compact menu float-right" id="<%= railId %>-content" style="border:0;box-shadow:none;">
+            <!--
             <a class="item icondh" style="padding-left: 0.5em;padding-right: 0.5em;">
                 <i class="green gamepad icon"></i>
             </a>
-            <a class="item icondh" style="padding-left: 0.5em;padding-right: 0.5em;">
-                <i class="green video camera icon"></i>
-            </a>
-            <a class="item icondh" style="padding-left: 0.5em;padding-right: 0.5em;">
-                <i class="green leaf icon"></i>
-            </a>
-            <a class="item icondh" style="padding-left: 0.5em;padding-right: 0.5em;">
-                <i class="green add icon"></i>
-            </a>
+            -->
         </div>
     </div>
 
@@ -123,4 +116,9 @@
 <script type="text/html" id="atab_body_tmpl">
     <div class="ui bottom attached tab segment <%= tabBodyItem %>"
          id="<%= tab.id %>" data-tab="<%= tab.id %>"><%= (fiona.isUrl(tab.context) ? '' : tab.context) %></div>
+</script>
+<script type="text/html" id="arail_tmpl">
+<a class="item icondh" style="padding-left: 0.5em;padding-right: 0.5em;" id="<%= id %>" title="<%= title %>">
+    <i class="<%= color %> <%= icon %> icon"></i>
+</a>
 </script>

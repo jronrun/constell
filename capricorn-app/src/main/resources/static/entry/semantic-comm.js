@@ -265,9 +265,10 @@ var comm = {};
                 result.target.changeTab(defineTab.id);
                 openFrame(defineTab);
             }, remTab = function (path) {
+                var nextTab = $sel(innerOptions.tabBodyItem, ':not(.active):eq(0)', 2).data('tab');
                 $sel(innerOptions.containerId, ' [data-tab=' + path + ']').remove();
                 refreshTab();
-                result.target.changeTab($sel(innerOptions.tabHeadItem, ':eq(0)').data('tab'));
+                result.target.changeTab(nextTab);
             }, initSidebar = function (direct, sidebarOptions) {
                 if (result[direct]) {
                     return result[direct];
@@ -313,6 +314,21 @@ var comm = {};
                         $sel(id)[me]();
                     };
                 });
+            }, appendRail = function (options) {
+                options = $.extend({
+                    icon: '',
+                    title: '',
+                    onClick: null,
+                    id: fiona.uniqueId('rail-ctl-'),
+                    color: 'green'
+                }, options || {});
+                tmpls('arail_tmpl', options, sel(innerOptions.railId, '-content'));
+
+                if ($.isFunction(options.onClick)) {
+                    $sel(options.id).click(function () {
+                        options.onClick(result);
+                    });
+                }
             };
 
             $(window).resize(function () {
@@ -325,6 +341,19 @@ var comm = {};
 
             $.extend(result, {
                 preview: previewM,
+                addCloseRailCtl: function () {
+                    appendRail({
+                        icon: 'delete',
+                        title: 'Close Current Tab',
+                        color: 'red',
+                        onClick: function (inst) {
+                            inst.remTab(inst.curTab());
+                        }
+                    });
+                },
+                addRailCtl: function (options) {
+                    appendRail(options);
+                },
                 curTab: function () {
                     return $sel(innerOptions.tabBodyItem, '.active', 2).data('tab');
                 },
