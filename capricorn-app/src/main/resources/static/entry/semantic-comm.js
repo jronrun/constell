@@ -290,7 +290,7 @@ var comm = {};
                 }
 
                 sidebarOptions = $.extend(sidebarOptions || {}, {
-                    context: sel(previewM.elId, '-content')
+                    context: (options.popup ? sel(previewM.elId, '-content') : options.parent)
                 });
 
                 if (options.toggle && ['right', 'top'].indexOf(direct) !== -1) {
