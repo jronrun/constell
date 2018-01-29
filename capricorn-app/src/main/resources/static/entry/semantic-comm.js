@@ -133,12 +133,15 @@ var comm = {};
             return previewM;
         },
 
-        previews: function (text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents) {
+        previews: function (options, callback, domReadyCallbackIfUrl, modalOptions, modalEvents) {
             var rootW = iFrame.isRootWin() ? window : top.window;
-            return rootW.comm.previewsInSelfWin(text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents);
+            return rootW.comm.previewsInSelfWin(options, callback, domReadyCallbackIfUrl, modalOptions, modalEvents);
         },
         previewsInSelfWin: function (options, tabOptions, modalOptions, modalEvents) {
             options = $.extend({
+                popup: true,
+                // content append to the given selector element if popup is false
+                parent: 'body',
                 toggle: true,
                 toggleId: '',
                 tabActiveIdx: 0,
@@ -209,9 +212,8 @@ var comm = {};
                     views[aTab.id] = view;
                 };
 
-            var previewM = core.previewInSelfWin(null, function () {
+            var previewM = null, showCallback = function () {
                 refreshTab();
-
                 if (options.rail) {
                     $sel(innerOptions.railId).show();
                 }
@@ -241,10 +243,23 @@ var comm = {};
                         $.isFunction(target.callback) && target.callback(target.id, false, previewM);
                     }
                 });
+            };
 
-            }, false, $.extend(modalOptions || {}, {
-                content: modalContent
-            }), modalEvents);
+            if ($('.page-struct').length) {
+                console && console.warn('work correct only if one pusher class in page');
+                return false;
+            }
+
+            if (options.popup) {
+                previewM = core.previewInSelfWin(null, function () {
+                    showCallback();
+                }, false, $.extend(modalOptions || {}, {
+                    content: modalContent
+                }), modalEvents);
+            } else {
+                $(options.parent).append(modalContent);
+                showCallback();
+            }
 
             var appendTab = function (defineTab) {
                 if ($sel(defineTab.id).length) {
@@ -399,11 +414,11 @@ var comm = {};
                     observeChanges: false,
                     allowMultiple: false,
                     offset: 0,
-                    context: 'body',
                     transition: 'scale',
                     duration: 400,
                     queue: false
                      */
+                    context: 'body',
                     closable: false,
                     keyboardShortcuts: false
                 }, (options = options || {}).modal || {});
