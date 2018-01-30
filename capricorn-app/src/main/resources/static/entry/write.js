@@ -8,6 +8,7 @@ var write = {};
             pvs = comm.previews({
                 popup: false,
                 toggle: false,
+                parentSet: 2,
                 content: {
                     context: ''
                 }

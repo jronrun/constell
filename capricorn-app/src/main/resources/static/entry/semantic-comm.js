@@ -52,7 +52,11 @@ var comm = {};
         );
     }
 
-    var core = {
+    var SETTER = {
+        1: 'append',
+        2: 'prepend',
+        3: 'html'
+    }, core = {
         /**
          * Preview in top window
          * @param text
@@ -141,8 +145,8 @@ var comm = {};
             // sidebar work only if one pusher class in page
             options = $.extend({
                 popup: true,
-                // content append to the given selector element if popup is false
-                parent: 'body',
+                parent: 'body',     // content append to the given selector element if popup is false
+                parentSet: 1,       // set content to parent given element, jQuery method: 1 append, 2 prepend, 3 html
                 toggle: true,
                 toggleId: '',
                 tabActiveIdx: 0,
@@ -259,7 +263,7 @@ var comm = {};
                     content: modalContent
                 }), modalEvents);
             } else {
-                $(options.parent).append(modalContent);
+                $(options.parent)[SETTER[options.parentSet]](modalContent);
                 showCallback();
             }
 
