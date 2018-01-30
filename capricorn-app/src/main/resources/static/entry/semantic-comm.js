@@ -383,6 +383,9 @@ var comm = {};
                 remTab: function(path) {
                     remTab(path || result.curTab());
                 },
+                refreshHead: function (title, path) {
+                    $sel(path || result.curTab(), '-th').html(title);
+                },
                 refreshTab: function (html, path) {
                     $sel(path || result.curTab()).html(html);
                 },

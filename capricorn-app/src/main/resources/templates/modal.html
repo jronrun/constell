@@ -91,7 +91,7 @@
         <div class="ui top attached tabular menu" style="<%= (tabHead ? '' : 'display:none;') %>" id="<%= headId %>">
             <% $.each(content, function(idx, tab) { %>
                 <a class="<%= (tabActiveIdx === idx ? 'active' : '') %> teal item <%= tabHeadItem %>"
-                   data-tab="<%= tab.id %>"><%= tab.title %></a>
+                   id="<%= tab.id %>-th" data-tab="<%= tab.id %>"><%= tab.title %></a>
             <% }); %>
             <!--
             <div class="menu">
