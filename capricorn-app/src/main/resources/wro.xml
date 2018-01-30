@@ -24,6 +24,105 @@
         <js>/entry/semantic-comm.js</js>
     </group>
 
+    <group name="code-mirror">
+        <css>/components/codemirror/lib/codemirror.css</css>
+        <js>/components/codemirror/lib/codemirror.js</js>
+
+        <js>/components/codemirror/addon/comment/comment.js</js>
+        <js>/components/codemirror/addon/comment/continuecomment.js</js>
+
+        <css>/components/codemirror/addon/dialog/dialog.css</css>
+        <js>/components/codemirror/addon/dialog/dialog.js</js>
+
+        <css>/components/codemirror/addon/display/fullscreen.css</css>
+        <js>/components/codemirror/addon/display/fullscreen.js</js>
+
+        <js>/components/codemirror/addon/display/autorefresh.js</js>
+        <js>/components/codemirror/addon/display/panel.js</js>
+        <js>/components/codemirror/addon/display/placeholder.js</js>
+
+        <js>/components/codemirror/addon/edit/closebrackets.js</js>
+        <js>/components/codemirror/addon/edit/closetag.js</js>
+        <js>/components/codemirror/addon/edit/continuelist.js</js>
+        <js>/components/codemirror/addon/edit/matchbrackets.js</js>
+        <js>/components/codemirror/addon/edit/matchtags.js</js>
+
+        <js>/components/codemirror/addon/fold/brace-fold.js</js>
+        <js>/components/codemirror/addon/fold/comment-fold.js</js>
+        <js>/components/codemirror/addon/fold/foldcode.js</js>
+
+        <css>/components/codemirror/addon/fold/foldgutter.css</css>
+        <js>/components/codemirror/addon/fold/foldgutter.js</js>
+
+        <js>/components/codemirror/addon/fold/indent-fold.js</js>
+        <js>/components/codemirror/addon/fold/markdown-fold.js</js>
+        <js>/components/codemirror/addon/fold/xml-fold.js</js>
+
+        <js>/components/codemirror/addon/hint/anyword-hint.js</js>
+        <js>/components/codemirror/addon/hint/css-hint.js</js>
+        <js>/components/codemirror/addon/hint/html-hint.js</js>
+        <js>/components/codemirror/addon/hint/javascript-hint.js</js>
+
+        <css>/components/codemirror/addon/hint/show-hint.css</css>
+        <js>/components/codemirror/addon/hint/show-hint.js</js>
+
+        <js>/components/codemirror/addon/hint/sql-hint.js</js>
+        <js>/components/codemirror/addon/hint/xml-hint.js</js>
+
+        <js>/components/codemirror/addon/runmode/runmode.js</js>
+        <js>/components/codemirror/addon/scroll/annotatescrollbar.js</js>
+
+        <js>/components/codemirror/addon/search/jump-to-line.js</js>
+        <js>/components/codemirror/addon/search/match-highlighter.js</js>
+
+        <css>/components/codemirror/addon/search/matchesonscrollbar.css</css>
+        <js>/components/codemirror/addon/search/matchesonscrollbar.js</js>
+
+        <js>/components/codemirror/addon/search/search.js</js>
+        <js>/components/codemirror/addon/search/searchcursor.js</js>
+
+        <js>/components/codemirror/addon/selection/active-line.js</js>
+        <js>/components/codemirror/addon/selection/mark-selection.js</js>
+        <js>/components/codemirror/addon/selection/selection-pointer.js</js>
+
+        <js>/components/codemirror/addon/wrap/hardwrap.js</js>
+
+        <js>/components/codemirror/mode/meta.js</js>
+        <js>/components/codemirror/mode/javascript/javascript.js</js>
+    </group>
+
+    <group name="note-mirror">
+        <js>/components/codemirror/addon/display/rulers.js</js>
+        <js>/components/codemirror/addon/edit/trailingspace.js</js>
+
+        <js>/components/codemirror/addon/lint/coffeescript-lint.js</js>
+        <js>/components/codemirror/addon/lint/css-lint.js</js>
+        <js>/components/codemirror/addon/lint/html-lint.js</js>
+        <js>/components/codemirror/addon/lint/javascript-lint.js</js>
+        <js>/components/codemirror/addon/lint/json-lint.js</js>
+        <js>/components/codemirror/addon/lint/yaml-lint.js</js>
+
+        <css>/components/codemirror/addon/lint/lint.css</css>
+        <js>/components/codemirror/addon/lint/lint.js</js>
+
+        <css>/components/codemirror/addon/merge/merge.css</css>
+        <js>/components/codemirror/addon/merge/merge.js</js>
+
+        <js>/components/codemirror/keymap/vim.js</js>
+
+        <js>/entry/diff_match_patch_20121119/diff_match_patch.js</js>
+    </group>
+
+    <group name="code">
+        <group-ref>code-mirror</group-ref>
+        <js>/entry/codemirror.js</js>
+    </group>
+
+    <group name="note">
+        <group-ref>note-mirror</group-ref>
+        <js>/entry/notemirror.js</js>
+    </group>
+
     <!-- Capricorn App Start -->
 
     <group name="write">
