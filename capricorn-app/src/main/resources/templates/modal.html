@@ -34,60 +34,62 @@
         </div>
     </div>
 
-    <div class="ui left vertical labeled icon sidebar menu <%= sidebarItem %>" style="border: 0;"> <!-- inverted -->
-        <!--
-        <a class="item">
-            <i class="home icon"></i>
-            Home
-        </a>
-        -->
-    </div>
-
-    <div class="ui right sidebar vertical menu <%= sidebarItem %>" style="border: 0;">
-        <!--
-        <a class="header item">File Permissions</a>
-        <a class="item">Share on Social</a>
-        <a class="item">Share by E-mail</a>
-        -->
-    </div>
-
-    <div class="ui top sidebar ui segment <%= sidebarItem %>" style="border: 0;">
-        <!--
-        <div class="ui center aligned page grid">
-            <div class="one column row">
-                <div class="sixteen wide column">
-                    <h3 class="ui header">New Content Awaits</h3>
-                </div>
-            </div>
-            <div class="three column divided row">
-                <div class="column">
-                    1
-                </div>
-                <div class="column">
-                    2
-                </div>
-                <div class="column">
-                    3
-                </div>
-            </div>
+    <% if (pushable) { %>
+        <div class="ui left vertical labeled icon sidebar menu <%= sidebarItem %>" style="border: 0;"> <!-- inverted -->
+            <!--
+            <a class="item">
+                <i class="home icon"></i>
+                Home
+            </a>
+            -->
         </div>
-        -->
-    </div>
 
-    <div class="ui bottom inverted nine item labeled icon sidebar menu <%= sidebarItem %>" style="border: 0;">
-        <!--
-        <a class="item">
-            <i class="home icon"></i>
-            Home
-        </a>
-        <a class="item">
-            <i class="block layout icon"></i>
-            Topics
-        </a>
-        -->
-    </div>
+        <div class="ui right sidebar vertical menu <%= sidebarItem %>" style="border: 0;">
+            <!--
+            <a class="header item">File Permissions</a>
+            <a class="item">Share on Social</a>
+            <a class="item">Share by E-mail</a>
+            -->
+        </div>
 
-    <div class="pusher<%= !popup ? ' page-struct' : '' %>" id="<%= containerId %>">
+        <div class="ui top sidebar ui segment <%= sidebarItem %>" style="border: 0;">
+            <!--
+            <div class="ui center aligned page grid">
+                <div class="one column row">
+                    <div class="sixteen wide column">
+                        <h3 class="ui header">New Content Awaits</h3>
+                    </div>
+                </div>
+                <div class="three column divided row">
+                    <div class="column">
+                        1
+                    </div>
+                    <div class="column">
+                        2
+                    </div>
+                    <div class="column">
+                        3
+                    </div>
+                </div>
+            </div>
+            -->
+        </div>
+
+        <div class="ui bottom inverted nine item labeled icon sidebar menu <%= sidebarItem %>" style="border: 0;">
+            <!--
+            <a class="item">
+                <i class="home icon"></i>
+                Home
+            </a>
+            <a class="item">
+                <i class="block layout icon"></i>
+                Topics
+            </a>
+            -->
+        </div>
+    <% } %>
+
+    <div class="<%= pushable ? 'pusher' : '' %><%= !popup ? ' page-struct' : '' %>" id="<%= containerId %>">
         <div class="ui top attached tabular menu" style="<%= (tabHead ? '' : 'display:none;') %>" id="<%= headId %>">
             <% $.each(content, function(idx, tab) { %>
                 <a class="<%= (tabActiveIdx === idx ? 'active' : '') %> teal item <%= tabHeadItem %>"

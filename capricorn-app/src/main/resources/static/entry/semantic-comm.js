@@ -138,6 +138,7 @@ var comm = {};
             return rootW.comm.previewsInSelfWin(options, callback, domReadyCallbackIfUrl, modalOptions, modalEvents);
         },
         previewsInSelfWin: function (options, tabOptions, modalOptions, modalEvents) {
+            // sidebar work only if one pusher class in page
             options = $.extend({
                 popup: true,
                 // content append to the given selector element if popup is false
@@ -166,6 +167,7 @@ var comm = {};
             });
 
             var result = {}, views = {}, innerOptions = {
+                pushable: $('.page-struct').length < 1,
                 containerId: containerId,
                 headId: (containerId + '-head'),
                 railId: (containerId + '-rail'),
@@ -249,11 +251,6 @@ var comm = {};
                     }
                 });
             };
-
-            if ($('.page-struct').length) {
-                console && console.warn('work correct only if one pusher class in page');
-                return false;
-            }
 
             if (options.popup) {
                 previewM = core.previewInSelfWin(null, function () {
@@ -406,11 +403,13 @@ var comm = {};
                 }
             });
 
-            $.each(['left', 'right', 'top', 'bottom'], function (idx, direct) {
-                result[$.camelCase(fmt('init-{0}-sidebar', direct))] = function (sidebarOptions) {
-                    initSidebar(direct, sidebarOptions);
-                };
-            });
+            if (innerOptions.pushable) {
+                $.each(['left', 'right', 'top', 'bottom'], function (idx, direct) {
+                    result[$.camelCase(fmt('init-{0}-sidebar', direct))] = function (sidebarOptions) {
+                        initSidebar(direct, sidebarOptions);
+                    };
+                });
+            }
 
             return result;
         },
