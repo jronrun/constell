@@ -137,9 +137,9 @@ var comm = {};
             return previewM;
         },
 
-        previews: function (options, callback, domReadyCallbackIfUrl, modalOptions, modalEvents) {
+        previews: function (options, tabOptions, modalOptions, modalEvents) {
             var rootW = iFrame.isRootWin() ? window : top.window;
-            return rootW.comm.previewsInSelfWin(options, callback, domReadyCallbackIfUrl, modalOptions, modalEvents);
+            return rootW.comm.previewsInSelfWin(options, tabOptions, modalOptions, modalEvents);
         },
         previewsInSelfWin: function (options, tabOptions, modalOptions, modalEvents) {
             // sidebar work only if one pusher class in page
