@@ -93,6 +93,66 @@ var fiona = {};
             });
         },
 
+        css: function(style, styleId) {
+            var link = document.createElement('link');
+            link.setAttribute('rel', 'stylesheet');
+            link.setAttribute('type', 'text/css');
+            link.setAttribute('href', style);
+            if (styleId) {
+                link.setAttribute('id', styleId);
+            }
+            $('head').append(link);
+        },
+
+        querySelector: function(selector, isAll, context) {
+            if (isAll == null) {
+                isAll = false;
+            }
+            if (context == null) {
+                context = document;
+            }
+            if (isAll) {
+                return context.querySelectorAll(selector);
+            } else {
+                return context.querySelector(selector);
+            }
+        },
+
+        query: function() {
+            var doc, isAll, l, params, results, selector;
+            params = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+            l = params.length;
+            selector = '';
+            isAll = false;
+            switch (l) {
+                case 1:
+                case 2:
+                case 3:
+                    selector = params[0];
+                    if (l === 2) {
+                        if (typeof params[1] === 'boolean') {
+                            isAll = params[1];
+                        } else {
+                            doc = params[1];
+                        }
+                    }
+                    if (l === 3) {
+                        doc = params[1];
+                        isAll = params[2];
+                    }
+            }
+            doc = doc || document;
+            if (/^[A-Za-z0-9]+$/.test(selector)) {
+                results = core.querySelector(selector, isAll, doc);
+                if (results === null) {
+                    selector = "[name=" + selector + "]";
+                } else {
+                    return results;
+                }
+            }
+            return core.querySelector(selector, isAll, doc);
+        },
+
         enter: function (selector, options) {
             if ($.isFunction(options)) {
                 options = {enter: options};
@@ -193,6 +253,12 @@ var fiona = {};
         },
         isUrl: function(text) {
             return /^(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/.test(text);
+        },
+        fullUrl: function(anURI) {
+            return core.isUrl(anURI) ? anURI : (location.origin || '') + anURI;
+        },
+        isJson: function(obj) {
+            return typeof obj === 'object' && !obj.length;
         },
 
         viewport: function () {
