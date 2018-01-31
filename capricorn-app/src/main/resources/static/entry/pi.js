@@ -95,6 +95,7 @@ var pi = {};
 
     _.randomStr = function(length) {
         var str = '';
+        length = length || 6;
         while (true) {
             str += Math.random().toString(36).substr(2);
             if (str.length >= length) {
