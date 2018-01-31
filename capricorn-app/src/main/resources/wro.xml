@@ -114,7 +114,7 @@
 
         <js minimize="false">/components/file-saver/FileSaver.min.js</js>
         <js>/components/filereader/filereader.js</js>
-        <js>/components/store.js/dist/store.everything.min.js</js>
+        <js minimize="false">/components/store.js/dist/store.everything.min.js</js>
     </group>
 
     <group name="code">
