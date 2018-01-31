@@ -93,6 +93,10 @@
         return th;
     }
 
+    function fmtjson() {
+        return JSON.stringify(target, false, 2);
+    }
+
     var keyMappings = {
         escKey: { k: 'Esc', f: 'fullscreenTgl'},
         ctrlLKey: { k: 'Ctrl-L', f: 'guttersTgl'}
@@ -290,6 +294,27 @@
                 }
                 $.isFunction(events.fullscreen) && events.fullscreen(isFullscreen);
             },
+            checkIsJson: function (text) {
+                if (!mirror.isJson(text || tools.selected())) {
+                    lemon.alert('The selected or content is not a valid json.');
+                    return false;
+                }
+
+                return true;
+            },
+            isJson: function(noneLogWarnMsg) {
+                return mirror.isJson(cm.getValue(), noneLogWarnMsg);
+            },
+            format: function () {
+                var cursor = cm.getCursor();
+                if (tools.isJson()) {
+                    cm.setValue(fmtjson(cm.getValue()));
+                } else {
+                    return;
+                }
+                cm.setCursor(cursor);
+                tools.refreshDelay();
+            },
             notifyContent: function () {
                 var evtN = 'MIRROR_INPUT_READ_NOTIFY', cMode = tools.mode();
                 return {
@@ -337,10 +362,10 @@
                 tools.refreshDelay();
                 return data;
             },
-            refreshDelay: function(delay) {
+            refreshDelay: function(wait) {
                 delay(function () {
                     cm.refresh();
-                }, delay || 100);
+                }, wait || 100);
             }
         };
 
@@ -397,8 +422,6 @@
             $.extend(tools, commandM);
             tools.cmds.push(k);
         });
-
-        intlJsonQueries(tools);
 
         return tools;
     };
@@ -599,6 +622,27 @@
             } else {
                 reqM(lang.mode);
             }
+        },
+        isJson: function(target, noneLogWarnMsg) {
+            try {
+                if (!pi.isString(target)) {
+                    target = JSON.stringify(target);
+                }
+                JSON.parse(target);
+            } catch (e) {
+                if (!noneLogWarnMsg) {
+                    console && console.warn('mirror.isJson: ' + e.message);
+                }
+                return false;
+            }
+            return true;
+        },
+
+        parse: function (target) {
+            if (!pi.isString(target)) {
+                target = JSON.stringify(target);
+            }
+            return JSON.parse(target);
         }
     };
 
