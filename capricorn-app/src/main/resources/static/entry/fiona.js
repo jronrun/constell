@@ -5,10 +5,160 @@ var fiona = {};
 
     var lz = LZString;
     LZString = undefined;
-    var theUniqueID = 0, SELECT_TYPE = {
+    var theUniqueID = 0, _ = {}, SELECT_TYPE = {
         1: '#',     //id
         2: '.'      //class
-    }, MARKED = 'marked';
+    }, MARKED = 'marked',
+        definedTypes = [
+            'Arguments', 'Array', 'Boolean', 'Date', 'Error', 'Function', 'Null',
+            'Number', 'Object', 'RegExp', 'String', 'Undefined', 'global'
+        ];
+
+    _.capitalize = function(word) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+    };
+
+    function dynamicMethod(delegate, methodN, methodBody, prefixN) {
+        return (function(methodN) {
+            return delegate[prefixN ? prefixN + _.capitalize(methodN) : methodN] = methodBody;
+        })(methodN);
+    }
+
+    _.type = function(obj, full) {
+        if (full == null) {
+            full = false;
+        }
+        var aType = Object.prototype.toString.call(obj);
+        if (full) {
+            return aType;
+        } else {
+            return aType.slice(8, -1);
+        }
+    };
+
+    function bindTypes(type) {
+        return dynamicMethod(_, type, (function(obj) {
+            return type === _.type(obj);
+        }), 'is');
+    }
+
+    for (var j = 0, len1 = definedTypes.length; j < len1; j++) {
+        bindTypes(definedTypes[j]);
+    }
+
+    _.isFunc = _.isFunction;
+    _.isWin = _.isGlobal;
+
+    _.isJson = function(obj) {
+        return typeof obj === 'object' && _.isObject(obj) && !obj.length;
+    };
+
+    _.isEvent = function(obj) {
+        return !_.isNull(obj) && !_.isUndefined(obj) && (!_.isUndefined(obj.altKey) || !_.isUndefined(obj.preventDefault));
+    };
+
+    _.prefix = function(target, length, fill) {
+        return (Array(length).join(fill || '0') + target).slice(-length);
+    };
+
+    _.suffix = function(target, length, fill) {
+        return target + Array(length + 1).join(fill || '0').slice(target.length);
+    };
+
+    _.trim = function(target, chars) {
+        if (!_.isString(target)) {
+            return target;
+        }
+        if (_.isUndefined(chars)) {
+            return target.replace(/(^\s*)|(\s*$)/g, "");
+        }
+        return target.replace(new RegExp("(^(" + chars + ")*)|((" + chars + ")*$)", "gi"), "");
+    };
+
+    _.repeat = function(target, count) {
+        return new Array(1 + count).join(target);
+    };
+
+    _.ltrim = function(target, chars) {
+        if (!_.isString(target)) {
+            return target;
+        }
+        return target.replace(new RegExp("(^" + (_.isBlank(chars) ? "\\s" : chars) + "*)"), "");
+    };
+
+    _.rtrim = function(target, chars) {
+        if (!_.isString(target)) {
+            return target;
+        }
+        return target.replace(new RegExp("(" + (_.isBlank(chars) ? "\\s" : chars) + "*$)"), "");
+    };
+
+    _.randomStr = function(length) {
+        var str = '';
+        while (true) {
+            str += Math.random().toString(36).substr(2);
+            if (str.length >= length) {
+                break;
+            }
+        }
+        return str.substr(0, length);
+    };
+
+    _.keys = function(obj, precodition) {
+        precodition = precodition || function () {
+            return true;
+        };
+        if (_.isObject(obj) && Object.keys) {
+            return Object.keys(obj);
+        }
+
+        var results1 = [];
+        for (var k in obj) {
+            if (!hasProp.call(obj, k)) {
+                continue;
+            }
+
+            var v = obj[k];
+            if (precodition(v, k)) {
+                results1.push(k);
+            }
+        }
+
+        return results1;
+    };
+
+    _.has = function(obj, target) {
+        if (_.isBlank(obj)) {
+            return false;
+        } else if (_.isArray(obj)) {
+            return indexOf.call(obj, target) >= 0;
+        } else if (_.isObject(obj)) {
+            return target in obj;
+        } else {
+            return Object.prototype.hasOwnProperty.call(obj, target);
+        }
+    };
+
+    _.isBlank = function() {
+        var len2, obj, q, v, valueAsBlank;
+        obj = arguments[0]; valueAsBlank = 2 <= arguments.length ? slice.call(arguments, 1) : [];
+        obj = _.isString(obj) ? _.trim(obj) : obj;
+        if (valueAsBlank != null) {
+            for (q = 0, len2 = valueAsBlank.length; q < len2; q++) {
+                v = valueAsBlank[q];
+                if (v === obj) {
+                    return true;
+                }
+            }
+        }
+
+        if (_.isNull(obj) || _.isUndefined(obj)
+            || (_.isString(obj) && obj.length < 1) || (_.isJson(obj) && (_.keys(obj)).length < 1)) {
+            return true;
+        }
+
+        return false;
+    };
 
     var core = {
         now: function() {
@@ -211,6 +361,14 @@ var fiona = {};
             });
         },
 
+        clone: function(target) {
+            if ($.isArray(target)) {
+                return target.slice();
+            } else {
+                return $.extend(true, {}, target);
+            }
+        },
+
         cloneHtml: function (selector) {
             return $('<div>').append($(selector).clone()).html();
         },
@@ -256,9 +414,6 @@ var fiona = {};
         },
         fullUrl: function(anURI) {
             return core.isUrl(anURI) ? anURI : (location.origin || '') + anURI;
-        },
-        isJson: function(obj) {
-            return typeof obj === 'object' && !obj.length;
         },
 
         viewport: function () {
@@ -410,6 +565,7 @@ var fiona = {};
     };
 
     base.exporter(base, root);
+    base.exporter(_, register);
     base.exporter(core, register);
 
     $(function () {
