@@ -111,6 +111,9 @@
         <js>/components/codemirror/keymap/vim.js</js>
 
         <js>/entry/diff_match_patch_20121119/diff_match_patch.js</js>
+
+        <js minimize="false">/components/file-saver/FileSaver.min.js</js>
+        <js>/components/filereader/filereader.js</js>
     </group>
 
     <group name="code">
@@ -120,6 +123,7 @@
 
     <group name="note">
         <group-ref>note-mirror</group-ref>
+        <js>/entry/files.js</js>
         <js>/entry/notemirror.js</js>
     </group>
 
