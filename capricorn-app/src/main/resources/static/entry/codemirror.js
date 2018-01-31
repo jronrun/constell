@@ -19,7 +19,7 @@
         //["name", "mime", "mode"], Optional property: ["ext", "mimes", "file", "alias"]
         var langs = [];
         $.each(CodeMirror.modeInfo || [], function(idx, lang) {
-            lang.id = fiona.uniqueId();
+            lang.id = pi.uniqueId();
             languages[lang.name.toLowerCase()] = lang;
             modes[lang.mode.toLowerCase()] = lang;
             langs.push(lang);
@@ -121,7 +121,7 @@
                 tools.format();
             },
             attrs: function (optionKey, optionVal) {
-                if (fiona.isJson(optionKey)) {
+                if (pi.isJson(optionKey)) {
                     $.each(optionKey, function (k, v) {
                         cm.setOption(k, v);
                     });
@@ -186,7 +186,7 @@
             autoLoadMode: function (mode) {
                 if (!$.isFunction(CodeMirror.autoLoadMode)) {
                     mirror.script('/addon/mode/loadmode.js', function () {
-                        CodeMirror.modeURL = fiona.fullUrl('/components/codemirror/mode/%N/%N.js');
+                        CodeMirror.modeURL = pi.fullUrl('/components/codemirror/mode/%N/%N.js');
                         CodeMirror.autoLoadMode(cm, mode);
                     });
                 } else {
@@ -209,7 +209,7 @@
             elId: function () {
                 var theId = $(tools.el()).attr('id');
                 if (!theId) {
-                    theId = 'mirror_' + fiona.uniqueId();
+                    theId = 'mirror_' + pi.uniqueId();
                     $(tools.el()).attr({id: theId});
                 }
 
@@ -497,17 +497,17 @@
                 aPath = '/css/mirror' + target;
             }
 
-            fiona.css(fiona.fullUrl(aPath));
+            pi.css(pi.fullUrl(aPath));
         },
 
         script: function (target, callback) {
-            fiona.script(fiona.fullUrl('/components/codemirror' + target), function (data) {
+            pi.script(pi.fullUrl('/components/codemirror' + target), function (data) {
                 $.isFunction(callback) && callback(data);
             });
         },
 
         highlight: function(target, mode, output) {
-            CodeMirror.runMode(fiona.query(target).value, mode, fiona.query(output));
+            CodeMirror.runMode(pi.query(target).value, mode, pi.query(output));
         },
 
         highlights: function(options) {
@@ -531,17 +531,17 @@
                 },
                 attrs: {},
 
-                id: fiona.uniqueId('highlighted')
+                id: pi.uniqueId('highlighted')
             }, options || {});
 
             var content = options.input, hsrc = '#hsrc_' + options.id,
                 hctx = '#hctx_' + options.id, hpre = hctx + ' pre';
             if (options.inputIsEl) {
-                content = fiona.query(content).value;
+                content = pi.query(content).value;
             }
 
             if (options.inputIsEncode) {
-                content = fiona.unsign(content);
+                content = pi.unsign(content);
             }
 
             options.theme = mirror.requireTheme(options.theme);
@@ -593,7 +593,7 @@
 
             if (!$.isFunction(CodeMirror.autoLoadMode)) {
                 mirror.script('/addon/mode/loadmode.js', function () {
-                    CodeMirror.modeURL = fiona.fullUrl('/components/codemirror/mode/%N/%N.js');
+                    CodeMirror.modeURL = pi.fullUrl('/components/codemirror/mode/%N/%N.js');
                     reqM(lang.mode);
                 });
             } else {

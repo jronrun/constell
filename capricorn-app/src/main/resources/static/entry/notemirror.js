@@ -80,7 +80,7 @@
                 var start = startLine || 0, end = endLine || aTarget.lineCount();
                 var cursor = aTarget.getCursor();
 
-                var tmpCursor = fiona.clone(cursor);
+                var tmpCursor = pi.clone(cursor);
                 tmpCursor.line = start;
                 aTarget.setCursor(tmpCursor);
                 for (var idx = start; idx < end; idx++) {
@@ -129,18 +129,18 @@
                 return tools.attrs(optionKey);
             },
             attrs: function (optionKey, optionVal) {
-                if (fiona.isJson(optionKey)) {
+                if (pi.isJson(optionKey)) {
                     $.each(optionKey, function (k, v) {
                         target.options[k] = v;
                     });
                     return optionKey;
                 }
 
-                if (fiona.isUndefined(optionKey)) {
+                if (pi.isUndefined(optionKey)) {
                     return target.options;
                 }
 
-                if (fiona.isArray(optionKey)) {
+                if (pi.isArray(optionKey)) {
                     var rAttr = {};
                     $.each(optionKey, function (k, okey) {
                         rAttr[okey] = target.options[okey];
@@ -149,7 +149,7 @@
                 }
 
                 var aVal = target.options[optionKey];
-                if (fiona.isUndefined(optionVal)) {
+                if (pi.isUndefined(optionVal)) {
                     return aVal;
                 }
 
@@ -163,7 +163,7 @@
                 CodeMirror.commands.goPrevDiff(tools.left.target);
             },
             differencesTgl: function (manual) {
-                var val = fiona.isUndefined(manual) ? !tools.attrs('highlightDifferences') : manual;
+                var val = pi.isUndefined(manual) ? !tools.attrs('highlightDifferences') : manual;
                 target.setShowDifferences(val);
                 tools.attrs('highlightDifferences', val);
                 return tools;
@@ -171,19 +171,19 @@
             refresh: function (options) {
                 options = options || {};
                 var prevAttrs = tools.attrs(), newOptions = target.extras, th = tools.left.theme(), modeInfo = tools.left.mode(),
-                    isCollapseIdentical = fiona.has(prevAttrs, 'collapseIdentical') && true === prevAttrs.collapseIdentical;
+                    isCollapseIdentical = pi.has(prevAttrs, 'collapseIdentical') && true === prevAttrs.collapseIdentical;
 
                 if (isCollapseIdentical) {
                     var vs = tools.viewVals();
-                    if (!fiona.has(options, 'orig1')) {
+                    if (!pi.has(options, 'orig1')) {
                         $.extend(options, { orig1: vs.left});
                     }
 
-                    if (!fiona.has(options, 'orig2')) {
+                    if (!pi.has(options, 'orig2')) {
                         $.extend(options, { orig2: vs.right});
                     }
 
-                    if (!fiona.has(options, 'value')) {
+                    if (!pi.has(options, 'value')) {
                         $.extend(options, { value: vs.middle});
                     }
                 }
@@ -230,15 +230,15 @@
             viewVals: function (options) {
                 var viewVals = {}, is2Panels = tools.is2Panels();
                 options = options || {};
-                if (!fiona.has(options, 'orig1')) {
+                if (!pi.has(options, 'orig1')) {
                     viewVals.left = is2Panels ? target.editor().getValue() : target.leftOriginal().getValue();
                 }
 
-                if (!fiona.has(options, 'orig2')) {
+                if (!pi.has(options, 'orig2')) {
                     viewVals.right = target.rightOriginal().getValue();
                 }
 
-                if (!fiona.has(options, 'value')) {
+                if (!pi.has(options, 'value')) {
                     viewVals.middle = target.editor().getValue();
                 }
 
@@ -331,12 +331,12 @@
         }, options || {});
 
         var aMode = null, minfo = null; if (aMode = options.mode) {
-            if (!fiona.isBlank(minfo = mirror.modeInfo(aMode))) {
+            if (!pi.isBlank(minfo = mirror.modeInfo(aMode))) {
                 aMode = minfo.mode;
             }
         }
 
-        var mv = CodeMirror.MergeView(fiona.query(options.elId), {
+        var mv = CodeMirror.MergeView(pi.query(options.elId), {
             value: options.value,
             origLeft: options.panels === 3 ? options.orig1 : null,
             orig: options.orig2,

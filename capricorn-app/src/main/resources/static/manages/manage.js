@@ -5,9 +5,9 @@ var mgr = {};
 (function ($, root, register) {
 
     iFrame.setEncryption(function (target) {
-        return fiona.sign(target);
+        return pi.sign(target);
     }, function (target) {
-        return fiona.deepUnsign(target);
+        return pi.deepUnsign(target);
     });
 
     var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -22,7 +22,7 @@ var mgr = {};
 
     var onEndCalls = {};
     var pageable = '.containerli.pageable', pjax = function (url, headerParams, container) {
-        var callId = 'call-' + fiona.uniqueId();
+        var callId = 'call-' + pi.uniqueId();
         headerParams = headerParams || {};
         if (headerParams.onEnd && $.isFunction(headerParams.onEnd)) {
             onEndCalls[callId] = headerParams.onEnd;
@@ -40,7 +40,7 @@ var mgr = {};
     };
 
     pjax.reload = function (container) {
-        pjax(fiona.getURI(), container);
+        pjax(pi.getURI(), container);
     };
 
     $(document).pjax('a[data-pjax]', pageable);
@@ -269,7 +269,7 @@ var mgr = {};
                 },
 
                 lang: function (lang) {
-                    fiona.post(fmt('/manage/language/{0}', lang)).fail(function (xhr) {
+                    pi.post(fmt('/manage/language/{0}', lang)).fail(function (xhr) {
                         swal('Oops...', mgr.failMsg(xhr), 'warning');
                     }).done(function (resp) {
                         location.reload();

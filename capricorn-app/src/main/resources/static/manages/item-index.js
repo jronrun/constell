@@ -8,8 +8,8 @@ var index = {};
         index: {
             init: function () {
                 var pageData = $$('[data-page-info]').data() || {};
-                pageInfo = fiona.deepUnsign(pageData.pageInfo);
-                access = fiona.deepUnsign(pageData.access);
+                pageInfo = pi.deepUnsign(pageData.pageInfo);
+                access = pi.deepUnsign(pageData.access);
                 formId = '#' + pageInfo.editId;
                 editId = '#' + pageInfo.contentId;
                 searchId = '#' + pageInfo.searchId;
@@ -42,7 +42,7 @@ var index = {};
                 var infoEl = '[data-list-info]', listInfo = {};
 
                 if ($$(infoEl).length) {
-                    listInfo = fiona.deepUnsign($$(infoEl).data('listInfo')) || {};
+                    listInfo = pi.deepUnsign($$(infoEl).data('listInfo')) || {};
                 }
 
                 if (param.pageNo === listInfo.index) {
@@ -99,7 +99,7 @@ var index = {};
                 core.edit.formCleanError();
                 var data = getFormData(formId);
 
-                fiona[method](action, JSON.stringify(data))
+                pi[method](action, JSON.stringify(data))
                     .fail(function (xhr) {
                         mgr.unloading(el);
                         if (400 === xhr.status) {
@@ -193,7 +193,7 @@ var index = {};
                     allowOutsideClick: false,
                     preConfirm: function () {
                         return new Promise(function (resolve, reject) {
-                            fiona.delete(fmt(pageInfo.delete, itemId))
+                            pi.delete(fmt(pageInfo.delete, itemId))
                             .fail(function (xhr) {
                                 var msg = mgr.failMsg(xhr);
                                 swal('Oops...', msg, 'warning');
@@ -219,7 +219,7 @@ var index = {};
             current: null,
             init: function () {
                 liveClk('[data-touch-action]', function (el) {
-                    var defineTouch = fiona.deepUnsign($('#touch-' + $(el).data('touchAction')).data('defineTouch'));
+                    var defineTouch = pi.deepUnsign($('#touch-' + $(el).data('touchAction')).data('defineTouch'));
                     defineTouch.touchId = parseInt($(el).data('touchId'));
                     core.touch.touch(defineTouch, true);
                 });
@@ -315,7 +315,7 @@ var index = {};
                     slaveIds: slaveIds
                 }, method = isUnBuild ? 'delete' : 'post';
 
-                fiona[method](defineTouch.relationHref, JSON.stringify(data)).fail(function (xhr) {
+                pi[method](defineTouch.relationHref, JSON.stringify(data)).fail(function (xhr) {
                     swal('Oops...', mgr.failMsg(xhr), 'warning');
                 }).done(function (resp) {
                     $.isFunction(successCall) && successCall(resp);

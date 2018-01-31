@@ -1,6 +1,6 @@
 'use strict';
 
-var fiona = {};
+var pi = {};
 (function ($, root, register) {
 
     var lz = LZString;
@@ -572,7 +572,7 @@ var fiona = {};
         core.initialize();
     });
 
-})(jQuery, window, fiona);
+})(jQuery, window, pi);
 
 // John Resig - https://johnresig.com/ - MIT Licensed
 (function () {

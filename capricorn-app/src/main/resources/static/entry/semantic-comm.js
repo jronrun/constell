@@ -83,7 +83,7 @@ var comm = {};
             modalEvents = modalEvents || {};
             var originalOnVisible = modalEvents.onVisible,
                 createViewInstance = null != text,
-                previewModalId = 'preview-modal-' + fiona.uniqueId(), contextId = sel(previewModalId, '-content');
+                previewModalId = 'preview-modal-' + pi.uniqueId(), contextId = sel(previewModalId, '-content');
             modalOptions = $.extend({}, modalOptions || {}, {
                 size: 5,
                 id: previewModalId
@@ -96,7 +96,7 @@ var comm = {};
                     }
 
                     if (createViewInstance) {
-                        var viewport = fiona.viewport();
+                        var viewport = pi.viewport();
 
                         var view = iFrame.create({
                             frameborder: 0
@@ -108,7 +108,7 @@ var comm = {};
                             height: viewport.h - 4
                         });
 
-                        if (fiona.isUrl(text)) {
+                        if (pi.isUrl(text)) {
                             view.openUrl(text, function() {
                                 $.isFunction(domReadyCallbackIfUrl) && domReadyCallbackIfUrl(view, previewM);
                             });
@@ -162,12 +162,12 @@ var comm = {};
                 ]
             }, options || {});
 
-            options.toggleId = '' === options.toggleId ? fiona.uniqueId('tgl-head-') : options.toggleId;
+            options.toggleId = '' === options.toggleId ? pi.uniqueId('tgl-head-') : options.toggleId;
             options.content = $.isArray(options.content) ? options.content : [options.content];
 
-            var containerId = fiona.uniqueId('previews-');
+            var containerId = pi.uniqueId('previews-');
             $.each(options.content, function (idx, tab) {
-                tab.id = tab.id || fiona.uniqueId(containerId + '-tab-');
+                tab.id = tab.id || pi.uniqueId(containerId + '-tab-');
             });
 
             var result = {}, views = {}, innerOptions = {
@@ -189,7 +189,7 @@ var comm = {};
                 },
                 refreshSize = function (heightOffset) {
                     var headH = $visible(innerOptions.headId).height() || 0,
-                        viewport = fiona.viewport(),
+                        viewport = pi.viewport(),
                         bodyH = viewport.h - headH - (heightOffset || 1);
                     $('.' + innerOptions.tabBodyItem).css({
                         margin: 0,
@@ -248,7 +248,7 @@ var comm = {};
                 }
 
                 $.each(options.content, function (idx, target) {
-                    if (fiona.isUrl(target.context)) {
+                    if (pi.isUrl(target.context)) {
                         openFrame(target);
                     } else {
                         $.isFunction(target.callback) && target.callback(target.id, false, previewM);
@@ -303,13 +303,13 @@ var comm = {};
                     var onVisible = sidebarOptions.onVisible, onHidden = sidebarOptions.onHidden;
                     sidebarOptions = $.extend(sidebarOptions, {
                         onVisible: function () {
-                            fiona.data(sel(innerOptions.headId), states());
+                            pi.data(sel(innerOptions.headId), states());
                             result.hideRail();
                             $sel(options.toggleId).hide();
                             $.isFunction(onVisible) && onVisible();
                         },
                         onHidden: function () {
-                            var beforeStates = fiona.data(sel(innerOptions.headId));
+                            var beforeStates = pi.data(sel(innerOptions.headId));
                             if (beforeStates.rail) {
                                 result.showRail();
                             }
@@ -340,7 +340,7 @@ var comm = {};
                     icon: '',
                     title: '',
                     onClick: null,
-                    id: fiona.uniqueId('rail-ctl-'),
+                    id: pi.uniqueId('rail-ctl-'),
                     color: 'green'
                 }, options || {});
                 tmpls('arail_tmpl', options, sel(innerOptions.railId, '-content'));
@@ -438,7 +438,7 @@ var comm = {};
                 }, (options = options || {}).modal || {});
 
             options = $.extend({
-                id: 'modal-' + fiona.uniqueId(),
+                id: 'modal-' + pi.uniqueId(),
                 close: false,
                 cache: false,       //destroy on hidden if false
                 size: 0,
@@ -467,7 +467,7 @@ var comm = {};
                 //attach button id
                 $.each(options.buttons || [], function (idx, btn) {
                     if (btn.text && btn.text.length > 0) {
-                        btn.id = 'modal-btn-' + fiona.uniqueId();
+                        btn.id = 'modal-btn-' + pi.uniqueId();
                     }
                 });
 

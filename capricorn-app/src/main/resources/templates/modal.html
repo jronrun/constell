@@ -108,7 +108,7 @@
         </div>
         <% $.each(content, function(idx, tab) { %>
             <div class="ui bottom attached <%= (tabActiveIdx === idx ? 'active' : '') %> tab segment <%= tabBodyItem %>"
-                 id="<%= tab.id %>" data-tab="<%= tab.id %>"><%= (fiona.isUrl(tab.context) ? '' : tab.context) %></div>
+                 id="<%= tab.id %>" data-tab="<%= tab.id %>"><%= (pi.isUrl(tab.context) ? '' : tab.context) %></div>
         <% }); %>
     </div>
 </script>
@@ -117,7 +117,7 @@
 </script>
 <script type="text/html" id="atab_body_tmpl">
     <div class="ui bottom attached tab segment <%= tabBodyItem %>"
-         id="<%= tab.id %>" data-tab="<%= tab.id %>"><%= (fiona.isUrl(tab.context) ? '' : tab.context) %></div>
+         id="<%= tab.id %>" data-tab="<%= tab.id %>"><%= (pi.isUrl(tab.context) ? '' : tab.context) %></div>
 </script>
 <script type="text/html" id="arail_tmpl">
 <a class="item icondh" style="padding-left: 0.5em;padding-right: 0.5em;" id="<%= id %>" title="<%= title %>">

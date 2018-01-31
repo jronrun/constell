@@ -24,8 +24,8 @@ var login = {};
                 return;
             }
 
-            var info = fiona.deepUnsign($(el).data('login'));
-            fiona.post(info.authorization, fiona.sign(data)).fail(function (xhr) {
+            var info = pi.deepUnsign($(el).data('login'));
+            pi.post(info.authorization, pi.sign(data)).fail(function (xhr) {
                 warning('Oops...', mgr.failMsg(xhr));
                 mgr.unloading(el);
             }).done(function (resp) {
@@ -35,7 +35,7 @@ var login = {};
         },
         initialize: function () {
             var loginBtn = '[data-login]';
-            fiona.enter('[data-name=password]', function () {
+            pi.enter('[data-name=password]', function () {
                 core.login(loginBtn);
             });
 
