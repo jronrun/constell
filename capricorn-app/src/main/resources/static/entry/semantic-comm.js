@@ -557,9 +557,10 @@ var comm = {};
             };
 
             $.extend(result, {
+                target: selector,
                 refresh: function (html, callback) {
                     $(selector).empty().html(html);
-                    $.isFunction(callback) && callback();
+                    $.isFunction(callback) && callback(selector);
                 },
                 resize: function (size) {
                     size = size || '50%';

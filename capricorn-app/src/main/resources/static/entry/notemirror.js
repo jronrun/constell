@@ -40,7 +40,7 @@
 
     var noteMirror = function (elId, options, events) {
         var aMirror = mirror(elId, $.extend({
-            mode: 'htmlmixed',
+            mode: 'markdown',
             keyMap: 'vim',
             fullScreen: true,
             autofocus: true,
@@ -94,7 +94,7 @@
             vim: vimTools
         });
 
-        aMirror.autoLoadMode('htmlmixed');
+        aMirror.autoLoadMode('markdown');
 
         return aMirror;
     };
