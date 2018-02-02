@@ -15,12 +15,12 @@
 </head>
 <body>
 <a class="icondh" id="write-menu" style="position: absolute;left: 0;top: 0;border: 0;z-index: 40000;margin-left: 0.7em;">
-    <i class="lemon grey icon" style="cursor: pointer;"></i>
+    <i class="lemon green icon" style="cursor: pointer;"></i>
 </a>
 <th:block th:replace="~{modal}"></th:block>
 <script type="text/html" id="menu_tmpl">
-    <div class="ui tiny fixed menu" id="<%= id %>">
-        <div class="item">
+    <div class="ui small fixed menu" id="<%= id %>">
+        <div class="item menu-logo" style="padding-left: 2.5em; padding-right: 3em;">
             <div layout:insert="~{logo}" class="ui image logoImg">logo</div>
         </div>
         <a class="active item">

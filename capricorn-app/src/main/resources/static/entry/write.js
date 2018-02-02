@@ -56,9 +56,8 @@ var write = {};
                     this.style.setProperty('height', $sel(menuOptions.id).height() + 'px', 'important');
                 });
 
-                $trigger.click(function () {
-                    pvw.top.toggle();
-                });
+                $trigger.click(pvw.top.toggle);
+                $('.menu-logo').click(pvw.top.toggle);
             }
         },
         initialize: function () {

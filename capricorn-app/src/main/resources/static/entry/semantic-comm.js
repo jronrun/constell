@@ -576,6 +576,65 @@ var comm = {};
             return result;
         },
 
+        dropdown: function (selector, options) {
+            options = $.extend({
+                /*
+                //https://semantic-ui.com/modules/dropdown.html#/settings
+
+                onChange(value, text, $choice)
+                onAdd(addedValue, addedText, $addedChoice)
+                onRemove(removedValue, removedText, $removedChoice)
+                onLabelCreate(value, text)
+                onLabelRemove(value)
+                onLabelSelect($selectedLabels)
+                onNoResults(searchValue)
+                onShow
+                onHide
+                */
+            }, options || {});
+
+            var target = $(selector).dropdown(options),
+                result = {target: target, settings: options}, doDropdown = function (method, value) {
+                    return $(result.target).dropdown(method, value);
+                };
+
+            $.extend(result, {
+                //value or value array
+                select: function (value) {
+                    doDropdown('set selected', value);
+                },
+                removeSelected: function (value) {
+                    doDropdown('remove selected', value);
+                },
+                setExactly: function (value) {
+                    doDropdown('set exactly', value);
+                },
+                setText: function (text) {
+                    doDropdown('set text', text);
+                },
+                setValue: function (value) {
+                    doDropdown('set value', value);
+                },
+                //Returns DOM element that matches a given input value
+                getItem: function (value) {
+                    doDropdown('get item', value);
+                },
+                changeValues: function (values) {
+                    doDropdown('change values', values);
+                }
+            });
+
+            bindBehavior([
+                'refresh', 'toggle', 'show', 'hide', 'clear', 'hide others', 'restore defaults',
+                'restore default text', 'restore placeholder text', 'restore default value',
+                'save defaults', 'get text', 'get value', 'bind touch events', 'bind mouse events',
+                'set active', 'set visible', 'remove active', 'remove visible', 'is selection',
+                'is animated', 'is visible', 'is hidden', 'get default text', 'get placeholder text'
+            ], result, 'dropdown');
+
+            return result;
+        },
+
         tab: function (selector, options) {
             options = $.extend({
                 /*
