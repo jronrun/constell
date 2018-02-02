@@ -37,17 +37,17 @@ var write = {};
         menu: {
             visible: false,
             init: function () {
-                var $trigger = $sel('write-menu'), $icon = $trigger.children('i'), menuOptions = {
+                var $trigger = $sel('write-menu'), menuOptions = {
                     id: pi.uniqueId('menu-')
                 };
                 pvw.initTopSidebar({
                     onVisible: function () {
                         core.menu.visible = true;
-                        $icon.hide();
+                        $trigger.hide();
                     },
                     onHidden: function () {
                         core.menu.visible = false;
-                        $icon.show();
+                        $trigger.fadeIn(800);
                     }
                 });
 

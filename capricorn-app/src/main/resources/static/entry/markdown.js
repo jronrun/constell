@@ -130,7 +130,7 @@ var markdown = function (options, markdownOptions) {
     }, markdownOptions || {});
 
     var inst = MarkdownIt(markdownOptions)
-        // .use(pluginTocAndAnchor, {
+        // .use(markdownTocAndAnchor, {
         //     anchorClassName: 'anchor',
         //     anchorLinkSymbol: ''
         // })

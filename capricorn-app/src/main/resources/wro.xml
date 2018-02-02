@@ -129,8 +129,9 @@
         <js minimize="false">/components/markdown-it-deflist/dist/markdown-it-deflist.min.js</js>
         <js minimize="false">/components/markdown-it-container/dist/markdown-it-container.min.js</js>
         <js minimize="false">/components/markdown-it-ins/dist/markdown-it-ins.min.js</js>
-        <!--<js>/components/markdown-it-toc-and-anchor/src/index.js</js>-->
 
+        <!--/components/markdown-it-toc-and-anchor/src/index.js-->
+        <js minimize="false">/entry/markdown-it-toc-and-anchor.min.js</js>
         <css>/css/markdown.css</css>
         <js>/entry/markdown.js</js>
     </group>
