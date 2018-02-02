@@ -37,6 +37,7 @@
     "markdown-it-deflist": "^2.0.3",
     "markdown-it-container": "^2.0.0",
     "markdown-it-ins": "^2.0.0",
-    "golden-layout": "^1.5.9"
+    "golden-layout": "^1.5.9",
+    "showdown": "^1.8.6"
   }
 }

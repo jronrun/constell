@@ -117,6 +117,24 @@
         <js minimize="false">/components/store.js/dist/store.everything.min.js</js>
     </group>
 
+    <group name="markdown">
+        <js minimize="false">/components/markdown-it/dist/markdown-it.min.js</js>
+        <js minimize="false">/components/markdown-it-footnote/dist/markdown-it-footnote.min.js</js>
+        <js minimize="false">/components/markdown-it-checkbox/dist/markdown-it-checkbox.min.js</js>
+        <js minimize="false">/components/markdown-it-emoji/dist/markdown-it-emoji.min.js</js>
+        <js minimize="false">/components/markdown-it-mark/dist/markdown-it-mark.min.js</js>
+        <js minimize="false">/components/markdown-it-sub/dist/markdown-it-sub.min.js</js>
+        <js minimize="false">/components/markdown-it-sup/dist/markdown-it-sup.min.js</js>
+        <js minimize="false">/components/markdown-it-abbr/dist/markdown-it-abbr.min.js</js>
+        <js minimize="false">/components/markdown-it-deflist/dist/markdown-it-deflist.min.js</js>
+        <js minimize="false">/components/markdown-it-container/dist/markdown-it-container.min.js</js>
+        <js minimize="false">/components/markdown-it-ins/dist/markdown-it-ins.min.js</js>
+        <!--<js>/components/markdown-it-toc-and-anchor/src/index.js</js>-->
+
+        <css>/css/markdown.css</css>
+        <js>/entry/markdown.js</js>
+    </group>
+
     <group name="code">
         <group-ref>code-mirror</group-ref>
         <js>/entry/codemirror.js</js>
