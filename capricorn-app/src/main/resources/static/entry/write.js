@@ -3,7 +3,7 @@
 var write = {};
 (function ($, root, register) {
 
-    var directive = {}, actions = {
+    var directive = {}, menuIndex = {}, actions = {
         new: function (args, cm) {
 
         },
@@ -55,12 +55,16 @@ var write = {};
         compare: function (args, cm) {
 
         }
+    }, exNameKey = function (directiveName) {
+        return fmt('directive.{0}.name', directiveName);
+    }, exDescKey = function (directiveName) {
+        return fmt('directive.{0}.desc', directiveName);
     }, ex = function (value, shortValue, handle, name, describe) {
         var aHandle = null;
         handle = handle || value;
         shortValue = shortValue || '';
-        name = name || fmt('directive.{0}.name', value);
-        describe = describe || fmt('directive.{0}.desc', value);
+        name = name || exNameKey(value);
+        describe = describe || exDescKey(value);
 
         if (pi.isFunc(handle)) {
             aHandle = handle;
@@ -83,16 +87,26 @@ var write = {};
             handle: aHandle
         };
 
-        directive[props.name] = props;
+        directive[value] = props;
         return props;
     }, menu = function (aDirective, type, label, params) {
-        return {
-            // type 1 normal, 2 only show in child window, 3 toggle, 4 separator
+        var nameKey = '';
+        if (!pi.isBlank(aDirective)) {
+            nameKey = exNameKey(pi.isString(aDirective) ? aDirective : aDirective.value);
+        }
+
+        var aMenu = {
+            // type 1 normal, 2 only show in child window, 3 toggle, 4 separator, 5 empty
+            id: pi.uniqueId('mi-'),
             type: type || 1,
             label: label || '',
             params: params || {},
+            nameKey: nameKey,
             ex: aDirective
         };
+
+        menuIndex[aMenu.id] = aMenu;
+        return aMenu;
     };
 
     ex('new', 'n');
@@ -122,6 +136,13 @@ var write = {};
         {
             type: 1,
             name: '.file',
+            /*
+                search: {
+                    name: '',
+                    placeholder: ''
+                },
+                header: ''
+             */
             items: [
                 menu(directive.new),
                 menu(directive.wnew),
@@ -139,7 +160,8 @@ var write = {};
                 menu(directive.w),
                 menu(directive.ww),
                 menu(directive.wq),
-                menu(directive.save)
+                menu(directive.save),
+                menu(null, 5, null, 90)
             ]
         },
         {
@@ -168,8 +190,16 @@ var write = {};
                 menu('findPrev', 1, 'Shift-Cmd-G'),
                 menu('replace', 1, 'Cmd-Alt-F'),
                 menu('replaceAll', 1, 'Shift-Cmd-Alt-F'),
-                menu(directive.jump, 1, 'Alt-G')
+                menu(directive.jump, 1, 'Alt-G'),
+                menu(null, 5, null, 90)
             ]
+        },
+        {
+            type: 2,
+            name: '.help',
+            handle: function () {
+
+            }
         }
     ];
 
@@ -208,8 +238,10 @@ var write = {};
             visible: false,
             init: function () {
                 var $trigger = $sel('write-menu'), menuOptions = {
-                    id: pi.uniqueId('menu-')
+                    id: pi.uniqueId('menu-'),
+                    menus: menus
                 };
+
                 pvw.initTopSidebar({
                     onVisible: function () {
                         core.menu.visible = true;
@@ -224,6 +256,18 @@ var write = {};
                 pvw.top.refresh(tmpls('menu_tmpl', menuOptions));
                 $(pvw.top.target).each(function () {
                     this.style.setProperty('height', $sel(menuOptions.id).height() + 'px', 'important');
+                });
+
+                comm.dropdown('.dropdown', {
+                    onShow: function () {
+                        delay(function () {
+                            $('.menu.transition.visible').css({
+                                '-webkit-box-shadow': '0 6px 12px rgba(0,0,0,.175)',
+                                'box-shadow': '0 6px 12px rgba(0, 0,0,.175)',
+                                border: 0
+                            });
+                        }, 230);
+                    }
                 });
 
                 $trigger.click(pvw.top.toggle);

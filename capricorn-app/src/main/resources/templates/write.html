@@ -16,33 +16,75 @@
     <script type="text/javascript" th:src="@{/module/markdown.js}"></script>
 </head>
 <body>
-<a class="icondh" id="write-menu" style="position: absolute;left: 0;top: 0;border: 0;z-index: 40000;margin-left: 0.7em;">
+<a class="icondh" id="write-menu"
+   style="position: absolute;left: 0;top: 0;border: 0;z-index: 40000;margin-left: 0.7em;">
     <i class="lemon green icon" style="cursor: pointer;"></i>
 </a>
 <th:block th:replace="~{modal}"></th:block>
 <script type="text/html" id="menu_tmpl">
-    <div class="ui small fixed menu" id="<%= id %>">
+    <div class="ui large fixed menu" id="<%= id %>">
         <div class="item menu-logo" style="padding-left: 2.5em; padding-right: 3em;">
             <div layout:insert="~{logo}" class="ui image logoImg">logo</div>
         </div>
-        <a class="active item">
-            Home
-        </a>
-        <a class="item">
-            Messages
-        </a>
-        <div class="right menu">
-            <div class="ui dropdown item">
-                Language <i class="dropdown icon"></i>
-                <div class="menu">
-                    <a class="item">English</a>
-                    <a class="item">Russian</a>
-                    <a class="item">Spanish</a>
+
+        <% $.each(menus, function(idx, mm) {
+            var mmNameKey = /^\./.test(mm.name) ? ('write.menu' + mm.name) : mm.name;
+        %>
+        <% if (1 === mm.type) { %>
+        <div class="ui dropdown item" id="<%= pi.sign(name) %>">
+            <%= getMessage(mmNameKey) %>
+            <div class="menu">
+                <% if (mm.search) { %>
+                <div class="ui icon search input">
+                    <i class="search icon"></i>
+                    <input type="text" id="<%= pi.sign(search.name) %>" name="<%= search.name %>"
+                           placeholder="<%= getMessage(search.placeholder) %>">
+                </div>
+                <div class="divider"></div>
+                <% } %>
+                <% if (mm.header) { %>
+                <div class="header">
+                    <%= header %>
+                </div>
+                <% } %>
+                <div class="scrolling menu">
+                    <% $.each(mm.items, function(mmidx, mi) {
+                    var nameValue = getMessage(mi.nameKey);
+                    %>
+                    <% if (1 === mi.type) { %>
+                    <div class="item" id="<%= mi.id %>" data-params="<%= pi.sign(mi.params) %>">
+                        <span class="description"><%= mi.label %></span>
+                        <%= nameValue %>
+                    </div>
+                    <% } else if (2 === mi.type) { %>
+                    <% if (!iFrame.isRootWin()) { %>
+                    <div class="item" id="<%= mi.id %>" data-params="<%= pi.sign(mi.params) %>">
+                        <span class="description"><%= mi.label %></span>
+                        <%= nameValue %>
+                    </div>
+                    <% } %>
+                    <% } else if (3 === mi.type) { %>
+                    <div class="item" id="<%= mi.id %>" data-params="<%= pi.sign(mi.params) %>">
+                        <span class="description icondh"><i class="toggle on blue icon"></i></span>
+                        <%= nameValue %>
+                    </div>
+                    <% } else if (4 === mi.type) { %>
+                    <div class="divider"></div>
+                    <% } else if (5 === mi.type) { %>
+                    <div><%= pi.repeat('&nbsp;', mi.params) %></div>
+                    <% } %>
+                    <% }); %>
                 </div>
             </div>
-            <div class="item">
-                <div class="ui primary button">Sign Up</div>
-            </div>
+        </div>
+        <% } else if (2 === mm.type) { %>
+        <a class="item" id="clk-<%= pi.sign(name) %>">
+            <%= getMessage(mmNameKey) %>
+        </a>
+        <% } %>
+        <% }); %>
+
+        <div class="right menu">
         </div>
     </div>
 </script>
