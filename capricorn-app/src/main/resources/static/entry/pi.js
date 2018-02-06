@@ -504,6 +504,16 @@ var pi = {};
 
             return s;
         },
+        getMessage: function () {
+            var msg = messages[arguments[0]] || '';
+            if (1 === arguments.length) {
+                return msg;
+            }
+
+            var args = Array.prototype.slice.apply(arguments).slice(1);
+            args.unshift(msg);
+            return fmt.apply(this, args);
+        },
         $visible: function (elId, selectType) {
             return $sel(elId, ':visible', selectType);
         },

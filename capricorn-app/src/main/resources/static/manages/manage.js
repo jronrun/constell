@@ -98,16 +98,6 @@ var mgr = {};
     $.extend(root, {
         $$: function (selector) {
             return $(pageable + ' ' + selector);
-        },
-        getMessage: function () {
-            var msg = messages[arguments[0]] || '';
-            if (1 === arguments.length) {
-                return msg;
-            }
-
-            var args = Array.prototype.slice.apply(arguments).slice(1);
-            args.unshift(msg);
-            return fmt.apply(this, args);
         }
     });
 
