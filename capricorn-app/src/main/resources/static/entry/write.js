@@ -7,6 +7,24 @@ var write = {};
         new: function (args, cm) {
 
         },
+        edit: function (args, cm) {
+
+        },
+        del: function (args, cm) {
+
+        },
+        help: function (args, cm) {
+
+        },
+        theme: function (args, cm) {
+
+        },
+        joinline: function (args, cm) {
+
+        },
+        mode: function (args, cm) {
+
+        },
         wnew: function (args, cm) {
 
         },
@@ -23,6 +41,9 @@ var write = {};
 
         },
         share: function (args, cm) {
+
+        },
+        shared: function (args, cm) {
 
         },
         view: function (args, cm) {
@@ -110,12 +131,19 @@ var write = {};
     };
 
     ex('new', 'n');
+    ex('edit', 'e');
+    ex('del', 'd');
+    ex('help', 'h');
+    ex('theme', 'th');
+    ex('mode', 'm');
+    ex('joinline', 'jo');
     ex('wnew', 'wn');
     ex('asnew', 'asn');
     ex('open', 'o');
     ex('menu');
     ex('quit', 'q');
     ex('share');
+    ex('shared');
     ex('view', 'v');
     ex('fullscreen', 'full');
     ex('live');
