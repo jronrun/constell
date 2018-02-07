@@ -145,6 +145,22 @@
 
             </div>
         </div>
+        <% } else if (4 === mm.type) { %>
+        <div class="ui dropdown item" id="<%= pi.sign(name) %>">
+            <%= getMessage(mmNameKey) %>
+            <div class="menu">
+                <div class="scrolling menu" style="overflow: hidden;">
+                    <% $.each(mm.items, function(idx, th) { %>
+                    <div class="item icondh" data-theme="<%= pi.sign(th) %>">
+                        <%= th %>
+                        <i class="check circle red icon" id="th_ch_<%= pi.sign(th) %>" style="display: none;"></i>
+                    </div>
+                    <% }); %>
+                </div>
+
+
+            </div>
+        </div>
         <% } %>
         <% }); %>
 
@@ -246,6 +262,7 @@
         'write.lang.type': [[#{write.lang.type}]],
         'write.lang.ext': [[#{write.lang.ext}]],
         'write.lang.chosen': [[#{write.lang.chosen}]],
+        'write.theme.chosen': [[#{write.theme.chosen}]],
         'write.search.lang.placeholder': [[#{write.search.lang.placeholder}]]
     };
 </script>

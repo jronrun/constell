@@ -291,6 +291,13 @@ var write = {};
                     $sel(infoP + pi.sign(mimeOrExt || '')).show();
                 }
             },
+            theme: {
+                chosen: function (th) {
+                    var thP = 'th_ch_';
+                    $(fmt('i[id^={0}]:visible', thP)).hide();
+                    $sel(thP + pi.sign(th)).show();
+                }
+            },
             init: function () {
                 var $trigger = $sel('write-menu'), menuOptions = {
                     id: pi.uniqueId('menu-'),
