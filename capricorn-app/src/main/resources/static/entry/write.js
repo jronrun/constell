@@ -239,8 +239,7 @@ var write = {};
             init: function () {
                 var $trigger = $sel('write-menu'), menuOptions = {
                     id: pi.uniqueId('menu-'),
-                    menus: menus,
-                    scrollH: pi.viewport().h * 70 / 100
+                    menus: menus
                 };
 
                 pvw.initTopSidebar({
@@ -269,6 +268,12 @@ var write = {};
                             });
 
                             $('.scrolling.menu:visible').each(function (idx, el) {
+                                var scrollH = pi.viewport().h * 75 / 100;
+                                $(el).css({
+                                    height: scrollH + 'px',
+                                    'max-height': scrollH + 'px'
+                                });
+
                                 if (!isMarked(el)) {
                                     $(el).niceScroll({
                                         cursorcolor: 'grey'
