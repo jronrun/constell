@@ -223,6 +223,11 @@ var write = {};
             ]
         },
         {
+            type: 1,
+            name: '.note',
+            items: []
+        },
+        {
             type: 3,
             name: '.language',
             items: mirror.languages
