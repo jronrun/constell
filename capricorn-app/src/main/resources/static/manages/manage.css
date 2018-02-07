@@ -35,4 +35,6 @@
 .cm-s-lemon .CodeMirror-guttermarker { color: #1d75b3; }
 .cm-s-lemon .CodeMirror-guttermarker-subtle { color: #e0e2e5; }
 
+.text-silver { color: silver; }
+
 .boxshadow { -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175); box-shadow: 0 6px 12px rgba(0, 0,0,.175); }

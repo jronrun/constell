@@ -98,11 +98,11 @@
                         <div class="ui raised segment" id="block_lang_ch_<%= lang.id %>" style="box-shadow: none;border: none;">
                             <a class="ui red ribbon label" id="mark_lang_ch_<%= lang.id %>" data-lang="<%= pi.sign(lang) %>"
                                style="display: none;"><%= getMessage('write.lang.chosen') %></a>
-                            <span class="green"><%= lang.name %></span>
+                            <span><%= lang.name %></span>
                             <div class="ui card" style="box-shadow: none;">
                                 <div class="content">
                                     <% if (lang.theMimes && lang.theMimes.length > 0) { %>
-                                    <div class="meta"><%= getMessage('write.lang.type') %></div>
+                                    <div class="meta text-silver"><%= getMessage('write.lang.type') %></div>
                                     <div class="ui small feed">
                                         <% $.each(lang.theMimes, function(idx, mime) { %>
                                         <div class="event">
@@ -118,7 +118,7 @@
                                     </div>
                                     <% } %>
                                     <% if (lang.ext && lang.ext.length > 0) {  %>
-                                    <div class="meta"><%= getMessage('write.lang.ext') %></div>
+                                    <div class="meta text-silver"><%= getMessage('write.lang.ext') %></div>
                                     <div class="ui small feed">
                                         <% $.each(lang.ext, function(idx, ext) { %>
                                         <div class="event">
