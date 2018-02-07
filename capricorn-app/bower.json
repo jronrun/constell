@@ -39,5 +39,8 @@
     "markdown-it-ins": "^2.0.0",
     "golden-layout": "^1.5.9",
     "showdown": "^1.8.6"
+  },
+  "devDependencies": {
+    "toastr": "^2.1.3"
   }
 }
