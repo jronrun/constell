@@ -10,10 +10,11 @@
     <link th:href="@{/module/code.css}" rel="stylesheet"/>
     <link th:href="@{/module/note.css}" rel="stylesheet"/>
     <link th:href="@{/module/markdown.css}" rel="stylesheet"/>
-    <script type="text/javascript" th:src="@{/module/write.js}"></script>
+    <script type="text/javascript" th:src="@{/module/base-heavy.js}"></script>
     <script type="text/javascript" th:src="@{/module/code.js}"></script>
     <script type="text/javascript" th:src="@{/module/note.js}"></script>
     <script type="text/javascript" th:src="@{/module/markdown.js}"></script>
+    <script type="text/javascript" th:src="@{/module/write.js}"></script>
 </head>
 <body>
 <a class="icondh" id="write-menu"
@@ -81,6 +82,69 @@
         <a class="item" id="clk-<%= pi.sign(name) %>">
             <%= getMessage(mmNameKey) %>
         </a>
+        <% } else if (3 === mm.type) { %>
+        <div class="ui dropdown item" id="<%= pi.sign(name) %>">
+            <%= getMessage(mmNameKey) %>
+            <div class="menu">
+                <div class="ui icon search input">
+                    <i class="search icon"></i>
+                    <input type="text" id="lang-qry-<%= pi.sign(name) %>" name=""
+                           placeholder="<%= getMessage('write.search.lang.placeholder') %>">
+                </div>
+                <div class="scrolling menu" style="overflow: hidden;">
+                    <% $.each(mm.items, function(k, lang) { %>
+                    <div class="item" id="lang_<%= lang.id %>" data-lang="<%= pi.sign(lang) %>">
+
+                        <div class="ui raised segment" style="border: none;">
+                            <a class="ui red ribbon label" id="lang_ch_<%= lang.id %>"
+                               style="display: none;"><%= getMessage('write.lang.chosen') %></a>
+                            <span class="green"><%= lang.name %></span>
+                            <div class="ui card" style="box-shadow: none;">
+                                <div class="content">
+                                    <% if (lang.theMimes && lang.theMimes.length > 0) { %>
+                                    <div class="meta"><%= getMessage('write.lang.type') %></div>
+                                    <div class="ui small feed">
+                                        <% $.each(lang.theMimes, function(idx, mime) { %>
+                                        <div class="event">
+                                            <div class="content">
+                                                <div class="summary icondh">
+                                                    <i class="check circle red icon"
+                                                       id="lang_info_ch_<%= pi.sign(mime) %>" style="display: none;"></i>
+                                                    <a href="javascript:void(0);" data-lang-info="<%= pi.sign(mime) %>"><%= mime %></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% }); %>
+                                    </div>
+                                    <% } %>
+                                    <% if (lang.ext && lang.ext.length > 0) {  %>
+                                    <div class="meta"><%= getMessage('write.lang.ext') %></div>
+                                    <div class="ui small feed">
+                                        <% $.each(lang.ext, function(idx, ext) { %>
+                                        <div class="event">
+                                            <div class="content">
+                                                <div class="summary icondh">
+                                                    <i class="check circle red icon"
+                                                       id="lang_info_ch_<%= pi.sign(ext) %>" style="display: none;"></i>
+                                                    <a href="javascript:void(0);" data-lang-info="<%= pi.sign(ext) %>"><%= ext %></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% }); %>
+                                    </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <% }); %>
+                </div>
+
+
+            </div>
+        </div>
         <% } %>
         <% }); %>
 
@@ -177,7 +241,12 @@
         'directive.mode.name': [[#{directive.mode.name}]],
         'directive.mode.desc': [[#{directive.mode.desc}]],
         'directive.joinline.name': [[#{directive.joinline.name}]],
-        'directive.joinline.desc': [[#{directive.joinline.desc}]]
+        'directive.joinline.desc': [[#{directive.joinline.desc}]],
+        'write.lang.type': [[#{write.lang.type}]],
+        'write.lang.type': [[#{write.lang.type}]],
+        'write.lang.ext': [[#{write.lang.ext}]],
+        'write.lang.chosen': [[#{write.lang.chosen}]],
+        'write.search.lang.placeholder': [[#{write.search.lang.placeholder}]]
     };
 </script>
 </body>

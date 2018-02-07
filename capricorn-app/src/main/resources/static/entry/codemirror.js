@@ -15,11 +15,24 @@
     //merge third themes
     $.each(thirdThemes, function (idx, a3rdTh) { themes.push(a3rdTh); });
 
+    function getMimes(lang) {
+        if (lang.mimes && lang.mimes.length > 0) {
+            return lang.mimes;
+        }
+
+        if ('null' !== lang.mime) {
+            return [lang.mime];
+        }
+
+        return [];
+    }
+
     function initializeLangs() {
         //["name", "mime", "mode"], Optional property: ["ext", "mimes", "file", "alias"]
         var langs = [];
         $.each(CodeMirror.modeInfo || [], function(idx, lang) {
             lang.id = pi.uniqueId();
+            lang.theMimes = getMimes(lang);
             languages[lang.name.toLowerCase()] = lang;
             modes[lang.mode.toLowerCase()] = lang;
             langs.push(lang);

@@ -160,7 +160,7 @@ var write = {};
     ex('jump', false, 'jumpToLine');
 
     var menus = [
-        // type 1 drop down, 2 link
+        // type 1 drop down, 2 link, 3 language, 4 theme
         {
             type: 1,
             name: '.file',
@@ -221,6 +221,16 @@ var write = {};
                 menu(directive.jump, 1, 'Alt-G'),
                 menu(null, 5, null, 90)
             ]
+        },
+        {
+            type: 3,
+            name: '.language',
+            items: mirror.languages
+        },
+        {
+            type: 4,
+            name: '.theme',
+            items: mirror.themes
         },
         {
             type: 2,
@@ -309,7 +319,7 @@ var write = {};
                                     setMarked(el);
                                 }
                             });
-                        }, 230);
+                        }, 260);
                     }
                 });
 
