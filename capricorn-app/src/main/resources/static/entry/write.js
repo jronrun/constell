@@ -274,6 +274,23 @@ var write = {};
         },
         menu: {
             visible: false,
+            lang: {
+                chosen: function (lang, mimeOrExt) {
+                    var markP = 'mark_lang_ch_', blockP = 'block_lang_ch_', infoP = 'info_lang_ch_',
+                        $old = $(fmt('a[id^={0}]:visible', markP));
+                    if ($old.length) {
+                        $old.hide();
+                        $sel('block_' + $old.attr('id')).css({
+                            'box-shadow': 'none'
+                        });
+                        $(fmt('i[id^={0}]:visible', infoP)).hide();
+                    }
+
+                    $sel(markP + lang.id).show();
+                    $sel(blockP + lang.id).css('box-shadow', '');
+                    $sel(infoP + pi.sign(mimeOrExt || '')).show();
+                }
+            },
             init: function () {
                 var $trigger = $sel('write-menu'), menuOptions = {
                     id: pi.uniqueId('menu-'),

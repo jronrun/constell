@@ -93,10 +93,10 @@
                 </div>
                 <div class="scrolling menu" style="overflow: hidden;">
                     <% $.each(mm.items, function(k, lang) { %>
-                    <div class="item" id="lang_<%= lang.id %>" data-lang="<%= pi.sign(lang) %>">
+                    <div class="item" id="lang_<%= lang.id %>">
 
-                        <div class="ui raised segment" style="border: none;">
-                            <a class="ui red ribbon label" id="lang_ch_<%= lang.id %>"
+                        <div class="ui raised segment" id="block_lang_ch_<%= lang.id %>" style="box-shadow: none;border: none;">
+                            <a class="ui red ribbon label" id="mark_lang_ch_<%= lang.id %>" data-lang="<%= pi.sign(lang) %>"
                                style="display: none;"><%= getMessage('write.lang.chosen') %></a>
                             <span class="green"><%= lang.name %></span>
                             <div class="ui card" style="box-shadow: none;">
@@ -108,9 +108,9 @@
                                         <div class="event">
                                             <div class="content">
                                                 <div class="summary icondh">
-                                                    <i class="check circle red icon"
-                                                       id="lang_info_ch_<%= pi.sign(mime) %>" style="display: none;"></i>
                                                     <a href="javascript:void(0);" data-lang-info="<%= pi.sign(mime) %>"><%= mime %></a>
+                                                    <i class="check circle red icon"
+                                                       id="info_lang_ch_<%= pi.sign(mime) %>" style="display: none;"></i>
                                                 </div>
                                             </div>
                                         </div>
@@ -124,9 +124,9 @@
                                         <div class="event">
                                             <div class="content">
                                                 <div class="summary icondh">
-                                                    <i class="check circle red icon"
-                                                       id="lang_info_ch_<%= pi.sign(ext) %>" style="display: none;"></i>
                                                     <a href="javascript:void(0);" data-lang-info="<%= pi.sign(ext) %>"><%= ext %></a>
+                                                    <i class="check circle red icon"
+                                                       id="info_lang_ch_<%= pi.sign(ext) %>" style="display: none;"></i>
                                                 </div>
                                             </div>
                                         </div>
