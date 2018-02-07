@@ -239,7 +239,8 @@ var write = {};
             init: function () {
                 var $trigger = $sel('write-menu'), menuOptions = {
                     id: pi.uniqueId('menu-'),
-                    menus: menus
+                    menus: menus,
+                    scrollH: pi.viewport().h * 70 / 100
                 };
 
                 pvw.initTopSidebar({
@@ -265,6 +266,15 @@ var write = {};
                                 '-webkit-box-shadow': '0 6px 12px rgba(0,0,0,.175)',
                                 'box-shadow': '0 6px 12px rgba(0, 0,0,.175)',
                                 border: 0
+                            });
+
+                            $('.scrolling.menu:visible').each(function (idx, el) {
+                                if (!isMarked(el)) {
+                                    $(el).niceScroll({
+                                        cursorcolor: 'grey'
+                                    });
+                                    setMarked(el);
+                                }
                             });
                         }, 230);
                     }

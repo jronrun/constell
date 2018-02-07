@@ -18,7 +18,7 @@
 <body>
 <a class="icondh" id="write-menu"
    style="position: absolute;left: 0;top: 0;border: 0;z-index: 40000;margin-left: 0.7em;">
-    <i class="lemon green icon" style="cursor: pointer;"></i>
+    <i class="lemon blue icon" style="cursor: pointer;"></i>
 </a>
 <th:block th:replace="~{modal}"></th:block>
 <script type="text/html" id="menu_tmpl">
@@ -47,7 +47,7 @@
                     <%= header %>
                 </div>
                 <% } %>
-                <div class="scrolling menu">
+                <div class="scrolling menu" style="height: <%= scrollH %>px;max-height: <%= scrollH %>px;overflow: hidden;">
                     <% $.each(mm.items, function(mmidx, mi) {
                     var nameValue = getMessage(mi.nameKey);
                     %>
