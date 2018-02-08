@@ -516,7 +516,7 @@ var comm = {};
                 //attach button event
                 $.each(options.buttons || [], function (idx, btn) {
                     if (btn.id && $.isFunction(btn.onClick)) {
-                        sel(btn.id).click(function () {
+                        $sel(btn.id).click(function () {
                             btn.onClick({button: btn, modal: result});
                         });
                     }
