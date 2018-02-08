@@ -264,7 +264,11 @@ var write = {};
                         }
                     }
                 });
+
                 core.menu.init();
+                delay(function () {
+                    core.preview.init();
+                }, 500);
 
                 //TODO rem
                 window.aa=pvw;
@@ -273,7 +277,15 @@ var write = {};
         },
         preview: {
             init: function () {
-                pvw.initRightSidebar();
+                pvw.initRightSidebar({
+                    transition: 'overlay',
+                    onVisible: function () {
+                        redact.setSize(pi.viewport().w / 2);
+                    },
+                    onHidden: function () {
+                        redact.setSize(pi.viewport().w);
+                    }
+                });
                 pvw.right.resize();
             }
         },
