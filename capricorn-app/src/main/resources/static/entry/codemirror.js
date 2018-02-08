@@ -145,11 +145,11 @@
                     return optionKey;
                 }
 
-                if (undefined === optionKey) {
+                if (pi.isUndefined(optionKey)) {
                     return cm.options;
                 }
 
-                if ($.isArray(optionKey)) {
+                if (pi.isArray(optionKey)) {
                     var rAttr = {};
                     $.each(optionKey, function (idx, okey) {
                         rAttr[okey] = cm.getOption(okey);
@@ -158,7 +158,7 @@
                 }
 
                 var aVal = cm.getOption(optionKey);
-                if (!optionVal) {
+                if (pi.isUndefined(optionVal)) {
                     return aVal;
                 }
 
@@ -309,7 +309,7 @@
             },
             checkIsJson: function (text) {
                 if (!mirror.isJson(text || tools.selected())) {
-                    lemon.alert('The selected or content is not a valid json.');
+                    alert('The selected or content is not a valid json.');
                     return false;
                 }
 

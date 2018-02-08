@@ -93,7 +93,7 @@
                 </div>
                 <div class="scrolling menu" style="overflow: hidden;">
                     <% $.each(mm.items, function(k, lang) { %>
-                    <div class="item" id="lang_<%= lang.id %>" data-params="<%= pi.sign(lang) %>" data-type="<%= mmType %>">
+                    <div class="item" id="lang_<%= lang.id %>" data-lang="<%= pi.sign(lang) %>" data-type="<%= mmType %>">
 
                         <div class="ui raised segment" id="block_lang_ch_<%= lang.id %>" style="box-shadow: none;border: none;">
                             <a class="ui red ribbon label" id="mark_lang_ch_<%= lang.id %>" data-lang-id="<%= pi.sign(lang.id) %>"
@@ -151,7 +151,7 @@
             <div class="menu">
                 <div class="scrolling menu" style="overflow: hidden;">
                     <% $.each(mm.items, function(idx, th) { %>
-                    <div class="item icondh" data-params="<%= pi.sign(th) %>" data-type="<%= mmType %>">
+                    <div class="item icondh" data-theme="<%= pi.sign(th) %>" data-type="<%= mmType %>">
                         <%= th %>
                         <i class="check circle red icon" id="th_ch_<%= pi.sign(th) %>" style="display: none;"></i>
                     </div>

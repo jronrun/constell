@@ -108,12 +108,18 @@ var write = {};
             handle: aHandle
         };
 
+        note.defineEx(props.value, props.handle, props.describe, props.short);
         directive[value] = props;
         return props;
     }, menu = function (aDirective, type, label, params) {
         var nameKey = '';
+
+        if (pi.isString(aDirective)) {
+            aDirective = ex(aDirective);
+        }
+
         if (!pi.isBlank(aDirective)) {
-            nameKey = exNameKey(pi.isString(aDirective) ? aDirective : aDirective.value);
+            nameKey = exNameKey(aDirective.value);
         }
 
         var aMenu = {
@@ -205,7 +211,7 @@ var write = {};
                 menu(directive.compare),
                 menu(null, 4),
                 menu('autocomplete', 1, 'Ctrl-J'),
-                menu(directive.wrapword),
+                menu(directive.wrapword, 3),
                 menu('toggleComment', 3, 'Ctrl-/'),
                 menu(directive.foldall),
                 menu(directive.unfoldall),
@@ -355,20 +361,22 @@ var write = {};
                 comm.dropdown('.dropdown', {
                     onChange: function(value, text, $choice) {
                         // type 1 drop down, 2 link, 3 language, 4 theme
-                        var data = pi.data($choice), params = data.params;
+                        var data = pi.data($choice);
                         switch (data.type) {
                             case 1:
+                                var menuId = $choice.attr('id');
+                                menuIndex[menuId].ex.handle(data.params);
                                 break;
                             case 2:
                                 break;
                             case 3:
                                 delay(function () {
-                                    core.menu.lang.change(params, chosenMimeOrExt);
+                                    core.menu.lang.change(data.lang, chosenMimeOrExt);
                                     chosenMimeOrExt = null;
                                 }, 200);
                                 break;
                             case 4:
-                                core.menu.theme.change(params);
+                                core.menu.theme.change(data.theme);
                                 break;
                         }
                         return false;
