@@ -297,15 +297,22 @@ var write = {};
                         $old = $(fmt('a[id^={0}]:visible', markP));
                     if ($old.length) {
                         $old.hide();
-                        $sel('block_' + $old.attr('id')).css({
+                        $(fmt('i[id^={0}]:visible', infoP)).hide();
+
+                        /*
+                        $sel(blockP + pi.data($old, 'langId')).css({
                             'box-shadow': 'none'
                         });
-                        $(fmt('i[id^={0}]:visible', infoP)).hide();
+                         */
                     }
 
                     $sel(markP + lang.id).show();
                     $sel(blockP + lang.id).css('box-shadow', '');
                     $sel(infoP + pi.sign(mimeOrExt || '')).show();
+                },
+                change: function (lang, mimeOrExt) {
+                    core.menu.lang.chosen(lang, mimeOrExt);
+
                 }
             },
             theme: {
@@ -313,6 +320,9 @@ var write = {};
                     var thP = 'th_ch_';
                     $(fmt('i[id^={0}]:visible', thP)).hide();
                     $sel(thP + pi.sign(th)).show();
+                },
+                change: function (th) {
+                    core.menu.theme.chosen(th);
                 }
             },
             init: function () {
@@ -337,7 +347,32 @@ var write = {};
                     this.style.setProperty('height', $sel(menuOptions.id).height() + 'px', 'important');
                 });
 
+                var chosenMimeOrExt = null;
+                liveClk('a[data-lang-info]', function (el) {
+                    chosenMimeOrExt = pi.data(el, 'langInfo');
+                });
+
                 comm.dropdown('.dropdown', {
+                    onChange: function(value, text, $choice) {
+                        // type 1 drop down, 2 link, 3 language, 4 theme
+                        var data = pi.data($choice), params = data.params;
+                        switch (data.type) {
+                            case 1:
+                                break;
+                            case 2:
+                                break;
+                            case 3:
+                                delay(function () {
+                                    core.menu.lang.change(params, chosenMimeOrExt);
+                                    chosenMimeOrExt = null;
+                                }, 200);
+                                break;
+                            case 4:
+                                core.menu.theme.change(params);
+                                break;
+                        }
+                        return false;
+                    },
                     onShow: function () {
                         delay(function () {
                             $('.menu.transition.visible').css({
