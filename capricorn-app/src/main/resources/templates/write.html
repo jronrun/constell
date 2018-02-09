@@ -86,12 +86,12 @@
         <div class="ui dropdown item" id="<%= pi.sign(mm.name) %>">
             <%= getMessage(mmNameKey) %>
             <div class="menu">
-                <div class="ui icon search input">
-                    <i class="search icon"></i>
-                    <input type="text" id="lang-qry-<%= pi.sign(mm.name) %>" name=""
+                <div class="ui icon input">
+                    <i class="blue search icon"></i>
+                    <input type="text" id="menu-lang-qry" style="border-color: #d9edf7;"
                            placeholder="<%= getMessage('write.search.lang.placeholder') %>">
                 </div>
-                <div class="scrolling menu" style="overflow: hidden;">
+                <div class="scrolling menu" style="overflow: hidden;" id="lang-qry-body">
                     <% $.each(mm.items, function(k, lang) { %>
                     <div class="item" id="lang_<%= lang.id %>" data-lang="<%= pi.sign(lang) %>" data-type="<%= mmType %>">
 

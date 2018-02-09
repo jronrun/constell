@@ -309,6 +309,67 @@ var write = {};
             visible: false,
             lang: {
                 chosenMimeOrExt: null,
+                init: function () {
+                    core.menu.lang.filter();
+
+                    liveClk('a[data-lang-info]', function (el) {
+                        core.menu.lang.chosenMimeOrExt = pi.data(el, 'langInfo');
+                    });
+                },
+                filter: function () {
+                    liveClk(sel('menu-lang-qry'), function(el, evt) {
+                        var langSel = 'div[data-lang]', val = $(evt.currentTarget).val(), blastSel = sel('lang-qry-body');
+                        if (pi.isBlank(val)) {
+                            blastReset(blastSel);
+                            $(langSel).show();
+                            return;
+                        }
+
+                        val = val.replace(/\+/g,'\\+');
+                        var ids = [], regEx = new RegExp(val), ismatch = false;
+                        $.each(mirror.languages, function(idx, lang) {
+                            ismatch = false;
+                            if (ismatch = regEx.test(lang.name)) {
+                            } else if (ismatch = regEx.test(lang.mode)) {
+                            } else if (ismatch = regEx.test(lang.mime)) {
+                            }
+
+                            if (!ismatch) {
+                                $.each(lang.mimes || [], function(idx, mime) {
+                                    if (ismatch) { return false; }
+                                    if (ismatch = regEx.test(mime)) { }
+                                });
+                            }
+
+                            if (!ismatch) {
+                                $.each(lang.ext || [], function(idx, ext) {
+                                    if (ismatch) { return false; }
+                                    if (ismatch = regEx.test(ext)) { }
+                                });
+                            }
+
+                            if (!ismatch) {
+                                $.each(lang.alias || [], function(idx, alias) {
+                                    if (ismatch) { return false; }
+                                    if (ismatch = regEx.test(alias)) { }
+                                });
+                            }
+
+                            if (!ismatch && lang.file) {
+                                ismatch = lang.file.test(val);
+                            }
+
+                            if (ismatch) {
+                                ids.push('#lang_' + lang.id);
+                            }
+                        });
+
+                        $(langSel).hide();
+                        $(ids.join(',')).show();
+
+                        blast(val, blastSel);
+                    }, 'keyup');
+                },
                 chosen: function (lang, mimeOrExt) {
                     var markP = 'mark_lang_ch_', blockP = 'block_lang_ch_', infoP = 'info_lang_ch_',
                         $old = $(fmt('a[id^={0}]:visible', markP));
@@ -443,9 +504,7 @@ var write = {};
                     this.style.setProperty('height', $sel(menuOptions.id).height() + 'px', 'important');
                 });
 
-                liveClk('a[data-lang-info]', function (el) {
-                    core.menu.lang.chosenMimeOrExt = pi.data(el, 'langInfo');
-                });
+                core.menu.lang.init();
 
                 $.each(menus, function (idx, aMenu) {
                     if ([1, 3, 4].indexOf(aMenu.type) !== -1) {
