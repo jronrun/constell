@@ -25,7 +25,7 @@
             }, params);
 
             params.get = function(index, defaultValue) {
-                index = index || 0; defaultValue = defaultValue || undefined;
+                index = index || 0;
                 if (params.args && params.args.length > index) {
                     return params.args[index];
                 }

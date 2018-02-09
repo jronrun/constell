@@ -32,7 +32,7 @@
             var mmNameKey = /^\./.test(mm.name) ? ('write.menu' + mm.name) : mm.name, mmType = pi.sign(mm.type);
         %>
         <% if (1 === mm.type) { %>
-        <div class="ui dropdown item" id="<%= pi.sign(name) %>">
+        <div class="ui dropdown item" id="<%= pi.sign(mm.name) %>">
             <%= getMessage(mmNameKey) %>
             <div class="menu">
                 <% if (mm.search) { %>
@@ -79,16 +79,16 @@
             </div>
         </div>
         <% } else if (2 === mm.type) { %>
-        <a class="item" id="clk-<%= pi.sign(name) %>"  data-type="<%= mmType %>">
+        <a class="item" id="clk-<%= pi.sign(mm.name) %>"  data-type="<%= mmType %>">
             <%= getMessage(mmNameKey) %>
         </a>
         <% } else if (3 === mm.type) { %>
-        <div class="ui dropdown item" id="<%= pi.sign(name) %>">
+        <div class="ui dropdown item" id="<%= pi.sign(mm.name) %>">
             <%= getMessage(mmNameKey) %>
             <div class="menu">
                 <div class="ui icon search input">
                     <i class="search icon"></i>
-                    <input type="text" id="lang-qry-<%= pi.sign(name) %>" name=""
+                    <input type="text" id="lang-qry-<%= pi.sign(mm.name) %>" name=""
                            placeholder="<%= getMessage('write.search.lang.placeholder') %>">
                 </div>
                 <div class="scrolling menu" style="overflow: hidden;">
@@ -146,7 +146,7 @@
             </div>
         </div>
         <% } else if (4 === mm.type) { %>
-        <div class="ui dropdown item" id="<%= pi.sign(name) %>">
+        <div class="ui dropdown item" id="<%= pi.sign(mm.name) %>">
             <%= getMessage(mmNameKey) %>
             <div class="menu">
                 <div class="scrolling menu" style="overflow: hidden;">
@@ -259,10 +259,13 @@
         'directive.joinline.name': [[#{directive.joinline.name}]],
         'directive.joinline.desc': [[#{directive.joinline.desc}]],
         'write.lang.type': [[#{write.lang.type}]],
-        'write.lang.type': [[#{write.lang.type}]],
         'write.lang.ext': [[#{write.lang.ext}]],
         'write.lang.chosen': [[#{write.lang.chosen}]],
         'write.theme.chosen': [[#{write.theme.chosen}]],
+        'write.theme.invalid': [[#{write.theme.invalid}]],
+        'write.theme.current': [[#{write.theme.current}]],
+        'write.mode.invalid': [[#{write.mode.invalid}]],
+        'write.mode.current': [[#{write.mode.current}]],
         'write.search.lang.placeholder': [[#{write.search.lang.placeholder}]]
     };
 </script>

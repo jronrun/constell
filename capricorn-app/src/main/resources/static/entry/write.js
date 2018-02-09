@@ -16,14 +16,24 @@ var write = {};
         help: function (args, cm) {
 
         },
-        theme: function (args, cm) {
-
+        theme: function (args) {
+            core.menu.theme.change(args.get(0));
         },
-        joinline: function (args, cm) {
-
+        joinline: function (args) {
+            var start = 0, end = undefined;
+            if (args.args) {
+                var len = args.args.length;
+                if (1 === len) {
+                    start = parseInt(args.args[0]) - 1;
+                } else if (len > 1) {
+                    start = parseInt(args.args[0]) - 1;
+                    end = parseInt(args.args[1]) - 1;
+                }
+            }
+            redact.vim.joinLine(start, end);
         },
-        mode: function (args, cm) {
-
+        mode: function (args) {
+            core.menu.lang.change(args.get(0), args.get(1));
         },
         wnew: function (args, cm) {
 
@@ -298,6 +308,7 @@ var write = {};
         menu: {
             visible: false,
             lang: {
+                chosenMimeOrExt: null,
                 chosen: function (lang, mimeOrExt) {
                     var markP = 'mark_lang_ch_', blockP = 'block_lang_ch_', infoP = 'info_lang_ch_',
                         $old = $(fmt('a[id^={0}]:visible', markP));
@@ -316,9 +327,14 @@ var write = {};
                     $sel(blockP + lang.id).css('box-shadow', '');
                     $sel(infoP + pi.sign(mimeOrExt || '')).show();
                 },
-                change: function (lang, mimeOrExt) {
-                    core.menu.lang.chosen(lang, mimeOrExt);
-
+                change: function (langName, mimeOrExt) {
+                    try {
+                        var curM = redact.mode(langName, mimeOrExt);
+                        redact.tip(getMessage('write.mode.current', curM.name + ' ' + (curM.mime || '')))
+                        core.menu.lang.chosen(curM, mimeOrExt);
+                    } catch (e) {
+                        redact.tip(e.message);
+                    }
                 }
             },
             theme: {
@@ -328,7 +344,81 @@ var write = {};
                     $sel(thP + pi.sign(th)).show();
                 },
                 change: function (th) {
-                    core.menu.theme.chosen(th);
+                    try {
+                        var curTh = redact.theme(th);
+                        redact.tip(getMessage('write.theme.current', curTh));
+                        core.menu.theme.chosen(curTh);
+                    } catch (e) {
+                        redact.tip(e.message);
+                    }
+                }
+            },
+            dd: {
+                init: function (aMenu) {
+                    comm.dropdown(sel(pi.sign(aMenu.name)), {
+                        onChange: function(value, text, $choice) {
+                            core.menu.dd.change(value, text, $choice);
+                        },
+                        onShow: function () {
+                            core.menu.dd.whenShow();
+
+                            switch (aMenu.type) {
+                                case 3:
+                                    core.menu.lang.chosen(redact.mode(), core.menu.lang.chosenMimeOrExt);
+                                    break;
+                                case 4:
+                                    delay(function () {
+                                        core.menu.theme.chosen(redact.theme());
+                                    }, 230);
+                                    break;
+                            }
+                        }
+                    });
+                },
+                change: function (value, text, $choice) {
+                    // type 1 drop down, 2 link, 3 language, 4 theme
+                    var data = pi.data($choice);
+                    switch (data.type) {
+                        case 1:
+                            var menuId = $choice.attr('id');
+                            menuIndex[menuId].ex.handle(data.params);
+                            break;
+                        case 2:
+                            break;
+                        case 3:
+                            delay(function () {
+                                core.menu.lang.change(data.lang.name, core.menu.lang.chosenMimeOrExt);
+                                core.menu.lang.chosenMimeOrExt = null;
+                            }, 200);
+                            break;
+                        case 4:
+                            core.menu.theme.change(data.theme);
+                            break;
+                    }
+                },
+                whenShow: function () {
+                    delay(function () {
+                        $('.menu.transition.visible').css({
+                            '-webkit-box-shadow': '0 6px 12px rgba(0,0,0,.175)',
+                            'box-shadow': '0 6px 12px rgba(0, 0,0,.175)',
+                            border: 0
+                        });
+
+                        $('.scrolling.menu:visible').each(function (idx, el) {
+                            var scrollH = pi.viewport().h * 75 / 100;
+                            $(el).css({
+                                height: scrollH + 'px',
+                                'max-height': scrollH + 'px'
+                            });
+
+                            if (!isMarked(el)) {
+                                $(el).niceScroll({
+                                    cursorcolor: 'grey'
+                                });
+                                setMarked(el);
+                            }
+                        });
+                    }, 260);
                 }
             },
             init: function () {
@@ -353,57 +443,13 @@ var write = {};
                     this.style.setProperty('height', $sel(menuOptions.id).height() + 'px', 'important');
                 });
 
-                var chosenMimeOrExt = null;
                 liveClk('a[data-lang-info]', function (el) {
-                    chosenMimeOrExt = pi.data(el, 'langInfo');
+                    core.menu.lang.chosenMimeOrExt = pi.data(el, 'langInfo');
                 });
 
-                comm.dropdown('.dropdown', {
-                    onChange: function(value, text, $choice) {
-                        // type 1 drop down, 2 link, 3 language, 4 theme
-                        var data = pi.data($choice);
-                        switch (data.type) {
-                            case 1:
-                                var menuId = $choice.attr('id');
-                                menuIndex[menuId].ex.handle(data.params);
-                                break;
-                            case 2:
-                                break;
-                            case 3:
-                                delay(function () {
-                                    core.menu.lang.change(data.lang, chosenMimeOrExt);
-                                    chosenMimeOrExt = null;
-                                }, 200);
-                                break;
-                            case 4:
-                                core.menu.theme.change(data.theme);
-                                break;
-                        }
-                        return false;
-                    },
-                    onShow: function () {
-                        delay(function () {
-                            $('.menu.transition.visible').css({
-                                '-webkit-box-shadow': '0 6px 12px rgba(0,0,0,.175)',
-                                'box-shadow': '0 6px 12px rgba(0, 0,0,.175)',
-                                border: 0
-                            });
-
-                            $('.scrolling.menu:visible').each(function (idx, el) {
-                                var scrollH = pi.viewport().h * 75 / 100;
-                                $(el).css({
-                                    height: scrollH + 'px',
-                                    'max-height': scrollH + 'px'
-                                });
-
-                                if (!isMarked(el)) {
-                                    $(el).niceScroll({
-                                        cursorcolor: 'grey'
-                                    });
-                                    setMarked(el);
-                                }
-                            });
-                        }, 260);
+                $.each(menus, function (idx, aMenu) {
+                    if ([1, 3, 4].indexOf(aMenu.type) !== -1) {
+                        core.menu.dd.init(aMenu);
                     }
                 });
 
