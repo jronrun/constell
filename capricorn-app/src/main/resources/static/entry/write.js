@@ -421,18 +421,22 @@ var write = {};
                             core.menu.dd.change(value, text, $choice);
                         },
                         onShow: function () {
-                            core.menu.dd.whenShow();
-
+                            var delayTime = 260, delayFunc = null;
                             switch (aMenu.type) {
                                 case 3:
-                                    core.menu.lang.chosen(redact.mode(), core.menu.lang.chosenMimeOrExt);
+                                    delayTime = 360;
+                                    delayFunc = function () {
+                                        core.menu.lang.chosen(redact.mode(), core.menu.lang.chosenMimeOrExt);
+                                    };
                                     break;
                                 case 4:
-                                    delay(function () {
+                                    delayFunc = function () {
                                         core.menu.theme.chosen(redact.theme());
-                                    }, 230);
+                                    };
                                     break;
                             }
+
+                            core.menu.dd.whenShow(delayTime, delayFunc);
                         }
                     });
                 },
@@ -457,7 +461,7 @@ var write = {};
                             break;
                     }
                 },
-                whenShow: function () {
+                whenShow: function (delayTime, delayFunc) {
                     delay(function () {
                         $('.menu.transition.visible').css({
                             '-webkit-box-shadow': '0 6px 12px rgba(0,0,0,.175)',
@@ -479,7 +483,9 @@ var write = {};
                                 setMarked(el);
                             }
                         });
-                    }, 260);
+
+                        $.isFunction(delayFunc) && delayFunc();
+                    }, delayTime);
                 }
             },
             init: function () {
