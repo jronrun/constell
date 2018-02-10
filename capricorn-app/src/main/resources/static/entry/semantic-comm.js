@@ -67,19 +67,6 @@ var comm = {};
          * @returns {*}
          */
         preview: function (text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents) {
-            var rootW = iFrame.isRootWin() ? window : top.window;
-            return rootW.comm.previewInSelfWin(text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents);
-        },
-        /**
-         * Preview in current self window
-         * @param text
-         * @param callback                function(view, previewM) {}  view: iFrame instance, previewM: modal instance
-         * @param domReadyCallbackIfUrl   function(view, previewM) {}  view: iFrame instance, previewM: modal instance
-         * @param modalOptions
-         * @param modalEvents
-         * @returns {*}
-         */
-        previewInSelfWin: function (text, callback, domReadyCallbackIfUrl, modalOptions, modalEvents) {
             modalEvents = modalEvents || {};
             var originalOnVisible = modalEvents.onVisible,
                 createViewInstance = null != text,
@@ -138,10 +125,6 @@ var comm = {};
         },
 
         previews: function (options, tabOptions, modalOptions, modalEvents) {
-            var rootW = iFrame.isRootWin() ? window : top.window;
-            return rootW.comm.previewsInSelfWin(options, tabOptions, modalOptions, modalEvents);
-        },
-        previewsInSelfWin: function (options, tabOptions, modalOptions, modalEvents) {
             // sidebar work only if one pusher class in page
             options = $.extend({
                 popup: true,
