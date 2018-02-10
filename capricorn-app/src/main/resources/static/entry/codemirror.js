@@ -10,6 +10,8 @@
         'ttcn','twilight','vibrant-ink','xq-dark','xq-light','yeti','zenburn'
     ], thirdThemes = [
         'chrome-devtools','cssedit','eiffel','github','mac-classic','one-dark','sidewalkchalk','summerfruit','tomorrow-night-blue','toy-chest'
+    ], blackBGMark = [
+        'dark', 'night', 'black'
     ];
 
     //merge third themes
@@ -328,9 +330,8 @@
                 cm.setCursor(cursor);
                 tools.refreshDelay();
             },
-            notifyContent: function () {
-                var evtN = 'MIRROR_INPUT_READ_NOTIFY', cMode = tools.mode();
-                return {
+            notifyContent: function (customData, evtName) {
+                var evtN = evtName || 'MIRROR_INPUT_READ_NOTIFY', cMode = tools.mode(), mirrorData = {
                     event: evtN,
                     data: {
                         lang: {
@@ -341,6 +342,9 @@
                         content: tools.val()
                     }
                 };
+
+                mirrorData.data =  $.extend(customData || {}, mirrorData.data);
+                return mirrorData;
             },
             inputReadNotifyTgl: function () {
                 return tools.tglOption(inputReadNotifyEvt);
@@ -656,6 +660,17 @@
                 target = JSON.stringify(target);
             }
             return JSON.parse(target);
+        },
+        isBlackBGTheme: function (th) {
+            var isBlackBG = false;
+            $.each(blackBG, function (idx, bbg) {
+                if (th.indexOf(bbg) !== -1) {
+                    isBlackBG = true;
+                    return false;
+                }
+            });
+
+            return isBlackBG;
         }
     };
 

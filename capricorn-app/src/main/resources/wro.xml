@@ -157,6 +157,10 @@
         <js>/entry/write.js</js>
     </group>
 
+    <group name="show">
+        <js>/entry/show.js</js>
+    </group>
+
     <!-- Capricorn App End -->
     <!-- Capricorn Manage Start -->
 

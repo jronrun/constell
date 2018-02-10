@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Capricorn Show</title>
+    <link th:href="@{/module/manage.css}" rel="stylesheet"/>
+    <link th:href="@{/module/code.css}" rel="stylesheet"/>
+    <link th:href="@{/module/markdown.css}" rel="stylesheet"/>
+    <script type="text/javascript" th:src="@{/module/base-heavy.js}"></script>
+    <script type="text/javascript" th:src="@{/module/code.js}"></script>
+    <script type="text/javascript" th:src="@{/module/markdown.js}"></script>
+    <script type="text/javascript" th:src="@{/module/show.js}"></script>
+</head>
+<body>
+<th:block th:replace="~{modal}"></th:block>
+<script th:inline="javascript">
+    var messages = {
+
+    };
+</script>
+</body>
+</html>

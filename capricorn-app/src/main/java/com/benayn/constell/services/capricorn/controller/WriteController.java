@@ -14,4 +14,9 @@ public class WriteController {
         System.out.println('h');
     }
 
+    @GetMapping(value = "/show")
+    public void show(Model model) {
+        System.out.println('s');
+    }
+
 }
