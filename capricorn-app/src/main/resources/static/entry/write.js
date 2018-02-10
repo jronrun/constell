@@ -56,10 +56,10 @@ var write = {};
         shared: function (args, cm) {
 
         },
-        view: function (args, cm) {
+        view: function (args) {
 
         },
-        live: function (args, cm) {
+        live: function (args) {
 
         },
         fullscreen: function (args, cm) {
@@ -104,7 +104,7 @@ var write = {};
                 var theHandle;
                 if (pi.isFunc(theHandle = actions[handle])) {
                     theHandle(args, cm);
-                } else if (pi.isFunc(theHandle = redact[handle])) {
+                } else if (pi.isFunc(theHandle = (redact[handle] || redact.vim[handle]))) {
                     theHandle();
                 }
             }
@@ -171,8 +171,8 @@ var write = {};
     ex('rich');
     ex('compare', 'comp');
     ex('wrapword', 'wrap', 'wordwrap');
-    ex('foldall', 'folda');
-    ex('unfoldall', 'unfolda');
+    ex('foldall', 'folda', 'foldAll');
+    ex('unfoldall', 'unfolda', 'unfoldAll');
     ex('jump', false, 'jumpToLine');
 
     var menus = [
