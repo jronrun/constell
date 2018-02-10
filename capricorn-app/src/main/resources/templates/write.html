@@ -149,6 +149,11 @@
         <div class="ui dropdown item" id="<%= pi.sign(mm.name) %>">
             <%= getMessage(mmNameKey) %>
             <div class="menu">
+                <div class="ui icon search input">
+                    <i class="blue search icon"></i>
+                    <input type="text" style="border-color: #d9edf7;"
+                           placeholder="<%= getMessage('write.search.theme.placeholder') %>">
+                </div>
                 <div class="scrolling menu" style="overflow: hidden;">
                     <% $.each(mm.items, function(idx, th) { %>
                     <div class="item icondh" data-theme="<%= pi.sign(th) %>" data-type="<%= mmType %>">
@@ -266,6 +271,7 @@
         'write.theme.current': [[#{write.theme.current}]],
         'write.mode.invalid': [[#{write.mode.invalid}]],
         'write.mode.current': [[#{write.mode.current}]],
+        'write.search.theme.placeholder': [[#{write.search.theme.placeholder}]],
         'write.search.lang.placeholder': [[#{write.search.lang.placeholder}]]
     };
 </script>
