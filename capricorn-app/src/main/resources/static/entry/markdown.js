@@ -83,7 +83,7 @@ var anchorLinkSymbol = '<svg aria-hidden="true" class="octicon octicon-link" hei
 
 var helper = function (inst, options) {
     options = options || {};
-    var tools = {
+    return {
         target: inst,
 
         render: function (src, env, theme, callback) {
@@ -93,8 +93,6 @@ var helper = function (inst, options) {
             return features('renderInline', src, env, inst, options, theme, callback);
         }
     };
-
-    return tools;
 };
 
 var markdown = function (options, markdownOptions) {
@@ -129,7 +127,7 @@ var markdown = function (options, markdownOptions) {
         highlight: null
     }, markdownOptions || {});
 
-    var inst = MarkdownIt(markdownOptions)
+    var inst = markdownit(markdownOptions)
         // .use(markdownTocAndAnchor, {
         //     anchorClassName: 'anchor',
         //     anchorLinkSymbol: ''
