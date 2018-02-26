@@ -140,6 +140,14 @@
         <js>/entry/markdown.js</js>
     </group>
 
+    <group name="beautify">
+        <js>/components/js-beautify/js/lib/beautify.js</js>
+        <js>/components/js-beautify/js/lib/beautify-css.js</js>
+        <js>/components/js-beautify/js/lib/beautify-html.js</js>
+        <js>/lib/vkBeautify.js</js>
+        <js>/lib/xml2json.js</js>
+    </group>
+
     <group name="code">
         <group-ref>code-mirror</group-ref>
         <js>/entry/codemirror.js</js>
