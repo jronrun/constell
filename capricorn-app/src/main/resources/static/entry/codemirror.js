@@ -11,7 +11,7 @@
     ], thirdThemes = [
         'chrome-devtools','cssedit','eiffel','github','mac-classic','one-dark','sidewalkchalk','summerfruit','tomorrow-night-blue','toy-chest'
     ], blackBGMark = [
-        'dark', 'night', 'black'
+        'dark', 'night', 'black', 'abcdef'
     ];
 
     //merge third themes
@@ -585,7 +585,7 @@
             }
 
             options.theme = mirror.requireTheme(options.theme);
-            tmpls(htmpl, options, 'body');
+            $('body').append(tmpl(htmpl, options));
             $(hsrc).val(content);
             if (options.style) {
                 $(hpre).css(options.style);
@@ -663,7 +663,7 @@
         },
         isBlackBGTheme: function (th) {
             var isBlackBG = false;
-            $.each(blackBG, function (idx, bbg) {
+            $.each(blackBGMark, function (idx, bbg) {
                 if (th.indexOf(bbg) !== -1) {
                     isBlackBG = true;
                     return false;

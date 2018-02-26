@@ -271,7 +271,7 @@ var pi = {};
 
         query: function() {
             var doc, isAll, l, params, results, selector;
-            params = 1 <= arguments.length ? slice.call(arguments, 0) : [];
+            params = 1 <= arguments.length ? [].slice.call(arguments, 0) : [];
             l = params.length;
             selector = '';
             isAll = false;
