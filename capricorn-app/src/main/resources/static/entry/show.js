@@ -26,10 +26,6 @@ var show = {};
                     mirror: mirror,
                     output: sel(viewId)
                 });
-                $sel(viewId).css({
-                    'margin-top': '0rem',
-                    padding: '2rem'
-                });
                 callback();
             });
         }
@@ -73,6 +69,27 @@ var show = {};
                 return js_beautify(source, options);
             }
         }
+    ], conversions = [
+        {
+            type: 'name',
+            key: ['Markdown'],
+            convert: function (input, theme) {
+                $sel(viewId).css({
+                    'margin-top': '0rem',
+                    padding: '2rem'
+                });
+
+                initMarkdown(function () {
+                    return marked.render(input, {}, theme);
+                });
+            }
+        },{
+            type: 'name',
+            key: ['HTML'],
+            convert: function (input, theme) {
+
+            }
+        }
     ];
 
     var pvw, taId = 'show_ta', viewId = 'show_view', core = {
@@ -103,8 +120,15 @@ var show = {};
         },
         load: function (aData) {
             var input = aData.content,
-                lang = aData.lang.mime || aData.lang.name, theme = aData.th,
+            //show type 1 preview & format, 2 format source, 3 original source
+            showType = aData.shows || 1,
+            lang = aData.lang.mime || aData.lang.name, theme = aData.th,
+            langMeta = mirror.modeInfo(lang),
             showInMirror = function (beautifyInput) {
+                $sel(viewId).css({
+                    'margin-top': '0rem',
+                    padding: '0rem'
+                });
                 mirror.highlights({
                     input: beautifyInput || input,
                     mode: lang,
@@ -114,29 +138,43 @@ var show = {};
 
                     }
                 });
+            },
+            formatSource = function () {
+                var matched = false;
+                $.each(beautifies, function (idx, aRender) {
+                    if (aRender.key.indexOf(langMeta[aRender.type || 'mode']) !== -1) {
+                        matched = true;
+                        initBeauty(function () {
+                            showInMirror(aRender.beautify(input));
+                        });
+                        return false;
+                    }
+                });
+
+                return matched;
+            },
+            convertSource = function () {
+                var matched = false;
+                $.each(conversions, function (idx, aRender) {
+                    if (aRender.key.indexOf(langMeta[aRender.type || 'mode']) !== -1) {
+                        matched = true;
+                        aRender.convert(input, theme, showType);
+                        return false;
+                    }
+                });
+
+                return matched;
             };
 
-            var langMeta = mirror.modeInfo(lang);
             if (langMeta) {
-                if (['Markdown'].indexOf(langMeta.name) !== -1) {
-                    initMarkdown(function () {
-                        return marked.render(input, {}, theme);
-                    });
-
-                    return true;
-                } else {
-                    var matched = false;
-                    $.each(beautifies, function (idx, aRender) {
-                        if (aRender.key.indexOf(langMeta[aRender.type || 'mode']) !== -1) {
-                            matched = true;
-                            initBeauty(function () {
-                                showInMirror(aRender.beautify(input));
-                            });
-                            return false;
-                        }
-                    });
-
-                    if (matched) {
+                if (1 === showType) {
+                    if (convertSource()) {
+                        return true;
+                    } else if (formatSource()) {
+                        return true;
+                    }
+                } else if (2 === showType) {
+                    if (formatSource()) {
                         return true;
                     }
                 }
