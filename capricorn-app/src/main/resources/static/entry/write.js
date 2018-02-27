@@ -217,7 +217,7 @@ var write = {};
                 menu(directive.quit, 2),
                 menu(directive.share),
                 menu(directive.view),
-                menu(directive.live),
+                menu(directive.live, 3),
                 menu(directive.fullscreen, 1, 'Ctrl-L'),
                 menu(null, 4),
                 menu(directive.info),
@@ -344,22 +344,21 @@ var write = {};
 
                 if (isVisible) {
                     notifyTglOpt = 2;
+                    var notifyHandle = function (evt) {
+                        rightIfr.tellEvent(evt.event, evt.data);
+                    };
 
                     if (!rightIfr) {
                         rightIfr = iFrame.create({}, pvw.right.target);
                         core.preview.resize();
                         rightIfr.openUrl(pi.fullUrl('/show'));
-
-                        var notifyHandle = function (evt) {
-                            rightIfr.tellEvent(evt.event, evt.data);
-                        };
                         redact.setNotifyContentHandle(notifyHandle);
-
-                        delay(function () {
-                            notifyHandle(redact.getNotifyContent());
-                            core.preview.resize();
-                        }, 300);
                     }
+
+                    delay(function () {
+                        notifyHandle(redact.getNotifyContent());
+                        core.preview.resize();
+                    }, 300);
                 } else {
                     notifyTglOpt = 3;
                 }
