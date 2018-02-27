@@ -75,6 +75,7 @@ var write = {};
             writePreview(pi.fullUrl('/show'), function (view) {
                 delay(function () {
                     var evt = redact.getNotifyContent();
+                    evt.data.shows = args.get(0);
                     view.tellEvent(evt.event, evt.data);
                 }, 300);
             });
@@ -344,21 +345,21 @@ var write = {};
 
                 if (isVisible) {
                     notifyTglOpt = 2;
-                    var notifyHandle = function (evt) {
-                        rightIfr.tellEvent(evt.event, evt.data);
-                    };
-
                     if (!rightIfr) {
+                        var notifyHandle = function (evt) {
+                            rightIfr.tellEvent(evt.event, evt.data);
+                        };
+
                         rightIfr = iFrame.create({}, pvw.right.target);
                         core.preview.resize();
                         rightIfr.openUrl(pi.fullUrl('/show'));
                         redact.setNotifyContentHandle(notifyHandle);
-                    }
 
-                    delay(function () {
-                        notifyHandle(redact.getNotifyContent());
-                        core.preview.resize();
-                    }, 300);
+                        delay(function () {
+                            notifyHandle(redact.getNotifyContent());
+                            core.preview.resize();
+                        }, 300);
+                    }
                 } else {
                     notifyTglOpt = 3;
                 }
