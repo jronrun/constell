@@ -3,7 +3,16 @@
 var show = {};
 (function ($, root, register) {
 
-    var marked = {}, mdInitialized = false, beautyInitialized = false,
+    var marked = {}, mdInitialized = false, beautyInitialized = false, ifr = null,
+    ifrResize = function () {
+        if (ifr) {
+            var viewport = pi.viewport();
+            ifr.attr({
+                width: viewport.w,
+                height: viewport.h
+            });
+        }
+    },
     initBeauty = function (callback) {
         if (beautyInitialized) {
             callback();
@@ -87,7 +96,17 @@ var show = {};
             type: 'name',
             key: ['HTML'],
             convert: function (input, theme) {
+                ifr = ifr || iFrame.create({
+                    frameborder: 0
+                }, sel(viewId));
+                ifrResize();
 
+                if (pi.isUrl(input)) {
+                    ifr.openUrl(input);
+                } else {
+                    var txt = (input || '').replace(/\\\//g, '/');
+                    ifr.write(txt);
+                }
             }
         }
     ];
@@ -116,7 +135,17 @@ var show = {};
 
                 //TODO rem
                 window.aa=pvw;
+
+                $(window).resize(function (e) {
+                    //e.preventDefault();
+                    ifrResize();
+                });
             }
+        },
+        reset: function () {
+            $sel(viewId).empty();
+            ifr = null;
+            pvw && pvw.resize(-1);
         },
         load: function (aData) {
             var input = aData.content,
@@ -158,7 +187,7 @@ var show = {};
                 $.each(conversions, function (idx, aRender) {
                     if (aRender.key.indexOf(langMeta[aRender.type || 'mode']) !== -1) {
                         matched = true;
-                        aRender.convert(input, theme, showType);
+                        aRender.convert(input, theme);
                         return false;
                     }
                 });
