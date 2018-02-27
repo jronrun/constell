@@ -91,6 +91,10 @@ var show = {};
                 initMarkdown(function () {
                     return marked.render(input, {}, theme);
                 });
+
+                $sel(viewId).niceScroll({
+                    cursorcolor: 'grey'
+                });
             }
         },{
             type: 'name',

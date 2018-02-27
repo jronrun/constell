@@ -3,6 +3,19 @@
 var write = {};
 (function ($, root, register) {
 
+    function writePreview(input, domReadyCallbackIfUrl, callback) {
+        comm.preview(input, callback, domReadyCallbackIfUrl, {
+            close: true
+        }, {
+            onVisible: function () {
+                $sel(core.menu.tid).hide();
+            },
+            onHidden: function () {
+                $sel(core.menu.tid).show();
+            }
+        });
+    }
+
     var directive = {}, menuIndex = {}, actions = {
         new: function (args, cm) {
 
@@ -57,7 +70,12 @@ var write = {};
 
         },
         view: function (args) {
-
+            writePreview(pi.fullUrl('/show'), function (view) {
+                delay(function () {
+                    var evt = redact.getNotifyContent();
+                    view.tellEvent(evt.event, evt.data);
+                }, 300);
+            });
         },
         live: function (args) {
             core.preview.toggle();
@@ -348,6 +366,7 @@ var write = {};
             }
         },
         menu: {
+            tid: 'write-menu',  //trigger id
             visible: false,
             lang: {
                 chosenMimeOrExt: null,
@@ -531,7 +550,7 @@ var write = {};
                 }
             },
             init: function () {
-                var $trigger = $sel('write-menu'), menuOptions = {
+                var $trigger = $sel(core.menu.tid), menuOptions = {
                     id: pi.uniqueId('menu-'),
                     menus: menus
                 };

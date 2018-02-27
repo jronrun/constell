@@ -240,7 +240,7 @@ var comm = {};
             };
 
             if (options.popup) {
-                previewM = core.previewInSelfWin(null, function () {
+                previewM = core.preview(null, function () {
                     showCallback();
                 }, false, $.extend(modalOptions || {}, {
                     content: modalContent
