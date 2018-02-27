@@ -11,7 +11,9 @@ var write = {};
                 $sel(core.menu.tid).hide();
             },
             onHidden: function () {
-                $sel(core.menu.tid).show();
+                if (!core.menu.visible) {
+                    $sel(core.menu.tid).show();
+                }
             }
         });
     }
