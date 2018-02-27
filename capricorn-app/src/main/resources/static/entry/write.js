@@ -60,7 +60,7 @@ var write = {};
 
         },
         live: function (args) {
-
+            core.preview.toggle();
         },
         fullscreen: function (args, cm) {
 
@@ -262,7 +262,7 @@ var write = {};
         }
     ];
 
-    var pvw = null, redact = null, nid = pi.uniqueId('note-'), core = {
+    var pvw = null, redact = null, rightIfr = null, nid = pi.uniqueId('note-'), core = {
         layout: {
             init: function () {
                 var viewContent = '<textarea style="border: 0; width: 100%; height: 100%;" id="{0}"></textarea>';
@@ -286,6 +286,10 @@ var write = {};
                     core.preview.init();
                 }, 500);
 
+                $(window).resize(function (e) {
+                    core.preview.resize();
+                });
+
                 //TODO rem
                 window.aa=pvw;
                 window.nn=redact;
@@ -303,6 +307,44 @@ var write = {};
                     }
                 });
                 pvw.right.resize();
+            },
+            resize: function () {
+                if (rightIfr) {
+                    rightIfr.attr({
+                        width: $(pvw.right.target).width(),
+                        height: $(pvw.right.target).height()
+                    });
+                }
+
+                redact.setSize(pi.viewport().w / (pvw.right.isVisible() ? 2 : 1));
+            },
+            toggle: function () {
+                var isVisible = !pvw.right.isVisible(), notifyTglOpt = 1;
+                pvw.right.toggle();
+
+                if (isVisible) {
+                    notifyTglOpt = 2;
+
+                    if (!rightIfr) {
+                        rightIfr = iFrame.create({}, pvw.right.target);
+                        core.preview.resize();
+                        rightIfr.openUrl(pi.fullUrl('/show'));
+
+                        var notifyHandle = function (evt) {
+                            rightIfr.tellEvent(evt.event, evt.data);
+                        };
+                        redact.setNotifyContentHandle(notifyHandle);
+
+                        delay(function () {
+                            notifyHandle(redact.getNotifyContent());
+                            core.preview.resize();
+                        }, 300);
+                    }
+                } else {
+                    notifyTglOpt = 3;
+                }
+
+                redact.inputReadNotifyTgl(notifyTglOpt);
             }
         },
         menu: {

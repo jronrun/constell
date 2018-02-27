@@ -96,9 +96,7 @@ var show = {};
             type: 'name',
             key: ['HTML'],
             convert: function (input, theme) {
-                ifr = ifr || iFrame.create({
-                    frameborder: 0
-                }, sel(viewId));
+                ifr = ifr || iFrame.create({}, sel(viewId));
                 ifrResize();
 
                 if (pi.isUrl(input)) {
@@ -111,7 +109,8 @@ var show = {};
         }
     ];
 
-    var pvw, taId = 'show_ta', viewId = 'show_view', core = {
+    var pvw, taId = 'show_ta', viewId = 'show_view',
+        lastNotifyTime = 0, lastNotifyData = null, lastTell = false, core = {
         layout: {
             init: function () {
                 var showContent = [
@@ -213,6 +212,34 @@ var show = {};
         },
         initialize: function () {
             core.layout.init();
+
+            iFrame.registers({
+                RESET: function () {
+                    core.reset();
+                },
+                REFRESH: function (evtName, evtData) {
+                    core.load(evtData);
+                },
+                MIRROR_INPUT_READ_NOTIFY: function (evtName, evtData) {
+                    lastNotifyData = evtData;
+                    var curTime = parseInt(pi.now()), pTell = function () {
+                        core.load(lastNotifyData);
+                    };
+
+                    if (curTime - lastNotifyTime > 1500) {
+                        lastNotifyTime = curTime;
+                        pTell();
+                    } else {
+                        if (!lastTell) {
+                            lastTell = true;
+                            delay(function () {
+                                pTell();
+                                lastTell = false;
+                            }, 1000);
+                        }
+                    }
+                }
+            });
         }
     };
 

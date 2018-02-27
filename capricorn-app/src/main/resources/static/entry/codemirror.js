@@ -116,6 +116,7 @@
         escKey: { k: 'Esc', f: 'fullscreenTgl'},
         ctrlLKey: { k: 'Ctrl-L', f: 'guttersTgl'}
     }, customEvts = [ 'fullscreen' ], inputReadNotifyEvt = 'inputReadNotifyEvt',
+        inputReadNotifyEvtHandle = null,
         helper = function(cm, events) {
         events = events || {};
         var tools = {
@@ -218,8 +219,22 @@
                     duration: 5000
                 }, tipOptions || {}));
             },
-            tglOption: function (optionKey) {
-                tools.attrs(optionKey, !tools.attrs(optionKey));
+            //opt 1 toggle, 2 true, 3 false, 4 get
+            tglOption: function (optionKey, opt) {
+                switch (opt = opt || 1) {
+                    case 1:
+                        tools.attrs(optionKey, !tools.attrs(optionKey));
+                        break;
+                    case 2:
+                        tools.attrs(optionKey, true);
+                        break;
+                    case 3:
+                        tools.attrs(optionKey, false);
+                        break;
+                    case 4:
+                        break;
+                }
+
                 return tools.attrs(optionKey);
             },
             wordwrap: function() {
@@ -330,7 +345,7 @@
                 cm.setCursor(cursor);
                 tools.refreshDelay();
             },
-            notifyContent: function (customData, evtName) {
+            getNotifyContent: function (customData, evtName) {
                 var evtN = evtName || 'MIRROR_INPUT_READ_NOTIFY', cMode = tools.mode(), mirrorData = {
                     event: evtN,
                     data: {
@@ -346,8 +361,15 @@
                 mirrorData.data =  $.extend(customData || {}, mirrorData.data);
                 return mirrorData;
             },
-            inputReadNotifyTgl: function () {
-                return tools.tglOption(inputReadNotifyEvt);
+            setNotifyContentHandle: function (handle) {
+                inputReadNotifyEvtHandle = handle;
+            },
+            notifyContent: function (customData, evtName) {
+                $.isFunction(inputReadNotifyEvtHandle)
+                    && inputReadNotifyEvtHandle(tools.getNotifyContent(customData, evtName));
+            },
+            inputReadNotifyTgl: function (opt) {
+                return tools.tglOption(inputReadNotifyEvt, opt);
             },
             readonlyTgl: function (isNocursor) {
                 if (!isNocursor) {

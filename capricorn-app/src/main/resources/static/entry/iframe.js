@@ -249,7 +249,7 @@ var iFrame = {};
                 name: uid,
                 align: null,
                 allowfullscreen: null,
-                frameborder: null,
+                frameborder: 0,
                 height: null,
                 width: null,
                 longdesc: null,
@@ -304,7 +304,15 @@ var iFrame = {};
         subscribe: function(callback, once) {
             aFrames.listen(callback, once, window);
         },
-        //Register event handle
+        //Register events handle
+        registers: function (events, once) {
+            $.each(events || {}, function (eventName, eventHandle) {
+                if ($.isFunction(eventHandle)) {
+                    core.register(eventName, eventHandle, once);
+                }
+            });
+        },
+        //Register event handle, callback(evtName, evtData, data)
         register: function (eventName, callback, once) {
             if (!aFramesEventHandle[eventName]) {
                 aFramesEventHandle[eventName] = {
