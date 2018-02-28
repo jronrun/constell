@@ -31,7 +31,9 @@ var anchorLinkSymbol = '<svg aria-hidden="true" class="octicon octicon-link" hei
 
         var featuresLast = function () {
             $(inRoot('a.anchor')).html(anchorLinkSymbol);
-            $(inRoot('blockquote')).addClass('md-blockquote');
+            $(inRoot('blockquote')).css({
+                margin: '0 0 1rem'
+            });
             $(inRoot('table')).addClass('table table-hover table-sm');
             $(inRoot('input[type="checkbox"]')).attr({disabled: true}).addClass('disabled');
 
