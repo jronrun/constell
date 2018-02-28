@@ -244,6 +244,16 @@ var pi = {};
             });
         },
 
+        addStyle: function(styles, styleId) {
+            styleId = styleId || pi.uniqueId('style-');
+            $sel(styleId).remove();
+            var style = document.createElement('style');
+            style.type = 'text/css';
+            style.id = styleId;
+            style.innerHTML = styles;
+            $('head').append(style);
+        },
+
         css: function(style, styleId) {
             var link = document.createElement('link');
             link.setAttribute('rel', 'stylesheet');
