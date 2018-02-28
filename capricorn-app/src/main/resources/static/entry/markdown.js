@@ -128,10 +128,9 @@ var markdown = function (options, markdownOptions) {
     }, markdownOptions || {});
 
     var inst = markdownit(markdownOptions)
-        // .use(markdownTocAndAnchor, {
-        //     anchorClassName: 'anchor',
-        //     anchorLinkSymbol: ''
-        // })
+        .use(markdownitHeadingAnchor, {
+            anchorClass: 'anchor'
+        })
         .use(markdownitFootnote)
         .use(markdownitCheckbox)
         .use(markdownitEmoji)

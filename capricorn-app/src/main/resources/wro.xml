@@ -135,7 +135,7 @@
         <js minimize="false">/components/markdown-it-ins/dist/markdown-it-ins.min.js</js>
 
         <!--/components/markdown-it-toc-and-anchor/src/index.js-->
-        <js minimize="false">/entry/markdown-it-toc-and-anchor.min.js</js>
+        <js>/lib/markdown-it-headinganchor.js</js>
         <css>/css/markdown.css</css>
         <js>/entry/markdown.js</js>
     </group>
