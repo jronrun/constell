@@ -652,11 +652,6 @@ var write = {};
         }
     };
 
-    $.extend(register, {
-    });
-
-    $(function () {
-        core.initialize();
-    });
+    $(function () {core.initialize();});
 
 })(jQuery, window, write);
