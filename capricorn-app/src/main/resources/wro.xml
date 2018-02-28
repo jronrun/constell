@@ -26,6 +26,7 @@
         <js>/entry/pi.js</js>
         <js>/entry/iframe.js</js>
         <js>/entry/semantic-comm.js</js>
+        <js>/entry/store.js</js>
     </group>
 
     <group name="code-mirror">
