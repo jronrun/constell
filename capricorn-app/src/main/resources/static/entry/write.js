@@ -18,6 +18,11 @@ var write = {};
         });
     }
 
+    var persistKey = 'write_state';
+    function leave() {
+        persist(persistKey, core.state());
+    }
+
     var directive = {}, menuIndex = {}, actions = {
         new: function (args, cm) {
 
@@ -305,6 +310,10 @@ var write = {};
                 core.menu.init();
                 delay(function () {
                     core.preview.init();
+                }, 300);
+
+                delay(function () {
+                    core.state(false, true);
                 }, 500);
 
                 $(window).resize(function (e) {
@@ -314,6 +323,7 @@ var write = {};
                 //TODO rem
                 window.aa=pvw;
                 window.nn=redact;
+                window.show=core;
             }  
         },
         preview: {
@@ -585,8 +595,60 @@ var write = {};
                 $('.menu-logo').click(pvw.top.toggle);
             }
         },
+        state: function (snapdata, persistLoad) {
+            if (true === persistLoad) {
+                snapdata = snapdata || persist(persistKey);
+            }
+
+            if (pi.isUndefined(snapdata)) {
+                return {
+                    menu: core.menu.visible,
+                    live: pvw.right.isVisible(),
+                    mirror: {
+                        data: redact.getNotifyContent().data,
+                        opts: redact.attrs(['foldGutter','lineNumbers','gutters']),
+                        vimInsert: 'vim-insert' === redact.attrs('keyMap')
+                    }
+                };
+            }
+
+            if (snapdata.menu && !core.menu.visible) {
+                pvw.top.show();
+            }
+            if (!snapdata.menu && core.menu.visible) {
+                pvw.top.hide();
+            }
+
+            if (snapdata.live && !pvw.right.isVisible()) {
+                core.preview.toggle();
+            }
+            if (!snapdata.live && pvw.right.isVisible()) {
+                core.preview.toggle();
+            }
+
+            var m, mm; if (m = snapdata.mirror) {
+                redact.attrs(m.opts || {});
+                if ((mm = m.data).th) {
+                    core.menu.theme.change(mm.th);
+                }
+                if (mm.lang) {
+                    core.menu.lang.change(mm.lang.name, mm.lang.mime);
+                }
+                if (m.vimInsert) {
+                    redact.vim.editMode();
+                }
+
+                redact.val(mm.content);
+            }
+        },
         initialize: function () {
             core.layout.init();
+
+            pi.unload(function () {
+                if (iFrame.isRootWin()) {
+                    leave();
+                }
+            });
         }
     };
 

@@ -406,7 +406,13 @@ var pi = {};
             });
             $(selector).attr(theData);
         },
-
+        unload: function(callback) {
+            //http://stackoverflow.com/questions/9626059/window-onbeforeunload-in-chrome-what-is-the-most-recent-fix
+            $(window).on('beforeunload', function() {
+                //var x =logout(); return x;
+                $.isFunction(callback) && callback();
+            });
+        },
         getURI: function () {
             return location.href.replace(location.origin, '');
         },
