@@ -503,6 +503,7 @@
         delete options.extraKeys;
 
         var targetId = /^#/.test(elId) ? elId.substring(1) : elId;
+        // http://codemirror.net/doc/manual.html#config
         var rich = CodeMirror.fromTextArea(document.getElementById(targetId), $.extend({
                 autofocus: false,
                 lineNumbers: false,
@@ -516,6 +517,7 @@
                 lineWrapping: true,
                 foldGutter: true,
                 content: '',
+                scrollbarStyle: 'null', //native
                 gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
                 matchTags: {
                     bothTags: true

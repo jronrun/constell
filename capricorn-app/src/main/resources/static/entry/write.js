@@ -3,14 +3,26 @@
 var write = {};
 (function ($, root, register) {
 
-    function writePreview(input, domReadyCallbackIfUrl, callback) {
+    var persistKey = 'write_state', views = {};
+    function writePreview(input, domReadyCallbackIfUrl, callback, viewMark, viewParams) {
         comm.preview(input, callback, domReadyCallbackIfUrl, {
             close: true
         }, {
             onVisible: function () {
+                if (viewMark) {
+                    views[viewMark] = {
+                        show: true,
+                        args: viewParams
+                    };
+                }
                 $sel(core.menu.tid).hide();
             },
             onHidden: function () {
+                if (viewMark) {
+                    views[viewMark] = {
+                        show: false
+                    };
+                }
                 if (!core.menu.visible) {
                     $sel(core.menu.tid).show();
                 }
@@ -18,7 +30,16 @@ var write = {};
         });
     }
 
-    var persistKey = 'write_state';
+    function actionView(showType) {
+        writePreview(pi.fullUrl('/show'), function (view) {
+            delay(function () {
+                var evt = redact.getNotifyContent();
+                evt.data.shows = showType;
+                view.tellEvent(evt.event, evt.data);
+            }, 300);
+        }, false, 'view', showType);
+    }
+
     function leave() {
         persist(persistKey, core.state());
     }
@@ -77,13 +98,7 @@ var write = {};
 
         },
         view: function (args) {
-            writePreview(pi.fullUrl('/show'), function (view) {
-                delay(function () {
-                    var evt = redact.getNotifyContent();
-                    evt.data.shows = args.get(0);
-                    view.tellEvent(evt.event, evt.data);
-                }, 300);
-            });
+            actionView(args.get(0));
         },
         live: function (args) {
             core.preview.toggle();
@@ -602,6 +617,7 @@ var write = {};
 
             if (pi.isUndefined(snapdata)) {
                 return {
+                    view: views.view,
                     menu: core.menu.visible,
                     live: pvw.right.isVisible(),
                     mirror: {
@@ -610,6 +626,21 @@ var write = {};
                         vimInsert: 'vim-insert' === redact.attrs('keyMap')
                     }
                 };
+            }
+
+            var m, mm; if (m = snapdata.mirror) {
+                redact.attrs(m.opts || {});
+                if ((mm = m.data).th) {
+                    core.menu.theme.change(mm.th);
+                }
+                if (mm.lang) {
+                    core.menu.lang.change(mm.lang.name, mm.lang.mime);
+                }
+                if (m.vimInsert) {
+                    redact.vim.editMode();
+                }
+
+                redact.val(mm.content);
             }
 
             if (snapdata.menu && !core.menu.visible) {
@@ -626,19 +657,8 @@ var write = {};
                 core.preview.toggle();
             }
 
-            var m, mm; if (m = snapdata.mirror) {
-                redact.attrs(m.opts || {});
-                if ((mm = m.data).th) {
-                    core.menu.theme.change(mm.th);
-                }
-                if (mm.lang) {
-                    core.menu.lang.change(mm.lang.name, mm.lang.mime);
-                }
-                if (m.vimInsert) {
-                    redact.vim.editMode();
-                }
-
-                redact.val(mm.content);
+            if (snapdata.view && snapdata.view.show) {
+                actionView(snapdata.view.args);
             }
         },
         initialize: function () {

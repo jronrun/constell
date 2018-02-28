@@ -153,7 +153,7 @@ var show = {};
         load: function (aData) {
             var input = aData.content,
             //show type 1 preview & format, 2 format source, 3 original source
-            showType = aData.shows || 1,
+            showType = parseInt(aData.shows || 1),
             lang = aData.lang.mime || aData.lang.name, theme = aData.th,
             langMeta = mirror.modeInfo(lang),
             showInMirror = function (beautifyInput) {
@@ -167,7 +167,7 @@ var show = {};
                     theme: theme,
                     outputEl: sel(viewId),
                     doneHandle: function () {
-
+                        $sel(viewId, ' pre.CodeMirror').niceScroll();
                     }
                 });
             },
