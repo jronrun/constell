@@ -163,10 +163,12 @@
     <!-- Capricorn App Start -->
 
     <group name="write">
+        <js>/entry/transform.js</js>
         <js>/entry/write.js</js>
     </group>
 
     <group name="show">
+        <js>/entry/transform.js</js>
         <js>/entry/show.js</js>
     </group>
 

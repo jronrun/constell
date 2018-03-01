@@ -178,11 +178,12 @@
                 return th;
             },
             mode: function(lan, optionalChosenMimeOrExt) {
+                var cmeKey = 'chosenMimeOrExt';
                 if (!lan) {
                     var rInfo = {};
                     $.extend(rInfo, tools.langInfo(tools.attrs('mode')));
                     $.extend(rInfo, {
-                        chosenMimeOrExt: tools.attrs('chosenMimeOrExt') || ''
+                        chosenMimeOrExt: tools.attrs(cmeKey) || ''
                     });
                     return rInfo;
                 }
@@ -198,7 +199,12 @@
                 tools.autoLoadMode(mode);
 
                 if (optionalChosenMimeOrExt) {
-                    tools.attrs('chosenMimeOrExt', optionalChosenMimeOrExt);
+                    tools.attrs(cmeKey, optionalChosenMimeOrExt);
+                } else {
+                    var curCME = tools.attrs(cmeKey) || '';
+                    if (info.theMimes.indexOf(curCME) === -1) {
+                        tools.attrs(cmeKey, info.theMimes.length > 0 ? info.theMimes[0] : '');
+                    }
                 }
 
                 return info;
