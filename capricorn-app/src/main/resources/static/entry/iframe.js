@@ -48,6 +48,14 @@ var iFrame = {};
                 iframe = target || window.frameElement;
             }
 
+            /*
+            ack example
+            fr=iFrame.wrap('#ifr_100001')
+            fr.listenReply()
+            // if 'SOURCE' event return {src: 'abc'}
+            fr.tellEvent('SOURCE', {}, function(data){console.log('ack: ' + JSON.stringify(data));})
+            // -> ack: {"src": "abc"}
+             */
             var ackCalls = function(eventId, ackCallback) {
                 var rootW = core.isRootWin() ? window : top.window, varN = '__defineIframeACKer__';
                 rootW[varN] = rootW[varN] || {};
@@ -223,10 +231,10 @@ var iFrame = {};
                     }
                 },
                 listenTell: function(callback, once) {
-                    meta.listen(callback, once, iframe.contentWindow);
+                    meta.listen(callback || function () {}, once, iframe.contentWindow);
                 },
                 listenReply: function(callback, once) {
-                    meta.listen(callback, once, window);
+                    meta.listen(callback || function () {}, once, window);
                 },
                 getInfo: function() {
                     return {

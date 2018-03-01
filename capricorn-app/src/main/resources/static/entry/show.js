@@ -3,7 +3,7 @@
 var show = {};
 (function ($, root, register) {
 
-    var marked = {}, mdInitialized = false, beautyInitialized = false, ifr = null,
+    var marked = {}, mdInitialized = false, beautyInitialized = false, ifr = null, source = '',
     ifrResize = function () {
         if (ifr) {
             var viewport = pi.viewport();
@@ -89,7 +89,9 @@ var show = {};
                 });
 
                 initMarkdown(function () {
-                    return marked.render(input, {}, theme);
+                    return marked.render(input, {}, theme, function (aResult) {
+                        source = aResult;
+                    });
                 });
 
                 $sel(viewId).niceScroll({
@@ -104,9 +106,11 @@ var show = {};
                 ifrResize();
 
                 if (pi.isUrl(input)) {
+                    source = input;
                     ifr.openUrl(input);
                 } else {
                     var txt = (input || '').replace(/\\\//g, '/');
+                    source = txt;
                     ifr.write(txt);
                 }
             }
@@ -166,7 +170,8 @@ var show = {};
                     mode: lang,
                     theme: theme,
                     outputEl: sel(viewId),
-                    doneHandle: function () {
+                    doneHandle: function (aResult) {
+                        source = aResult;
                         $sel(viewId, ' pre.CodeMirror').niceScroll();
                     }
                 });
@@ -220,6 +225,9 @@ var show = {};
             iFrame.registers({
                 RESET: function () {
                     core.reset();
+                },
+                SOURCE: function () {
+                    return {src: source};
                 },
                 REFRESH: function (evtName, evtData) {
                     core.load(evtData);
