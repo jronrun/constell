@@ -151,5 +151,22 @@ var markdown = function (options, markdownOptions) {
         .use(markdownitIns)
     ;
 
+    // https://markdown-it.github.io/
+    // Inject line numbers for sync scroll. Notes:
+    //
+    // - We track only headings and paragraphs on first level. That's enough.
+    // - Footnotes content causes jumps. Level limit filter it automatically.
+    function injectLineNumbers(tokens, idx, options, env, slf) {
+        var line;
+        if (tokens[idx].map && tokens[idx].level === 0) {
+            line = tokens[idx].map[0];
+            tokens[idx].attrJoin('class', 'line');
+            tokens[idx].attrSet('data-line', pi.sign(line));
+        }
+        return slf.renderToken(tokens, idx, options, env, slf);
+    }
+
+    inst.renderer.rules.paragraph_open = inst.renderer.rules.heading_open = injectLineNumbers;
+
     return helper(inst, options);
 };
