@@ -3,8 +3,9 @@
 var show = {};
 (function ($, root, register) {
 
-    var scrollMap = null, isScrollMapReady = false, isScrollMapBuilding = false;
-    function buildScrollMap() {
+    var scrollMap = null, isScrollMapReady = false, isScrollMapBuilding = false,
+        isScrollSynchronize = false;
+    function buildMarkdownScrollMap() {
         if (isScrollMapBuilding) {
             return;
         }
@@ -55,7 +56,6 @@ var show = {};
 
     // Synchronize scroll position from source to result
     var syncFs = {
-        syncAble: false,
         lastLineNo: 0,
         to: function (lineInfo) {
             if (!scrollMap) {
@@ -101,11 +101,11 @@ var show = {};
             syncFs.lastLineNo = lineNo;
         },
         build: function () {
-            if (!syncFs.syncAble) {
+            if (!isScrollSynchronize) {
                 return;
             }
 
-            buildScrollMap();
+            buildMarkdownScrollMap();
         },
         script: function (callback) {
             if (syncFs.loaded) {
@@ -211,7 +211,7 @@ var show = {};
                     return {src: showSource};
                 },
                 SYNC_SCROLL: function (evtName, evtData) {
-                    syncFs.syncAble = evtData.sync;
+                    isScrollSynchronize = evtData.sync;
                 },
                 SCROLL: function (evtName, evtData) {
                     syncFs.to(evtData);
