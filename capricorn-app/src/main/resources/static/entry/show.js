@@ -3,8 +3,14 @@
 var show = {};
 (function ($, root, register) {
 
-    var scrollMap = null;
+    var scrollMap = null, isScrollMapReady = false, isScrollMapBuilding = false;
     function buildScrollMap() {
+        if (isScrollMapBuilding) {
+            return;
+        }
+
+        isScrollMapBuilding = true;
+        isScrollMapReady = false;
         var i, _scrollMap = [], nonEmptyList = [],
             lines = $sel(viewId, ' .line'), linesCount = lines.length,
             $view = $sel(viewId), offset = $view.scrollTop() - $view.offset().top;
@@ -43,15 +49,21 @@ var show = {};
         }
 
         scrollMap = _scrollMap;
+        isScrollMapReady = true;
+        isScrollMapBuilding = false;
     }
 
     // Synchronize scroll position from source to result
     var syncFs = {
-        sync: false,
+        syncAble: false,
         lastLineNo: 0,
         to: function (lineInfo) {
             if (!scrollMap) {
                 syncFs.build();
+            }
+
+            if (!isScrollMapReady) {
+                return;
             }
 
             lineInfo = lineInfo || {};
@@ -89,7 +101,7 @@ var show = {};
             syncFs.lastLineNo = lineNo;
         },
         build: function () {
-            if (!syncFs.sync) {
+            if (!syncFs.syncAble) {
                 return;
             }
 
@@ -199,7 +211,7 @@ var show = {};
                     return {src: showSource};
                 },
                 SYNC_SCROLL: function (evtName, evtData) {
-                    syncFs.sync = evtData.sync;
+                    syncFs.syncAble = evtData.sync;
                 },
                 SCROLL: function (evtName, evtData) {
                     syncFs.to(evtData);
@@ -232,9 +244,6 @@ var show = {};
 
     //TODO rem
     window.show = core;
-
-    $.extend(register, {
-    });
 
     $(function () {
         core.initialize();
