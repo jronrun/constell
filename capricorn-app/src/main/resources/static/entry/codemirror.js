@@ -272,7 +272,21 @@
                 tools.toLine(cm.lastLine() + 1);
             },
             toLine: function (line, ch) {
+                var aLines = tools.visibleLines();
+                if (line > aLines.bottom) {
+                    line = line + (aLines.bottom - aLines.top - 2);
+                }
+
                 cm.setCursor((line || 1) - 1, ch || 0)
+            },
+            visibleLines: function () {
+                var scrollInfo = cm.getScrollInfo();
+                var occludeToleranceTop = 0;
+                var occludeToleranceBottom = 0;
+                var from = cm.coordsChar({left: 0, top: occludeToleranceTop + scrollInfo.top}, 'local');
+                var bottomY = scrollInfo.clientHeight - occludeToleranceBottom + scrollInfo.top;
+                var to = cm.coordsChar({left: 0, top: bottomY}, 'local');
+                return {top: from.line + 1, bottom: to.line + 1};
             },
             //opt 1 toggle, 2 show, 3 unshow, 4 get
             guttersTgl: function (opt, options) {
