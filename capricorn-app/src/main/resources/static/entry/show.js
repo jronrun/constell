@@ -3,6 +3,110 @@
 var show = {};
 (function ($, root, register) {
 
+    var scrollMap = null;
+    function buildScrollMap() {
+        var i, _scrollMap = [], nonEmptyList = [],
+            lines = $sel(viewId, ' .line'), linesCount = lines.length,
+            $view = $sel(viewId), offset = $view.scrollTop() - $view.offset().top;
+
+        for (i = 0; i < linesCount; i++) {
+            _scrollMap.push(-1);
+        }
+
+        nonEmptyList.push(0);
+        _scrollMap[0] = 0;
+
+        lines.each(function (n, el) {
+            var $el = $(el), t = pi.data(el, 'line');
+            if (t === '') {
+                return;
+            }
+            if (t !== 0) {
+                nonEmptyList.push(t);
+            }
+            _scrollMap[t] = Math.round($el.offset().top + offset);
+        });
+
+        nonEmptyList.push(linesCount);
+        _scrollMap[linesCount] = $view[0].scrollHeight;
+
+        var pos = 0, a, b;
+        for (i = 1; i < linesCount; i++) {
+            if (_scrollMap[i] !== -1) {
+                pos++;
+                continue;
+            }
+
+            a = nonEmptyList[pos];
+            b = nonEmptyList[pos + 1];
+            _scrollMap[i] = Math.round((_scrollMap[b] * (i - a) + _scrollMap[a] * (b - i)) / (b - a));
+        }
+
+        scrollMap = _scrollMap;
+    }
+
+    // Synchronize scroll position from source to result
+    var syncFs = {
+        sync: false,
+        lastLineNo: 0,
+        to: function (lineInfo) {
+            if (!scrollMap) {
+                syncFs.build();
+            }
+
+            lineInfo = lineInfo || {};
+            var i, lineNo = parseInt(lineInfo.line || 0), realLineNo = 0, posTo = scrollMap[lineNo];
+            if (lineNo === syncFs.lastLineNo) {
+                return;
+            }
+
+            if (pi.isUndefined(posTo)) {
+                if (lineNo > syncFs.lastLineNo) {
+                    var lineCount = parseInt(lineInfo.count || 0);
+                    for (i = lineNo; i <= lineCount; i++) {
+                        if (!pi.isUndefined(posTo = scrollMap[i])) {
+                            realLineNo = i;
+                            break;
+                        }
+                    }
+                } else {
+                    for (i = lineNo; i >= 0; i--) {
+                        if (!pi.isUndefined(posTo = scrollMap[i])) {
+                            realLineNo = i;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (pi.isUndefined(posTo) || syncFs.lastLineNo === realLineNo) {
+                return;
+            }
+
+            $sel(viewId).stop(true).animate({
+                scrollTop: posTo
+            }, 100, 'linear');
+            syncFs.lastLineNo = lineNo;
+        },
+        build: function () {
+            if (!syncFs.sync) {
+                return;
+            }
+
+            buildScrollMap();
+        },
+        script: function (callback) {
+            if (syncFs.loaded) {
+                callback();
+            } else {
+                pi.script('/module/lodash.js', function () {
+                    syncFs.loaded = true;
+                    callback();
+                });
+            }
+        }
+    };
+
     var ifr = null,
     ifrResize = function () {
         if (ifr) {
@@ -77,103 +181,9 @@ var show = {};
                 }
 
                 delay(function () {
-                    core.scroll.build();
+                    syncFs.build();
                 }, 200);
             });
-        },
-        scroll: {
-            map: null,
-            syncAble: false,
-            lastLineNo: 0,
-            to: function (lineInfo) {
-                if (!core.scroll.map) {
-                    core.scroll.build();
-                }
-
-                lineInfo = lineInfo || {};
-                var i, lineNo = parseInt(lineInfo.line || 0), realLineNo = 0, posTo = core.scroll.map[lineNo];
-                if (lineNo === core.scroll.lastLineNo) {
-                    return;
-                }
-
-                if (pi.isUndefined(posTo)) {
-                    if (lineNo > core.scroll.lastLineNo) {
-                        var lineCount = parseInt(lineInfo.count || 0);
-                        for (i = lineNo; i <= lineCount; i++) {
-                            if (!pi.isUndefined(posTo = core.scroll.map[i])) {
-                                realLineNo = i;
-                                break;
-                            }
-                        }
-                    } else {
-                        for (i = lineNo; i >= 0; i--) {
-                            if (!pi.isUndefined(posTo = core.scroll.map[i])) {
-                                realLineNo = i;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (pi.isUndefined(posTo) || core.scroll.lastLineNo === realLineNo) {
-                    return;
-                }
-
-                $sel(viewId).stop(true).animate({
-                    scrollTop: posTo
-                }, 100, 'linear');
-                core.scroll.lastLineNo = lineNo;
-            },
-            build: function () {
-                if (!core.scroll.syncAble) {
-                    return;
-                }
-
-                var i, _scrollMap = [], nonEmptyList = [],
-                    lines = $sel(viewId, ' .line'), linesCount = lines.length,
-                    $view = $sel(viewId), offset = $view.scrollTop() - $view.offset().top;
-
-                for (i = 0; i < linesCount; i++) {
-                    _scrollMap.push(-1);
-                }
-
-                nonEmptyList.push(0);
-                _scrollMap[0] = 0;
-
-                lines.each(function (n, el) {
-                    var $el = $(el), t = pi.data(el, 'line');
-                    if (t === '') { return; }
-                    if (t !== 0) { nonEmptyList.push(t); }
-                    _scrollMap[t] = Math.round($el.offset().top + offset);
-                });
-
-                nonEmptyList.push(linesCount);
-                _scrollMap[linesCount] = $view[0].scrollHeight;
-
-                var pos = 0, a, b;
-                for (i = 1; i < linesCount; i++) {
-                    if (_scrollMap[i] !== -1) {
-                        pos++;
-                        continue;
-                    }
-
-                    a = nonEmptyList[pos];
-                    b = nonEmptyList[pos + 1];
-                    _scrollMap[i] = Math.round((_scrollMap[b] * (i - a) + _scrollMap[a] * (b - i)) / (b - a));
-                }
-
-                core.scroll.map = _scrollMap;
-            },
-            script: function (callback) {
-                if (core.scroll.loaded) {
-                    callback();
-                } else {
-                    pi.script('/module/lodash.js', function () {
-                        core.scroll.loaded = true;
-                        callback();
-                    });
-                }
-            }
         },
         initialize: function () {
             core.layout.init();
@@ -186,10 +196,10 @@ var show = {};
                     return {src: showSource};
                 },
                 SYNC_SCROLL: function (evtName, evtData) {
-                    core.scroll.syncAble = evtData.sync;
+                    syncFs.sync = evtData.sync;
                 },
                 SCROLL: function (evtName, evtData) {
-                    core.scroll.to(evtData);
+                    syncFs.to(evtData);
                 },
                 REFRESH: function (evtName, evtData) {
                     core.load(evtData);
