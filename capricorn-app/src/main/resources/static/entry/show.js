@@ -119,8 +119,6 @@ var show = {};
                     return;
                 }
 
-                console.warn('lineNo: ' + lineNo + ' ' + posTo + ' realLineNo: ' + realLineNo);
-
                 $sel(viewId).stop(true).animate({
                     scrollTop: posTo
                 }, 100, 'linear');
@@ -131,7 +129,6 @@ var show = {};
                     return;
                 }
 
-                console.info('show scroll build');
                 var i, _scrollMap = [], nonEmptyList = [],
                     lines = $sel(viewId, ' .line'), linesCount = lines.length,
                     $view = $sel(viewId), offset = $view.scrollTop() - $view.offset().top;
@@ -189,18 +186,15 @@ var show = {};
                     return {src: showSource};
                 },
                 SYNC_SCROLL: function (evtName, evtData) {
-                    console.log('evt: ' + evtName + ' ' + JSON.stringify(evtData));
                     core.scroll.syncAble = evtData.sync;
                 },
                 SCROLL: function (evtName, evtData) {
-                    console.log('evt: ' + evtName + ' ' + JSON.stringify(evtData));
                     core.scroll.to(evtData);
                 },
                 REFRESH: function (evtName, evtData) {
                     core.load(evtData);
                 },
                 MIRROR_INPUT_READ_NOTIFY: function (evtName, evtData) {
-                    console.log('evt: ' + evtName + ' ' );
                     lastNotifyData = evtData;
                     var curTime = parseInt(pi.now()), pTell = function () {
                         core.load(lastNotifyData);
