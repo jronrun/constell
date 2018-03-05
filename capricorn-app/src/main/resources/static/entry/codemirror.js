@@ -279,10 +279,10 @@
 
                 cm.setCursor((line || 1) - 1, ch || 0)
             },
-            visibleLines: function () {
+            visibleLines: function (occludeToleranceTop, occludeToleranceBottom) {
                 var scrollInfo = cm.getScrollInfo();
-                var occludeToleranceTop = 0;
-                var occludeToleranceBottom = 0;
+                occludeToleranceTop = occludeToleranceTop || 0;
+                occludeToleranceBottom = occludeToleranceBottom || 0;
                 var from = cm.coordsChar({left: 0, top: occludeToleranceTop + scrollInfo.top}, 'local');
                 var bottomY = scrollInfo.clientHeight - occludeToleranceBottom + scrollInfo.top;
                 var to = cm.coordsChar({left: 0, top: bottomY}, 'local');
