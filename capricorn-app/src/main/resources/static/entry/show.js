@@ -67,15 +67,15 @@ var show = {};
             }
 
             lineInfo = lineInfo || {};
-            var i, lineNo = parseInt(lineInfo.line || 0), realLineNo = 0, posTo = scrollMap[lineNo];
+            var i, lineNo = parseInt(lineInfo.top || 0), realLineNo = 0, posTo = scrollMap[lineNo];
             if (lineNo === syncFs.lastLineNo) {
                 return;
             }
 
             if (pi.isUndefined(posTo)) {
                 if (lineNo > syncFs.lastLineNo) {
-                    var lineCount = parseInt(lineInfo.count || 0);
-                    for (i = lineNo; i <= lineCount; i++) {
+                    var lineEnd = parseInt(lineInfo.bottom || 0);
+                    for (i = lineNo; i <= lineEnd; i++) {
                         if (!pi.isUndefined(posTo = scrollMap[i])) {
                             realLineNo = i;
                             break;

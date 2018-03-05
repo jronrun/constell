@@ -427,10 +427,7 @@ var write = {};
                 } else {
                     core.preview.script(function () {
                         core.preview.sync = _.debounce(function () {
-                            rightIfr.tellEvent('SCROLL', {
-                                line: redact.visibleLines().top,
-                                count: redact.target.lineCount()
-                            });
+                            rightIfr.tellEvent('SCROLL', redact.visibleLines());
                         }, 100, { maxWait: 100 });
 
                         doSyncTgl();
