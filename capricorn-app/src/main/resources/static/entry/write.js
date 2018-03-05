@@ -383,13 +383,69 @@ var write = {};
                         delay(function () {
                             notifyHandle(redact.getNotifyContent());
                             core.preview.resize();
+                            core.preview.syncTgl(2);
                         }, 300);
                     }
                 } else {
                     notifyTglOpt = 3;
+                    core.preview.syncTgl(3);
                 }
 
                 redact.inputReadNotifyTgl(notifyTglOpt);
+            },
+            modeChange: function (langInfo) {
+                if ('Markdown' !== langInfo.name && core.preview.syncAble) {
+                    core.preview.syncTgl(3);
+                }
+            },
+            syncTgl: function (opt) {
+                // only support for Markdown
+                var cur = core.preview.syncAble;
+                //opt 1 toggle, 2 open, 3 close, 4 get
+                switch (opt || 1) {
+                    case 2: if (true === cur) {return;} break;
+                    case 3: if (true !== cur) {return;}break;
+                    case 4: return cur;
+                }
+
+                var evtN = 'scroll', doSyncTgl = function () {
+                    if (true === core.preview.syncAble) {
+                        core.preview.syncAble = false;
+                        redact.target.off(evtN, core.preview.sync);
+                    } else {
+                        if ('Markdown' === redact.mode().name) {
+                            redact.target.on(evtN, core.preview.sync);
+                            core.preview.syncAble = true;
+                        }
+                    }
+
+                    rightIfr.tellEvent('SYNC_SCROLL', {sync: core.preview.syncAble});
+                };
+
+                if (pi.isFunc(core.preview.sync)) {
+                    doSyncTgl();
+                } else {
+                    core.preview.script(function () {
+                        core.preview.sync = _.debounce(function () {
+                            rightIfr.tellEvent('SCROLL', {
+                                line: redact.visibleLines().top,
+                                count: redact.target.lineCount()
+                            });
+                        }, 100, { maxWait: 100 });
+
+                        doSyncTgl();
+                    });
+                }
+            },
+            script: function (callback) {
+                if (core.preview.lloaded) {
+                    callback();
+                } else {
+                    pi.script('/module/lodash.js', function () {
+                        core.preview.lloaded = true;
+                        callback();
+                    });
+                }
             }
         },
         menu: {
@@ -481,6 +537,7 @@ var write = {};
                         var curM = redact.mode(langName, mimeOrExt);
                         redact.tip(getMessage('write.mode.current', curM.name + ' ' + (curM.mime || '')))
                         core.menu.lang.chosen(curM, mimeOrExt);
+                        core.preview.modeChange(curM);
                     } catch (e) {
                         redact.tip(e.message);
                     }
@@ -663,6 +720,12 @@ var write = {};
         },
         initialize: function () {
             core.layout.init();
+
+            iFrame.registers({
+                SCROLL: function (evtName, evtData) {
+
+                }
+            });
 
             pi.unload(function () {
                 if (iFrame.isRootWin()) {
