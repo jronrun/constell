@@ -145,6 +145,9 @@ var show = {};
                 $(window).resize(function (e) {
                     //e.preventDefault();
                     ifrResize();
+                    delay(function () {
+                        syncFs.build();
+                    }, 200);
                 });
             }
         },
