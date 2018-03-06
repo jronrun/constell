@@ -117,6 +117,62 @@ var show = {};
                 });
             }
         }
+    },
+    // Synchronize scroll position from result to source
+    toSrc = {
+        initialized: false,
+        lastLineNo: 0,
+        init: function () {
+            if (!isScrollSynchronize || true === toSrc.initialized) {
+                return;
+            }
+
+            syncFs.script(function () {
+                var syncToSrcScroll = _.debounce(function () {
+                    var resultHtml = $sel(viewId),
+                        scrollTop  = resultHtml.scrollTop(),
+                        lines,
+                        i,
+                        line;
+
+                    if (!isScrollMapReady) {
+                        buildMarkdownScrollMap();
+                    }
+
+                    if (!isScrollMapReady) {
+                        return;
+                    }
+
+                    lines = Object.keys(scrollMap);
+
+                    if (lines.length < 1) {
+                        return;
+                    }
+
+                    line = lines[0];
+
+                    for (i = 1; i < lines.length; i++) {
+                        if (scrollMap[lines[i]] < scrollTop) {
+                            line = lines[i];
+                            continue;
+                        }
+
+                        break;
+                    }
+
+                    if (toSrc.lastLineNo !== line) {
+                        toSrc.lastLineNo = line;
+                        iFrame.post('SCROLL', {
+                            line: line
+                        });
+                    }
+                }, 50, { maxWait: 50 });
+
+                $sel(viewId).on('touchstart mouseover', function () {
+                    $sel(viewId).on('scroll', syncToSrcScroll);
+                });
+            });
+        }
     };
 
     var ifr = null,
@@ -212,6 +268,7 @@ var show = {};
                 },
                 SYNC_SCROLL: function (evtName, evtData) {
                     isScrollSynchronize = evtData.sync;
+                    toSrc.init();
                 },
                 SCROLL: function (evtName, evtData) {
                     syncFs.to(evtData);

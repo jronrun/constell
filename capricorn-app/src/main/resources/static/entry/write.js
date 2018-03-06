@@ -720,7 +720,7 @@ var write = {};
 
             iFrame.registers({
                 SCROLL: function (evtName, evtData) {
-
+                    redact.toLine(evtData.line)
                 }
             });
 
