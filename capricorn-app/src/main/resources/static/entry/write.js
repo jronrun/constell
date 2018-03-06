@@ -353,6 +353,11 @@ var write = {};
                     }
                 });
                 pvw.right.resize();
+
+                $(redact.target.getWrapperElement()).on('touchstart mouseover', function () {
+                    rightIfr.tellEvent('SCROLL_NOTIFY_STOP');
+                    core.preview.syncTgl(2);
+                });
             },
             resize: function () {
                 if (rightIfr) {
@@ -720,7 +725,15 @@ var write = {};
 
             iFrame.registers({
                 SCROLL: function (evtName, evtData) {
-                    redact.toLine(evtData.line)
+                    //redact.toLine(evtData.line)
+                    var lineHeight = parseFloat($(redact.target.getWrapperElement()).css('line-height'));
+                    //redact.target.scrollTo(null, parseInt(evtData.line) * lineHeight);
+                    $('.CodeMirror-scroll').stop(true).animate({
+                        scrollTop: parseInt(evtData.line) * lineHeight
+                    }, 100, 'linear');
+                },
+                SCROLL_NOTIFY_STOP: function () {
+                    core.preview.syncTgl(3);
                 }
             });
 

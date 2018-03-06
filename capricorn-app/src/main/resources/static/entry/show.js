@@ -128,7 +128,7 @@ var show = {};
             }
 
             syncFs.script(function () {
-                var syncToSrcScroll = _.debounce(function () {
+                toSrc.sync = _.debounce(function () {
                     var resultHtml = $sel(viewId),
                         scrollTop  = resultHtml.scrollTop(),
                         lines,
@@ -169,9 +169,13 @@ var show = {};
                 }, 50, { maxWait: 50 });
 
                 $sel(viewId).on('touchstart mouseover', function () {
-                    $sel(viewId).on('scroll', syncToSrcScroll);
+                    iFrame.post('SCROLL_NOTIFY_STOP');
+                    $sel(viewId).on('scroll', toSrc.sync);
                 });
             });
+        },
+        close: function () {
+            $sel(viewId).off('scroll', toSrc.sync);
         }
     };
 
@@ -272,6 +276,9 @@ var show = {};
                 },
                 SCROLL: function (evtName, evtData) {
                     syncFs.to(evtData);
+                },
+                SCROLL_NOTIFY_STOP: function (evtName, evtData) {
+                    toSrc.close();
                 },
                 REFRESH: function (evtName, evtData) {
                     core.load(evtData);
