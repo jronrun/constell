@@ -355,8 +355,10 @@ var write = {};
                 pvw.right.resize();
 
                 $(redact.target.getWrapperElement()).on('touchstart mouseover', function () {
-                    rightIfr.tellEvent('SCROLL_NOTIFY_STOP');
-                    core.preview.syncTgl(2);
+                    if (pvw.right.isVisible()) {
+                        rightIfr.tellEvent('SCROLL_NOTIFY_STOP');
+                        core.preview.syncTgl(2);
+                    }
                 });
             },
             resize: function () {
@@ -438,6 +440,12 @@ var write = {};
                         doSyncTgl();
                     });
                 }
+            },
+            scrollToLine: function (lineNo) {
+                var coord = redact.target.charCoords({line: lineNo, ch: 0}, 'local');
+                $('.CodeMirror-scroll').stop(true).animate({
+                    scrollTop: coord.top
+                }, 100, 'linear');
             },
             script: function (callback) {
                 if (core.preview.lloaded) {
@@ -725,15 +733,23 @@ var write = {};
 
             iFrame.registers({
                 SCROLL: function (evtName, evtData) {
-                    //redact.toLine(evtData.line)
-                    var lineHeight = parseFloat($(redact.target.getWrapperElement()).css('line-height'));
-                    //redact.target.scrollTo(null, parseInt(evtData.line) * lineHeight);
-                    $('.CodeMirror-scroll').stop(true).animate({
-                        scrollTop: parseInt(evtData.line) * lineHeight
-                    }, 100, 'linear');
+                    core.preview.scrollToLine(parseInt(evtData.line));
                 },
                 SCROLL_NOTIFY_STOP: function () {
                     core.preview.syncTgl(3);
+                },
+                SCROLL_INFO: function () {
+                    var linesInfo = [], lc = redact.target.lineCount();
+                    linesInfo[0] = 0;
+                    for (var i = 1; i <= lc; i++) {
+                        var coord = redact.target.charCoords({line: i, ch: 0}, 'local');
+                        linesInfo[i] = coord.top;
+                    }
+
+                    return {linesInfo: linesInfo};
+                },
+                LOAD_DONE: function () {
+
                 }
             });
 

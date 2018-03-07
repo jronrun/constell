@@ -120,8 +120,17 @@ var show = {};
     },
     // Synchronize scroll position from result to source
     toSrc = {
+        isReady: false,
+        linesInfo: [],
         initialized: false,
         lastLineNo: 0,
+        initLinesInfo: function (callback) {
+            iFrame.post('SCROLL_INFO', {}, function (n, evtData) {
+                toSrc.isReady = true;
+                toSrc.linesInfo = evtData.data.linesInfo;
+                callback();
+            });
+        },
         init: function () {
             if (!isScrollSynchronize || true === toSrc.initialized) {
                 return;
@@ -129,42 +138,43 @@ var show = {};
 
             syncFs.script(function () {
                 toSrc.sync = _.debounce(function () {
-                    var resultHtml = $sel(viewId),
-                        scrollTop  = resultHtml.scrollTop(),
-                        lines,
-                        i,
-                        line;
+                    // line and html map
+                    var doSync = function () {
+                        var resultHtml = $sel(viewId),
+                            scrollTop  = resultHtml.scrollTop(),
+                            lines,
+                            i,
+                            line;
 
-                    if (!isScrollMapReady) {
-                        buildMarkdownScrollMap();
-                    }
+                        lines = Object.keys(toSrc.linesInfo);
 
-                    if (!isScrollMapReady) {
-                        return;
-                    }
-
-                    lines = Object.keys(scrollMap);
-
-                    if (lines.length < 1) {
-                        return;
-                    }
-
-                    line = lines[0];
-
-                    for (i = 1; i < lines.length; i++) {
-                        if (scrollMap[lines[i]] < scrollTop) {
-                            line = lines[i];
-                            continue;
+                        if (lines.length < 1) {
+                            return;
                         }
 
-                        break;
-                    }
+                        line = lines[0];
 
-                    if (toSrc.lastLineNo !== line) {
-                        toSrc.lastLineNo = line;
-                        iFrame.post('SCROLL', {
-                            line: line
-                        });
+                        for (i = 1; i < lines.length; i++) {
+                            if (toSrc.linesInfo[lines[i]] < scrollTop) {
+                                line = lines[i];
+                                continue;
+                            }
+
+                            break;
+                        }
+
+                        if (toSrc.lastLineNo !== line) {
+                            toSrc.lastLineNo = line;
+                            iFrame.post('SCROLL', {
+                                line: line
+                            });
+                        }
+                    };
+
+                    if (toSrc.isReady) {
+                        doSync();
+                    } else {
+                        toSrc.initLinesInfo(doSync);
                     }
                 }, 50, { maxWait: 50 });
 
@@ -173,6 +183,9 @@ var show = {};
                     $sel(viewId).on('scroll', toSrc.sync);
                 });
             });
+        },
+        build: function () {
+            toSrc.isReady = false;
         },
         close: function () {
             $sel(viewId).off('scroll', toSrc.sync);
@@ -219,7 +232,8 @@ var show = {};
                     ifrResize();
                     delay(function () {
                         syncFs.build();
-                    }, 200);
+                        toSrc.build();
+                    }, 500);
                 });
             }
         },
@@ -229,6 +243,10 @@ var show = {};
             pvw && pvw.resize(-1);
         },
         load: function (aData) {
+            var doneEvent = function () {
+                iFrame.post('LOAD_DONE');
+            };
+
             transform.get(aData, function (sourceType, aResult) {
                 showSource = aResult;
                 switch (sourceType) {
@@ -236,28 +254,34 @@ var show = {};
                         $sel(viewId).css({'margin-top': '0rem', padding: '0rem'})
                             .html(aResult);
                         $sel(viewId, ' pre.CodeMirror').niceScroll();
+                        doneEvent();
                         break;
                     case 2:
                         $sel(viewId).css({'margin-top': '0rem', padding: '2rem'})
                             .html(aResult).fadeIn(1000);
                         $sel(viewId).niceScroll();
+                        doneEvent();
                         break;
                     case 3:
                         ifr = ifr || iFrame.create({}, sel(viewId));
                         ifrResize();
 
                         if (pi.isUrl(aResult)) {
-                            ifr.openUrl(aResult);
+                            ifr.openUrl(aResult, function () {
+                                doneEvent();
+                            });
                         } else {
                             var txt = (aResult || '').replace(/\\\//g, '/');
                             ifr.write(txt);
+                            doneEvent();
                         }
                         break;
                 }
 
                 delay(function () {
                     syncFs.build();
-                }, 200);
+                    toSrc.build();
+                }, 800);
             });
         },
         initialize: function () {
@@ -272,7 +296,7 @@ var show = {};
                 },
                 SYNC_SCROLL: function (evtName, evtData) {
                     isScrollSynchronize = evtData.sync;
-                    toSrc.init();
+                    //toSrc.init();
                 },
                 SCROLL: function (evtName, evtData) {
                     syncFs.to(evtData);
@@ -308,6 +332,7 @@ var show = {};
 
     //TODO rem
     window.show = core;
+    window.buildMarkdownScrollMap=buildMarkdownScrollMap;
 
     $(function () {
         core.initialize();
