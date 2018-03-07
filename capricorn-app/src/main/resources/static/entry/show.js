@@ -10,48 +10,55 @@ var show = {};
             return;
         }
 
-        isScrollMapBuilding = true;
-        isScrollMapReady = false;
-        var i, _scrollMap = [], nonEmptyList = [],
-            lines = $sel(viewId, ' .line'), linesCount = lines.length,
-            $view = $sel(viewId), offset = $view.scrollTop() - $view.offset().top;
+        var doBuild = function (srcLineCount) {
+            isScrollMapBuilding = true;
+            isScrollMapReady = false;
+            var i, _scrollMap = [], nonEmptyList = [],
+                lines = $sel(viewId, ' .line'), linesCount = srcLineCount,
+                $view = $sel(viewId), offset = $view.scrollTop() - $view.offset().top;
 
-        for (i = 0; i < linesCount; i++) {
-            _scrollMap.push(-1);
-        }
-
-        nonEmptyList.push(0);
-        _scrollMap[0] = 0;
-
-        lines.each(function (n, el) {
-            var $el = $(el), t = pi.data(el, 'line');
-            if (t === '') {
-                return;
+            for (i = 0; i < linesCount; i++) {
+                _scrollMap.push(-1);
             }
-            if (t !== 0) {
-                nonEmptyList.push(t);
+
+            nonEmptyList.push(0);
+            _scrollMap[0] = 0;
+
+            lines.each(function (n, el) {
+                var $el = $(el), t = pi.data(el, 'line');
+                if (t === '') {
+                    return;
+                }
+                if (t !== 0) {
+                    nonEmptyList.push(t);
+                }
+                _scrollMap[t] = Math.round($el.offset().top + offset);
+            });
+
+            nonEmptyList.push(linesCount);
+            _scrollMap[linesCount] = $view[0].scrollHeight;
+
+            var pos = 0, a, b;
+            for (i = 1; i < linesCount; i++) {
+                if (_scrollMap[i] !== -1) {
+                    pos++;
+                    continue;
+                }
+
+                a = nonEmptyList[pos];
+                b = nonEmptyList[pos + 1];
+                _scrollMap[i] = Math.round((_scrollMap[b] * (i - a) + _scrollMap[a] * (b - i)) / (b - a));
             }
-            _scrollMap[t] = Math.round($el.offset().top + offset);
+
+            scrollMap = _scrollMap;
+            isScrollMapReady = true;
+            isScrollMapBuilding = false;
+            return scrollMap;
+        };
+
+        iFrame.post('LINE_COUNT', {}, function (n, evtData) {
+            doBuild(parseInt(evtData.data.count));
         });
-
-        nonEmptyList.push(linesCount);
-        _scrollMap[linesCount] = $view[0].scrollHeight;
-
-        var pos = 0, a, b;
-        for (i = 1; i < linesCount; i++) {
-            if (_scrollMap[i] !== -1) {
-                pos++;
-                continue;
-            }
-
-            a = nonEmptyList[pos];
-            b = nonEmptyList[pos + 1];
-            _scrollMap[i] = Math.round((_scrollMap[b] * (i - a) + _scrollMap[a] * (b - i)) / (b - a));
-        }
-
-        scrollMap = _scrollMap;
-        isScrollMapReady = true;
-        isScrollMapBuilding = false;
     }
 
     // Synchronize scroll position from source to result
@@ -120,17 +127,8 @@ var show = {};
     },
     // Synchronize scroll position from result to source
     toSrc = {
-        isReady: false,
-        linesInfo: [],
         initialized: false,
         lastLineNo: 0,
-        initLinesInfo: function (callback) {
-            iFrame.post('SCROLL_INFO', {}, function (n, evtData) {
-                toSrc.isReady = true;
-                toSrc.linesInfo = evtData.data.linesInfo;
-                callback();
-            });
-        },
         init: function () {
             if (!isScrollSynchronize || true === toSrc.initialized) {
                 return;
@@ -139,42 +137,42 @@ var show = {};
             syncFs.script(function () {
                 toSrc.sync = _.debounce(function () {
                     // line and html map
-                    var doSync = function () {
-                        var resultHtml = $sel(viewId),
-                            scrollTop  = resultHtml.scrollTop(),
-                            lines,
-                            i,
-                            line;
+                    var resultHtml = $sel(viewId),
+                        scrollTop  = resultHtml.scrollTop(),
+                        lines,
+                        i,
+                        line;
 
-                        lines = Object.keys(toSrc.linesInfo);
+                    if (!isScrollMapReady) {
+                        buildMarkdownScrollMap();
+                    }
 
-                        if (lines.length < 1) {
-                            return;
+                    if (!isScrollMapReady) {
+                        return;
+                    }
+
+                    lines = Object.keys(scrollMap);
+
+                    if (lines.length < 1) {
+                        return;
+                    }
+
+                    line = lines[0];
+
+                    for (i = 1; i < lines.length; i++) {
+                        if (scrollMap[lines[i]] < scrollTop) {
+                            line = lines[i];
+                            continue;
                         }
 
-                        line = lines[0];
+                        break;
+                    }
 
-                        for (i = 1; i < lines.length; i++) {
-                            if (toSrc.linesInfo[lines[i]] < scrollTop) {
-                                line = lines[i];
-                                continue;
-                            }
-
-                            break;
-                        }
-
-                        if (toSrc.lastLineNo !== line) {
-                            toSrc.lastLineNo = line;
-                            iFrame.post('SCROLL', {
-                                line: line
-                            });
-                        }
-                    };
-
-                    if (toSrc.isReady) {
-                        doSync();
-                    } else {
-                        toSrc.initLinesInfo(doSync);
+                    if (toSrc.lastLineNo !== line) {
+                        toSrc.lastLineNo = line;
+                        iFrame.post('SCROLL', {
+                            line: line
+                        });
                     }
                 }, 50, { maxWait: 50 });
 
@@ -296,7 +294,7 @@ var show = {};
                 },
                 SYNC_SCROLL: function (evtName, evtData) {
                     isScrollSynchronize = evtData.sync;
-                    //toSrc.init();
+                    toSrc.init();
                 },
                 SCROLL: function (evtName, evtData) {
                     syncFs.to(evtData);

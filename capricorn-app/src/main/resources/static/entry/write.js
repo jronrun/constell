@@ -748,6 +748,11 @@ var write = {};
 
                     return {linesInfo: linesInfo};
                 },
+                LINE_COUNT: function () {
+                    return {
+                        count: redact.target.lineCount()
+                    };
+                },
                 LOAD_DONE: function () {
 
                 }
