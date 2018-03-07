@@ -378,20 +378,23 @@ var write = {};
                 if (isVisible) {
                     notifyTglOpt = 2;
                     if (!rightIfr) {
-                        var notifyHandle = function (evt) {
-                            rightIfr.tellEvent(evt.event, evt.data);
+                        var notifyHandle = function (evt, callback) {
+                            rightIfr.tellEvent(evt.event, evt.data, function (n, evtData) {
+                                pi.isFunc(callback) && callback(evtData);
+                            });
                         };
 
                         rightIfr = iFrame.create({}, pvw.right.target);
                         core.preview.resize();
-                        rightIfr.openUrl(pi.fullUrl('/show'));
                         redact.setNotifyContentHandle(notifyHandle);
 
-                        delay(function () {
-                            notifyHandle(redact.getNotifyContent());
-                            core.preview.resize();
-                            core.preview.syncTgl(2);
-                        }, 300);
+                        rightIfr.openUrl(pi.fullUrl('/show'), function () {
+                            core.preview.syncTgl(2, function () {
+                                notifyHandle(redact.getNotifyContent());
+                                core.preview.resize();
+                            });
+                        });
+
                     }
                 } else {
                     notifyTglOpt = 3;
@@ -405,14 +408,25 @@ var write = {};
                     core.preview.syncTgl(3);
                 }
             },
-            syncTgl: function (opt) {
+            syncTgl: function (opt, callback) {
                 // only support for Markdown
                 var cur = core.preview.syncAble;
                 //opt 1 toggle, 2 open, 3 close, 4 get
-                switch (opt || 1) {
-                    case 2: if (true === cur) {return;} break;
-                    case 3: if (true !== cur) {return;}break;
-                    case 4: return cur;
+                switch (opt = (opt || 1)) {
+                    case 2:
+                        if (true === cur) {
+                            pi.isFunc(callback) && callback(opt);
+                            return;
+                        }
+                        break;
+                    case 3:
+                        if (true !== cur) {
+                            pi.isFunc(callback) && callback(opt);
+                            return;
+                        }
+                        break;
+                    case 4:
+                        return cur;
                 }
 
                 var evtN = 'scroll', doSyncTgl = function () {
@@ -426,7 +440,9 @@ var write = {};
                         }
                     }
 
-                    rightIfr.tellEvent('SYNC_SCROLL', {sync: core.preview.syncAble});
+                    rightIfr.tellEvent('SYNC_SCROLL', {sync: core.preview.syncAble}, function () {
+                        pi.isFunc(callback) && callback(opt);
+                    });
                 };
 
                 if (pi.isFunc(core.preview.sync)) {

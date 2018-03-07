@@ -74,7 +74,7 @@ var show = {};
             }
 
             lineInfo = lineInfo || {};
-            var i, lineNo = parseInt(lineInfo.top || 0), realLineNo = 0, posTo = scrollMap[lineNo];
+            var i, lineNo = parseInt(lineInfo.top || 0), realLineNo = -1, posTo = scrollMap[lineNo];
             if (lineNo === syncFs.lastLineNo) {
                 return;
             }
@@ -279,7 +279,7 @@ var show = {};
                 delay(function () {
                     syncFs.build();
                     toSrc.build();
-                }, 800);
+                }, 100);
             });
         },
         initialize: function () {
