@@ -279,6 +279,12 @@
 
                 cm.setCursor((line || 1) - 1, ch || 0)
             },
+            scrollToLine: function (lineNo, mode) {
+                var coord = cm.charCoords({line: lineNo, ch: 0}, mode || 'local');
+                $(cm.getWrapperElement()).find('.CodeMirror-scroll').stop(true).animate({
+                    scrollTop: coord.top
+                }, 100, 'linear');
+            },
             visibleLines: function (occludeToleranceTop, occludeToleranceBottom) {
                 var scrollInfo = cm.getScrollInfo();
                 occludeToleranceTop = occludeToleranceTop || 0;
@@ -364,6 +370,15 @@
                 }
                 cm.setCursor(cursor);
                 tools.refreshDelay();
+            },
+            linesInfo: function () {
+                var cmLines = [], lc = cm.lineCount();
+                cmLines[0] = 0;
+                for (var i = 1; i <= lc; i++) {
+                    cmLines[i] = cm.charCoords({line: i, ch: 0}, 'local');
+                }
+
+                return cmLines;
             },
             getNotifyContent: function (customData, evtName) {
                 var evtN = evtName || 'MIRROR_INPUT_READ_NOTIFY', cMode = tools.mode(), mirrorData = {
