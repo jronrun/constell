@@ -108,8 +108,8 @@
         return th;
     }
 
-    function fmtjson() {
-        return JSON.stringify(target, false, 2);
+    function fmtjson(target) {
+        return JSON.stringify(pi.isString(target) ? JSON.parse(target) : target, false, 2);
     }
 
     var keyMappings = {
