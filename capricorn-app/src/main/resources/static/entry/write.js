@@ -451,7 +451,7 @@ var write = {};
                     core.preview.script(function () {
                         core.preview.sync = _.debounce(function () {
                             rightIfr.tellEvent('SCROLL', redact.visibleLines());
-                        }, 100, { maxWait: 100 });
+                        }, 50, { maxWait: 50 });
 
                         doSyncTgl();
                     });
