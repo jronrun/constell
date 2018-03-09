@@ -211,6 +211,7 @@ var write = {};
     ex('save', 'sa');
     ex('rich');
     ex('compare', 'comp');
+    ex('format', 'fo');
     ex('wrapword', 'wrap', 'wordwrap');
     ex('foldall', 'folda', 'foldAll');
     ex('unfoldall', 'unfolda', 'unfoldAll');
@@ -260,6 +261,7 @@ var write = {};
                 menu('visualMode', 1, 'Esc'),
                 menu(directive.rich),
                 menu(directive.compare),
+                menu(directive.format, 1),
                 menu(null, 4),
                 menu('autocomplete', 1, 'Ctrl-J'),
                 menu(directive.wrapword, 3),
