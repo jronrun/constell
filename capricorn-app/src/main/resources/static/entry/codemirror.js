@@ -371,11 +371,11 @@
                 cm.setCursor(cursor);
                 tools.refreshDelay();
             },
-            linesInfo: function () {
+            linesInfo: function (mode) {
                 var cmLines = [], lc = cm.lineCount();
                 cmLines[0] = 0;
                 for (var i = 1; i <= lc; i++) {
-                    cmLines[i] = cm.charCoords({line: i, ch: 0}, 'local');
+                    cmLines[i] = cm.charCoords({line: i, ch: 0}, mode || 'local');
                 }
 
                 return cmLines;
