@@ -125,6 +125,9 @@
             handleCmd: function (input) {
                 return cm.execCommand(input);
             },
+            isSelected: function () {
+                return tools.doc().somethingSelected();
+            },
             selected: function (noMirrorTextIfNoneSelected) {
                 var text = ''; if (tools.doc().somethingSelected()) {
                     text = tools.doc().getSelection();
@@ -138,7 +141,6 @@
             },
             repSelected: function (code, collapse, origin) {
                 tools.doc().replaceSelection(code, collapse, origin);
-                tools.format();
             },
             attrs: function (optionKey, optionVal) {
                 if (pi.isJson(optionKey)) {
@@ -359,17 +361,28 @@
                 return true;
             },
             isJson: function(noneLogWarnMsg) {
-                return mirror.isJson(cm.getValue(), noneLogWarnMsg);
+                return extra.isJson(cm.getValue(), noneLogWarnMsg);
             },
-            format: function () {
-                var cursor = cm.getCursor();
-                if (tools.isJson()) {
-                    cm.setValue(fmtjson(cm.getValue()));
+            // formatHandle(value, doneHandle(beautifyValue))
+            format: function (formatHandle, notUseDefaultJsonFormat) {
+                var cursor = cm.getCursor(), targetValue = tools.selected(),
+                    isSelectedTxt = tools.isSelected(),
+                    aDoneHandle = function (aValue) {
+                        if (isSelectedTxt) {
+                            tools.repSelected(aValue);
+                        } else {
+                            cm.setValue(aValue);
+                        }
+                        cm.setCursor(cursor);
+                        tools.refreshDelay();
+                    };
+                if (!notUseDefaultJsonFormat && extra.isJson(targetValue, true)) {
+                    aDoneHandle(fmtjson(targetValue));
                 } else {
-                    return;
+                    pi.isFunc(formatHandle) && formatHandle(targetValue, function (beautifyValue) {
+                        aDoneHandle(beautifyValue);
+                    }, isSelectedTxt);
                 }
-                cm.setCursor(cursor);
-                tools.refreshDelay();
             },
             linesInfo: function (mode) {
                 var cmLines = [], lc = cm.lineCount();

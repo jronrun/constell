@@ -126,6 +126,15 @@ var write = {};
         },
         compare: function (args, cm) {
 
+        },
+        format: function (args, cm) {
+            redact.format(function (value, doneHandle) {
+                var aData = redact.getNotifyContent().data;
+                aData.content = value;
+                transform.beautify(aData, function (aResult) {
+                    doneHandle(aResult);
+                });
+            });
         }
     }, exNameKey = function (directiveName) {
         return fmt('directive.{0}.name', directiveName);
@@ -341,7 +350,8 @@ var write = {};
                 window.aa=pvw;
                 window.nn=redact;
                 window.show=core;
-            }  
+                window.actions=actions;
+            }
         },
         preview: {
             init: function () {

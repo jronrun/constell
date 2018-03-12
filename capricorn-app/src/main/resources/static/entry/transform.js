@@ -90,6 +90,23 @@ var transform = {};
 
     var core = {
 
+        beautify: function (aData, resultHandle) {
+            var matched = false, input = aData.content,
+                lang = aData.lang.mime || aData.lang.name, langMeta = mirror.modeInfo(lang);
+
+            $.each(beautifies, function (idx, aRender) {
+                if (aRender.key.indexOf(langMeta[aRender.type || 'mode']) !== -1) {
+                    matched = true;
+                    initBeauty(function () {
+                        resultHandle(aRender.beautify(input));
+                    });
+                    return false;
+                }
+            });
+
+            return matched;
+        },
+
         /**
          * @param aData         mirror notify content
          * ex: {"lang":{"name":"","mime":""},"th":"","content":"","shows":""}
