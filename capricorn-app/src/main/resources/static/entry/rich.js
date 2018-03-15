@@ -1,19 +1,20 @@
 'use strict';
 
-var rich = {};
-(function ($, root, register) {
+(function ($, root, component) {
 
-    var core = {
-        initialize: function () {
+    var proto = {
 
-        }
     };
 
-    $.extend(register, {
+    $.extend(proto, {
     });
 
     $(function () {
-        core.initialize();
+        proto.initialize();
     });
 
-})(jQuery, window, rich);
+    root[component] = exporter(proto, function() {
+
+    });
+
+})(jQuery, window, 'rich');

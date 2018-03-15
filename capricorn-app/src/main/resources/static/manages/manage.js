@@ -368,27 +368,30 @@ $(function () {
 /*
 'use strict';
 
-var index = {};
-(function ($, root, register) {
+(function ($, root, component) {
 
-    var core = {
-        initialize: function () {
+    var proto = {
 
-        }
     };
 
-    $.extend(register, {
+    $.extend(proto, {
     });
 
     $(function () {
-        core.initialize();
+        proto.initialize();
     });
 
-})(jQuery, window, index);
+    root[component] = exporter(proto, function() {
 
-'use strict';
+    });
 
-(function ($, root, component) {
+})(jQuery, window, 'quills');
+
+'use strict'
+
+;(function($, component) {
+
+    var root = Function('return this')();
 
     var proto = {
 
@@ -398,5 +401,5 @@ var index = {};
 
     });
 
-})(jQuery, window, 'quills');
+}.call(this, jQuery, 'quills'));
  */

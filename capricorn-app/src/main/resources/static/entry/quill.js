@@ -1,6 +1,8 @@
-'use strict';
+'use strict'
 
-(function ($, root, component) {
+;(function($, component) {
+
+    var root = Function('return this')();
 
     var proto = {
 
@@ -10,4 +12,4 @@
 
     });
 
-})(jQuery, window, 'quills');
+}.call(this, jQuery, 'quills'));
