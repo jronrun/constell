@@ -554,6 +554,8 @@ var pi = {};
                     };
                 }
             });
+
+            return host;
         },
         //opt 1 toggle, 2 mark, 3 unmark, 4 get
         attrTgl: function (selector, attrName, opt) {
