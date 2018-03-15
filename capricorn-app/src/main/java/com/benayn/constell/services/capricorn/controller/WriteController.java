@@ -19,4 +19,14 @@ public class WriteController {
         System.out.println('s');
     }
 
+    @GetMapping(value = "/diff")
+    public void diff(Model model) {
+        System.out.println('d');
+    }
+
+    @GetMapping(value = "/rich")
+    public void rich(Model model) {
+        System.out.println('r');
+    }
+
 }

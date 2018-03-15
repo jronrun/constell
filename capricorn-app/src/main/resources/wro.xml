@@ -176,6 +176,12 @@
         <js>/entry/show.js</js>
     </group>
 
+    <group name="rich">
+        <js minimize="false">/lib/quill/quill.min.js</js>
+        <js>/entry/quill.js</js>
+        <js>/entry/rich.js</js>
+    </group>
+
     <!-- Capricorn App End -->
     <!-- Capricorn Manage Start -->
 
